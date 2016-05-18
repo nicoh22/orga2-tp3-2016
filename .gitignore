@@ -1,0 +1,26 @@
+#Compiled 
+*.o
+*pyc
+core
+*.bin
+*.ctsko
+*.ctsk
+*.tsko
+*.tsk
+diskette.img
+
+#Latex stuff
+*.log
+*.aux
+*.gz
+*.toc
+
+#Backups editores
+*.ycm_extra_conf.py
+*.ycm_extra_conf.pyc
+*.swp
+*~
+
+#Misc
+*.tmp
+kernel.sym
