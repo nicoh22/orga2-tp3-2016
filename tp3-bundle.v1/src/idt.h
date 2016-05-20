@@ -25,7 +25,7 @@ typedef struct str_idt_entry_fld {
 
 extern idt_entry idt[];
 extern idt_descriptor IDT_DESC;
-
+extern void idt_inicializar();
 void idt_inicializar();
 
 
