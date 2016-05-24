@@ -13,8 +13,8 @@
 #include "tss.h"
 #include "game.h"
 
-void mmu_inicializar();
-
+extern void mmu_inicializar();
+extern void mmu_inicializar_dir_kernel();
 
 #endif	/* !__MMU_H__ */
 

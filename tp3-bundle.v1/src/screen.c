@@ -51,7 +51,31 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
     p[y][x].a = attr;
 }
 
+void inicializar_interfaz() {
+	int x = 0;
+	int y = 0;	
+	while (x < 80) {
+		print(" ", x, y, C_BG_BLACK);
+		x++;
+	}
 
+	x = 0;
+	y = 44;
+	while (y < 50) {
+		while (x < 80) {
+			if(x <= 50 || x > 60) {
+				print(" ", x, y, C_BG_BLACK);
+			}else if (x > 55) {
+				print(" ", x, y, C_BG_BLUE);
+			}else {
+				print(" ", x, y, C_BG_RED);
+			}
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+}
 
 
 

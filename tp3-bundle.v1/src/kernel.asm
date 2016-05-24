@@ -9,6 +9,11 @@ extern GDT_DESC
 extern IDT_DESC
 
 extern idt_inicializar
+extern mmu_inicializar_dir_kernel
+extern inicializar_interfaz
+
+%define PAGE_DIRECTORY 0X27000
+%define PAGE_TABLE 0X28000
 
 %define stackBasePointerKern 0x27000 ; EBOLA
 %define dataSegmentSelectorKern 0x28
@@ -101,11 +106,22 @@ BITS 32
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
-    
-    ; Cargar directorio de paginas
+	; Cargar directorio de paginas
+	
+	call mmu_inicializar_dir_kernel ; inicializa y carga el dir   
 
-    ; Habilitar paginacion
-    
+	; Habilitar paginacion
+
+	mov eax, PAGE_DIRECTORY 
+	mov cr3, eax
+
+	mov eax, cr0
+	or eax, 0x80000000
+	mov cr0, eax
+ 
+	; Inicializar interfaz de usuario
+	call inicializar_interfaz
+   
     ; Inicializar tss
 
     ; Inicializar tss de la tarea Idle

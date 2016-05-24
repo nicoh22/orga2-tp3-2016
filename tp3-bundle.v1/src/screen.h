@@ -29,5 +29,6 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+extern void inicializar_interfaz();
 
 #endif  /* !__SCREEN_H__ */
