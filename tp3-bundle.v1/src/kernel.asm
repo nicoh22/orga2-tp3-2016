@@ -128,7 +128,9 @@ BITS 32
 	mov ebx, nombre_grupo
 	push ebx
 	call print_alligned_right	
-    ; Inicializar tss
+    pop ebx
+
+	; Inicializar tss
 
     ; Inicializar tss de la tarea Idle
 
