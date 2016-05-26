@@ -31,4 +31,6 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
 
 extern void inicializar_interfaz();
 
+extern void print_alligned_right(const char * text);
+
 #endif  /* !__SCREEN_H__ */

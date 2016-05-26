@@ -11,6 +11,7 @@ extern IDT_DESC
 extern idt_inicializar
 extern mmu_inicializar_dir_kernel
 extern inicializar_interfaz
+extern print_alligned_right
 
 %define PAGE_DIRECTORY 0X27000
 %define PAGE_TABLE 0X28000
@@ -33,6 +34,7 @@ iniciando_mr_len equ    $ - iniciando_mr_msg
 iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
 iniciando_mp_len equ    $ - iniciando_mp_msg
 
+nombre_grupo db 'A PC regalado no se le mira procesador', 0
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -57,7 +59,6 @@ start:
 
     ; Habilitar A20 - no hay que salver registros
 	call habilitar_A20
-    xchg bx, bx
     ; Cargar la GDT
 	lgdt [GDT_DESC] ; EBOLA
 
@@ -121,7 +122,12 @@ BITS 32
  
 	; Inicializar interfaz de usuario
 	call inicializar_interfaz
-   
+
+
+    xchg bx, bx
+	mov ebx, nombre_grupo
+	push ebx
+	call print_alligned_right	
     ; Inicializar tss
 
     ; Inicializar tss de la tarea Idle
@@ -134,8 +140,9 @@ BITS 32
     ; Cargar IDT
 	lidt [IDT_DESC]		
 
-	mov eax, 0
-	div eax
+;	comento esto para probar que imprime nombre_grupo
+;	mov eax, 0
+;	div eax
  
     ; Configurar controlador de interrupciones
 

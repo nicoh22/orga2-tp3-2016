@@ -77,5 +77,15 @@ void inicializar_interfaz() {
 	}
 }
 
+void print_alligned_right(const char * text){
+	//toma un string terminado en 0 y lo imprime 
+	//en la primera linea, alineado a derecha.
+	int count = 0;
 
+	while( text[count] != 0 ){
+		count++;
+	}
+	int pos_inicial = VIDEO_COLS - count;
+	print(text, pos_inicial, 0, C_FG_WHITE + C_BG_BLACK);
+}
 
