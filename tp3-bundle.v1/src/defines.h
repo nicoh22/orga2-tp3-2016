@@ -42,6 +42,10 @@
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
 #define VIDEO_SCREEN            0x000B8000 /* direccion fisica del buffer de video */
-
-
+#define PAGE_SIZE 				0X1000
+#define INICIO_PAGINAS_LIBRES 	0x100000
+#define TASK_CODE 				0x8000000
+#define PAGE_DIRECTORY_KERN 	0X27000
+#define PAGE_TABLE_KERN 		0X28000
+#define IDLE_TASK 				0X11000
 #endif  /* !__DEFINES_H__ */
