@@ -1,0 +1,22 @@
+TODO: agregar introducción a lo que hicimos?
+
+
+\subsection{Segmentación y manejo de excepciones}
+
+De acuerdo a lo indicado en el enunciado, definimos segmentos de código y datos en la GDT a partir del indice 4, un par con privilegios de kernel y otro con privilegios de usuario. 
+Direccionamos los primeros $878$MB de memoria con estos segmentos.
+Para ello, establecimos la base de cada segmento en la dirección 0x0 y, para poder representar el número en 20 bits, calculamos el limite de cada uno en bloques de 4KB. 
+Adicionalmente, definimos un segmento de datos con privilegios de kernel para la memoria de video, basado en la dirección 0xB8000. Dado que las dimensiones de la pantalla son 80x50 caracteres y que para representar cada uno se necesitan dos bytes, el tamaño de este segmento es de 8000 Bytes. En función de esto definimos el limite del segmento en 7999, su ultimo byte direccionable.
+
+
+
+
+\textbf{TODO: Como manejamos/imprimimos mensaje de excepciones}
+
+
+
+
+\subsection{Paginación}
+
+\textbf{TODO: Explicar ej. 3 y 4}
+
