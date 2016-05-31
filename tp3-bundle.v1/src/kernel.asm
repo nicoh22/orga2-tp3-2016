@@ -9,6 +9,7 @@ extern GDT_DESC
 extern IDT_DESC
 
 extern idt_inicializar
+extern mmu_inicializar
 extern mmu_inicializar_dir_kernel
 extern mmu_inicializar_dir_tarea
 extern inicializar_interfaz
@@ -106,7 +107,7 @@ BITS 32
 	JL .inicializarPantalla
     
     ; Inicializar el manejador de memoria
- 
+ 	call mmu_inicializar
     ; Inicializar el directorio de paginas
 	; Cargar directorio de paginas
 	
@@ -143,25 +144,32 @@ BITS 32
     ; Cargar IDT
 	lidt [IDT_DESC]		
 
-;	test interrupciones
+;test interrupciones
+
 ;	mov eax, 0
 ;	div eax
 
-;	test mmu
+;fin test
+
+;test mmu
+
 	xor ebx, ebx
 	mov ebx, 1
 	mov ecx, 0x400000 ; direccion base del mapa 
 	push ecx
 	push ebx
+	
+	xchg bx, bx
 	call mmu_inicializar_dir_tarea 
 	mov cr3, eax ; la tlb se flushea sola aca
-
+	
 	mov ebx, 0xb8000 ; memoria de video
-	mov byte [ebx], 0xFF
-
+	mov byte [ebx + 1], 0x4F
+	mov byte [ebx], 100
 	mov eax, PAGE_DIRECTORY	
 	mov cr3, eax
-;	fin test
+
+;fin test
 
     ; Configurar controlador de interrupciones
 

@@ -65,9 +65,9 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 	int *page_table = mmu_proxima_pagina_fisica_libre(); 
 	page_directory[0] = (int)page_table + ATTR_KERN; 
 
-
 	// En la tabla de paginas registramos las primeras 1024 con bloques
 	// de 4kb
+	
 	int base_page_addr = 0;
 	i = 0;
 	while(i < 1024) {
@@ -75,21 +75,21 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 		base_page_addr += 4096;						
 		i++;
 	}
-	
 	// logica para determinar direccion fisica (en el mapa)
 	// TODO en vez del parametro fisica podemos recibir el X y el Y
 	// y calcular su direccion aca o en un funcion "xyaFisica"
-	
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
 	mmu_mapear_pagina(fisica, PAGE_DIRECTORY_KERN, fisica, ATTR_KERN);
-
+	breakpoint();
 	//tipo de tarea
-	int* codigo_fuente = (int*) (IDLE_TASK + tipo * PAGE_SIZE);
+	int* codigo_fuente = (int*) (IDLE_TASK + (tipo * PAGE_SIZE));
 	mmu_copiar_pagina(codigo_fuente, (int*) fisica);
 	
 	unsigned int cr3Tarea = (int) page_directory + ATTR_USER;
 	
+	breakpoint();
+
 	mmu_mapear_pagina(TASK_CODE, cr3Tarea, fisica, ATTR_USER);
 
 	//En principio se mapea a si misma
@@ -100,9 +100,11 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 
 void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fisica, short attr){
 	int *page_directory = (int*) (ALIGN(cr3));
-	int *page_table = (int*) page_directory[PDE_INDEX(virtual)];	
+	int *page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);	
+	
 	if(page_table == 0){
-		*page_table = (int) mmu_proxima_pagina_fisica_libre() + attr;
+		page_table = mmu_proxima_pagina_fisica_libre();
+		page_directory[PDE_INDEX(virtual)] = (int) page_table + attr; 
 		int i = 0;
 		while(i < 1024) {// Limpiamos la tabla nueva
 			page_table[i] = 0; 
@@ -116,7 +118,7 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	
 	int *page_directory = (int*) (ALIGN(cr3));
-	int *page_table = (int*) page_directory[PDE_INDEX(virtual)];	
+	int *page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);	
 	if(page_table != 0){
 		page_table[PTE_INDEX(virtual)] = 0;
 	}
@@ -126,6 +128,7 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 
 
 void mmu_copiar_pagina(int* codigo_fuente, int* fisica){
+	breakpoint();
 	int i = 0; 
 	while(i < 1024){
 		fisica[i] = codigo_fuente[i];
