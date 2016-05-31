@@ -10,6 +10,7 @@ extern IDT_DESC
 
 extern idt_inicializar
 extern mmu_inicializar_dir_kernel
+extern mmu_inicializar_dir_tarea
 extern inicializar_interfaz
 extern print_alligned_right
 
@@ -142,10 +143,26 @@ BITS 32
     ; Cargar IDT
 	lidt [IDT_DESC]		
 
-;	comento esto para probar que imprime nombre_grupo
+;	test interrupciones
 ;	mov eax, 0
 ;	div eax
- 
+
+;	test mmu
+	xor ebx, ebx
+	mov ebx, 1
+	mov ecx, 0x400000 ; direccion base del mapa 
+	push ecx
+	push ebx
+	call mmu_inicializar_dir_tarea 
+	mov cr3, eax ; la tlb se flushea sola aca
+
+	mov ebx, 0xb8000 ; memoria de video
+	mov byte [ebx], 0xFF
+
+	mov eax, PAGE_DIRECTORY	
+	mov cr3, eax
+;	fin test
+
     ; Configurar controlador de interrupciones
 
     ; Cargar tarea inicial

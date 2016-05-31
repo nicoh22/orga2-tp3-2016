@@ -76,8 +76,9 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 		i++;
 	}
 	
-	//logica para determinar direccion fisica (en el mapa)
-	// int fisica
+	// logica para determinar direccion fisica (en el mapa)
+	// TODO en vez del parametro fisica podemos recibir el X y el Y
+	// y calcular su direccion aca o en un funcion "xyaFisica"
 	
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
@@ -110,7 +111,7 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 		
 	}
 	page_table[PTE_INDEX(virtual)] = fisica + attr;
-	
+	tlbflush();	
 }
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	
@@ -119,6 +120,7 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	if(page_table != 0){
 		page_table[PTE_INDEX(virtual)] = 0;
 	}
+	tlbflush();
 }
 
 
