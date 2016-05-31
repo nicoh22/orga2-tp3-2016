@@ -81,16 +81,12 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
 	mmu_mapear_pagina(fisica, PAGE_DIRECTORY_KERN, fisica, ATTR_KERN);
-	breakpoint();
 	//tipo de tarea
 	int* codigo_fuente = (int*) (IDLE_TASK + (tipo * PAGE_SIZE));
 	mmu_copiar_pagina(codigo_fuente, (int*) fisica);
 	
 	unsigned int cr3Tarea = (int) page_directory + ATTR_USER;
 	
-	breakpoint();
-
-	mmu_mapear_pagina(TASK_CODE, cr3Tarea, fisica, ATTR_USER);
 
 	//En principio se mapea a si misma
 	//No esta atacando a nadie
@@ -128,7 +124,6 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 
 
 void mmu_copiar_pagina(int* codigo_fuente, int* fisica){
-	breakpoint();
 	int i = 0; 
 	while(i < 1024){
 		fisica[i] = codigo_fuente[i];
