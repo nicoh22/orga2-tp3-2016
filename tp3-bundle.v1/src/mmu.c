@@ -85,7 +85,7 @@ unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
 	int* codigo_fuente = (int*) (IDLE_TASK + (tipo * PAGE_SIZE));
 	mmu_copiar_pagina(codigo_fuente, (int*) fisica);
 	
-	unsigned int cr3Tarea = (int) page_directory + ATTR_USER;
+	unsigned int cr3Tarea = (int) page_directory;
 	
 
 	//En principio se mapea a si misma
