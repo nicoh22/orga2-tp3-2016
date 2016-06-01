@@ -13,6 +13,17 @@ sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
 
+LA: db 'A', 0 
+LS: db 'S', 0 
+LD: db 'D', 0 
+LW: db 'W', 0 
+LJ: db 'J', 0 
+LK: db 'K', 0 
+LL: db 'L', 0 
+LI: db 'I', 0 
+LLESS: db '<', 0 
+LGREATER: db '>', 0 
+
 ;; PIC
 extern fin_intr_pic1
 
@@ -85,10 +96,116 @@ ISR 19
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 
+global _isr32
+
+_isr32: 
+;El stackframe podria ser mas chico
+;cambiar pushad y popad por los que sean necesarios
+	pushad
+	call proximo_reloj	
+;	call game_tick
+	call fin_intr_pic1	
+	popad
+	iret
+
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 
+
+%define A 0x1e
+%define S 0x1f
+%define D 0x20
+%define W 0x11
+%define J 0x24
+%define K 0x25
+%define L 0x26
+%define I 0x17
+%define L_SHIFT 0x2a
+%define R_SHIFT 0x36
+
+
+global _isr33
+
+_isr33:
+	pushad
+	xor eax, eax
+	in al, 0x60
+	
+	mov edi, LA
+	cmp al, A
+	je .print
+
+.verS:		
+	mov edi, LS
+	cmp al, S
+	je .print
+
+.verD:	
+	mov edi, LD
+	cmp al, D
+	je .print
+
+.verW:	
+	mov edi, LW
+	cmp al, W
+	je .print
+
+.verJ:	
+	mov edi, LJ
+	cmp al, J
+	je .print
+
+.verK:	
+	mov edi, LK
+	cmp al, K
+	je .print
+
+.verL:	
+	mov edi, LL
+	cmp al, L
+	je .print
+
+.verI:
+	mov edi, LI
+	cmp al, I
+	je .print
+
+.verLS:	
+	mov edi, LLESS
+	cmp al, L_SHIFT
+	je .print
+
+.verRS:	
+	cmp al, R_SHIFT
+	jne .fin
+	mov edi, LGREATER
+
+.print:	
+	
+
+	xor ebx, ebx
+	xor ecx, ecx
+	mov ecx, 79
+	xor edx, edx 
+	mov edx, 0x4F
+	
+	push edx
+	push ebx
+	push ecx	
+	push edi
+
+	call print
+
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+
+.fin:	
+	call fin_intr_pic1	
+	popad
+	iret
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
@@ -99,7 +216,11 @@ ISR 19
 
 %define VIRUS_ROJO 0x841
 %define VIRUS_AZUL 0x325
+global _isr102
 
+_isr102:
+	mov eax, 0x42
+	iret
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;

@@ -14,12 +14,16 @@ extern mmu_inicializar_dir_kernel
 extern mmu_inicializar_dir_tarea
 extern inicializar_interfaz
 extern print_alligned_right
+extern resetear_pic
+extern habilitar_pic
 
 %define PAGE_DIRECTORY 0X27000
 %define PAGE_TABLE 0X28000
 
 %define stackBasePointerKern 0x27000 ; EBOLA
 %define dataSegmentSelectorKern 0x28
+
+%define INT_SOFT 0x66
 
 global start
 
@@ -172,10 +176,18 @@ BITS 32
 ;fin test
 
     ; Configurar controlador de interrupciones
+	
+	call resetear_pic
+	call habilitar_pic
 
     ; Cargar tarea inicial
 
     ; Habilitar interrupciones
+	sti
+;test interrupcion software
+;	int INT_SOFT
+
+;fin test
 
     ; Saltar a la primera tarea: Idle
 
