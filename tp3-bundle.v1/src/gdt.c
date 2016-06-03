@@ -6,6 +6,7 @@
 */
 
 #include "gdt.h"
+#include "tss.h"
 
 gdt_entry gdt[GDT_COUNT] = {
     /* Descriptor nulo*/
@@ -108,6 +109,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     }
+
 };
 
 gdt_descriptor GDT_DESC = {

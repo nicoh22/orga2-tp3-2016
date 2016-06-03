@@ -26,7 +26,8 @@
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 9
+#define GDT_COUNT 66 
+// 9 iniciales + tss idle + tss inicial + 20 por jugador + 15 sanas
 
 #define GDT_IDX_NULL_DESC           0
 #define GDT_IDX_KERN_CODE           4
@@ -34,6 +35,8 @@
 #define GDT_IDX_USER_CODE           6
 #define GDT_IDX_USER_DATA           7
 #define GDT_IDX_VIDEO               8
+#define GDT_IDX_TSS_INICIAL			9
+#define GDT_IDX_TSS_IDLE            10
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
@@ -47,5 +50,6 @@
 #define TASK_CODE 				0x8000000
 #define PAGE_DIRECTORY_KERN 	0X27000
 #define PAGE_TABLE_KERN 		0X28000
-#define IDLE_TASK 				0X11000
+#define IDLE_TASK 				0X10000
+#define STACK_BASE_KERN 		0X27000
 #endif  /* !__DEFINES_H__ */

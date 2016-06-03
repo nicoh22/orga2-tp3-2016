@@ -79,7 +79,7 @@ start:
 
 protectedMode:
     ; Establecer selectores de segmentos
-BITS 32	
+BITS 32
 
 	mov ax, dataSegmentSelectorKern
 	mov ds, ax
@@ -111,15 +111,15 @@ BITS 32
 	JL .inicializarPantalla
     
     ; Inicializar el manejador de memoria
- 	call mmu_inicializar
+	call mmu_inicializar
     ; Inicializar el directorio de paginas
 	; Cargar directorio de paginas
-	
-	call mmu_inicializar_dir_kernel ; inicializa y carga el dir   
+
+	call mmu_inicializar_dir_kernel ; inicializa y carga el dir
 
 	; Habilitar paginacion
 
-	mov eax, PAGE_DIRECTORY 
+	mov eax, PAGE_DIRECTORY
 	mov cr3, eax
 
 	mov eax, cr0
