@@ -66,7 +66,7 @@ void tss_inicializar() {
 	tss_idle.unused3 = 0;
 	tss_idle.cr3 = PAGE_DIRECTORY_KERN;
 	tss_idle.eip = 0x10000;
-	tss_idle.eflags = 0x02;//despues cambiar por 0x202
+	tss_idle.eflags = 0x02;//TODO: despues cambiar por 0x202
 	tss_idle.eax = 0;
 	tss_idle.ecx = 0;
 	tss_idle.edx = 0;
@@ -109,8 +109,8 @@ void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 	gdt[gdt_index].base_0_15 = (tss & 0x0000FFFF);
 	gdt[gdt_index].base_23_16 = ((tss >> 16) & 0x000000FF);
 	gdt[gdt_index].base_31_24 = (tss >> 24);
-	gdt[gdt_index].limit_0_15 = limite & 0x0FF;
-	gdt[gdt_index].limit_16_19 = (limite >> 16)& 0x00F;
+	gdt[gdt_index].limit_0_15 = limite & 0x0000FFFF;
+	gdt[gdt_index].limit_16_19 = (limite >> 16) & 0x0000000F;
 	gdt[gdt_index].type = 0x9;
 	gdt[gdt_index].s = 0x0;
 	gdt[gdt_index].dpl = 0x00;
@@ -119,8 +119,7 @@ void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 	gdt[gdt_index].db = 0x0;
 	gdt[gdt_index].l = 0x0;
 	gdt[gdt_index].g = 0x0;
-
-
+	
 }
 
 //tss* tss_completar_tarea(short tipo, ??){}

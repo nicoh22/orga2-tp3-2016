@@ -14,14 +14,12 @@ unsigned int proxima_pagina_libre;
 void mmu_inicializar() {
 	proxima_pagina_libre = INICIO_PAGINAS_LIBRES;
 }
+
 int *mmu_proxima_pagina_fisica_libre() {
 	unsigned int pagina_libre = proxima_pagina_libre;
 	proxima_pagina_libre += PAGE_SIZE;
 	return (int*) pagina_libre;
 }
-
-
-
 
 void mmu_inicializar_dir_kernel() {
 	// Usamos punteros a int para direccionar 32bits, que es el tamaño
@@ -111,6 +109,7 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 	page_table[PTE_INDEX(virtual)] = fisica + attr;
 	tlbflush();	
 }
+
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	
 	int *page_directory = (int*) (ALIGN(cr3));
@@ -120,8 +119,6 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	}
 	tlbflush();
 }
-
-
 
 void mmu_copiar_pagina(int* codigo_fuente, int* fisica){
 	int i = 0; 
