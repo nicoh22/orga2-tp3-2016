@@ -19,5 +19,39 @@ Definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-és
 
 \subsection{Paginación}
 
-\textbf{TODO: Explicar ej. 3 y 4}
+Siguiendo las indicaciones del enunciado, mapeamos las direcciones \textit{0x000000} a \textit{0x3FFFFF} usando \textit{identity mapping}.
+Para lograrlo en primer lugar inicializamos los primeros 4KB de memoria a partir de la dirección \textit{0x27000} con ceros, donde luego definimos el directorio de páginas del kernel.
+Ubicamos la primer página del directorio en la dirección \textit{0x28000}, con atributos de lectura y escritura, nivel de privilegios cero y el bit presente activo.
+Luego, para mapear el sección de memoria pedida, llenamos la tabla con las direcciones de los primeros 1024 bloques de 4KB de memoria física. 
+De esta manera definimos la última entrada de la tabla con la dirección base 0x3FF000, haciendo direccionables los siguientes 4096-1 direcciones. 
+Al igual que la definición de la tabla de páginas en el directorio, cada página fue definida con atributos de lectura y escritura, privilegios de kernel y bit presente activo.
+
+Teniendo armado un directorio de páginas con una tabla de páginas definida, habilitamos paginación moviendo la dirección del directorio a CR3 y levantando el bit correspondiente en CR0.
+ 
+
+
+
+\textbf{TODO: Explicar ej. 4}\\
+\begin{comment}
+a) Escribir una rutina (inicializar mmu) que se encargue de inicializar las estructuras ne-
+cesarias para administrar la memoria en el area libre (un contador de paginas libres).
+
+
+b) Escribir una rutina (mmu inicializar dir tarea) encargada de inicializar un directorio
+de páginas y tablas de páginas para una tarea, respetando la figura 3. La rutina debe copiar
+el código de la tarea a su área asignada, es decir la posición indicada por el jugador dentro
+de el mapa y mapear dichas páginas a partir de la dirección virtual 0x08000000(128MB).
+Sugerencia: agregar a esta función todos los parámentros que considere necesarios para los
+distintos tipos de tareas.
+
+
+c) Escribir dos rutinas encargadas de mapear y desmapear páginas de memoria.
+
+I- mmu mapear pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica)
+Permite mapear la página fı́sica correspondiente a fisica en la dirección virtual
+virtual utilizando cr3.
+
+II- mmu unmapear pagina(unsigned int virtual, unsigned int cr3)
+Borra el mapeo creado en la dirección virtual virtual utilizando cr3.
+\end{comment}
 
