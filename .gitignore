@@ -24,3 +24,5 @@ diskette.img
 #Misc
 *.tmp
 kernel.sym
+*.project
+*.cproject
