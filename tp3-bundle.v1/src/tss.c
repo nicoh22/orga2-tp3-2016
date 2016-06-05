@@ -63,7 +63,7 @@ void tss_inicializar() {
 	tss_idle.ss2 = 0;
 	tss_idle.unused3 = 0;
 	tss_idle.cr3 = PAGE_DIRECTORY_KERN;
-	tss_idle.eip = 0;
+	tss_idle.eip = 0x10000;
 	tss_idle.eflags = 0x02;//despues cambiar por 0x202
 	tss_idle.eax = 0;
 	tss_idle.ecx = 0;
@@ -89,10 +89,47 @@ void tss_inicializar() {
 	tss_idle.unused10 = 0;
 	tss_idle.dtrap = 0;
 	tss_idle.iomap = 0;
+	
+	//Cargar las entradas de la gdt
+	//Por eso en tss.h esta el include de gdt.h y no al reves
+
+	unsigned int inicial = (unsigned int) &tss_inicial;
+	unsigned int idle = (unsigned int) &tss_idle;
+	unsigned int limite = 103;
+	
+	gdt[GDT_IDX_TSS_INICIAL].base_0_15 = (inicial & 0x0000FFFF);
+	gdt[GDT_IDX_TSS_INICIAL].base_23_16 = ((inicial >> 16) & 0x000000FF);
+	gdt[GDT_IDX_TSS_INICIAL].base_31_24 = (inicial >> 24);
+	gdt[GDT_IDX_TSS_INICIAL].limit_0_15 = limite & 0x0FF;
+	gdt[GDT_IDX_TSS_INICIAL].limit_16_19 = (limite >> 16)& 0x00F;
+	gdt[GDT_IDX_TSS_INICIAL].type = 0x9;
+	gdt[GDT_IDX_TSS_INICIAL].s = 0x0;
+	gdt[GDT_IDX_TSS_INICIAL].dpl = 0x00;
+	gdt[GDT_IDX_TSS_INICIAL].p = 0x1;
+	gdt[GDT_IDX_TSS_INICIAL].avl = 0x1;
+	gdt[GDT_IDX_TSS_INICIAL].db = 0x0;
+	gdt[GDT_IDX_TSS_INICIAL].l = 0x0;
+	gdt[GDT_IDX_TSS_INICIAL].g = 0x0;
+
+	gdt[GDT_IDX_TSS_IDLE].base_0_15 = (idle & 0x0000FFFF);
+	gdt[GDT_IDX_TSS_IDLE].base_23_16 = ((idle >> 16) & 0x000000FF);
+	gdt[GDT_IDX_TSS_IDLE].base_31_24 = (idle >> 24);
+	gdt[GDT_IDX_TSS_IDLE].limit_0_15 = limite & 0x0FF;
+	gdt[GDT_IDX_TSS_IDLE].limit_16_19 = (limite >> 16)& 0x00F;
+	gdt[GDT_IDX_TSS_IDLE].type = 0x9;
+	gdt[GDT_IDX_TSS_IDLE].s = 0x0;
+	gdt[GDT_IDX_TSS_IDLE].dpl = 0x00;
+	gdt[GDT_IDX_TSS_IDLE].p = 0x1;
+	gdt[GDT_IDX_TSS_IDLE].avl = 0x1;
+	gdt[GDT_IDX_TSS_IDLE].db = 0x0;
+	gdt[GDT_IDX_TSS_IDLE].l = 0x0;
+	gdt[GDT_IDX_TSS_IDLE].g = 0x0;
+
+
 }
 
 void tss_cargar_en_gdt(){
 
 }
 
-tss* tss_definir_tarea(){}
+//tss* tss_definir_tarea(){}
