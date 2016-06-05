@@ -10,6 +10,8 @@
 tss tss_inicial;
 tss tss_idle;
 
+void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index);
+
 void tss_inicializar() {
 	//llena idle e inicial 
 	tss_inicial.ptl = 0;
@@ -93,43 +95,33 @@ void tss_inicializar() {
 	//Cargar las entradas de la gdt
 	//Por eso en tss.h esta el include de gdt.h y no al reves
 
-	unsigned int inicial = (unsigned int) &tss_inicial;
-	unsigned int idle = (unsigned int) &tss_idle;
+	
+	tss_cargar_en_gdt(&tss_inicial, GDT_IDX_TSS_INICIAL);
+	tss_cargar_en_gdt(&tss_idle, GDT_IDX_TSS_IDLE);
+
+}
+
+void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
+	
+	unsigned int tss = (unsigned int) tss_pointer;
 	unsigned int limite = 103;
 	
-	gdt[GDT_IDX_TSS_INICIAL].base_0_15 = (inicial & 0x0000FFFF);
-	gdt[GDT_IDX_TSS_INICIAL].base_23_16 = ((inicial >> 16) & 0x000000FF);
-	gdt[GDT_IDX_TSS_INICIAL].base_31_24 = (inicial >> 24);
-	gdt[GDT_IDX_TSS_INICIAL].limit_0_15 = limite & 0x0FF;
-	gdt[GDT_IDX_TSS_INICIAL].limit_16_19 = (limite >> 16)& 0x00F;
-	gdt[GDT_IDX_TSS_INICIAL].type = 0x9;
-	gdt[GDT_IDX_TSS_INICIAL].s = 0x0;
-	gdt[GDT_IDX_TSS_INICIAL].dpl = 0x00;
-	gdt[GDT_IDX_TSS_INICIAL].p = 0x1;
-	gdt[GDT_IDX_TSS_INICIAL].avl = 0x1;
-	gdt[GDT_IDX_TSS_INICIAL].db = 0x0;
-	gdt[GDT_IDX_TSS_INICIAL].l = 0x0;
-	gdt[GDT_IDX_TSS_INICIAL].g = 0x0;
-
-	gdt[GDT_IDX_TSS_IDLE].base_0_15 = (idle & 0x0000FFFF);
-	gdt[GDT_IDX_TSS_IDLE].base_23_16 = ((idle >> 16) & 0x000000FF);
-	gdt[GDT_IDX_TSS_IDLE].base_31_24 = (idle >> 24);
-	gdt[GDT_IDX_TSS_IDLE].limit_0_15 = limite & 0x0FF;
-	gdt[GDT_IDX_TSS_IDLE].limit_16_19 = (limite >> 16)& 0x00F;
-	gdt[GDT_IDX_TSS_IDLE].type = 0x9;
-	gdt[GDT_IDX_TSS_IDLE].s = 0x0;
-	gdt[GDT_IDX_TSS_IDLE].dpl = 0x00;
-	gdt[GDT_IDX_TSS_IDLE].p = 0x1;
-	gdt[GDT_IDX_TSS_IDLE].avl = 0x1;
-	gdt[GDT_IDX_TSS_IDLE].db = 0x0;
-	gdt[GDT_IDX_TSS_IDLE].l = 0x0;
-	gdt[GDT_IDX_TSS_IDLE].g = 0x0;
+	gdt[gdt_index].base_0_15 = (tss & 0x0000FFFF);
+	gdt[gdt_index].base_23_16 = ((tss >> 16) & 0x000000FF);
+	gdt[gdt_index].base_31_24 = (tss >> 24);
+	gdt[gdt_index].limit_0_15 = limite & 0x0FF;
+	gdt[gdt_index].limit_16_19 = (limite >> 16)& 0x00F;
+	gdt[gdt_index].type = 0x9;
+	gdt[gdt_index].s = 0x0;
+	gdt[gdt_index].dpl = 0x00;
+	gdt[gdt_index].p = 0x1;
+	gdt[gdt_index].avl = 0x1;
+	gdt[gdt_index].db = 0x0;
+	gdt[gdt_index].l = 0x0;
+	gdt[gdt_index].g = 0x0;
 
 
 }
 
-void tss_cargar_en_gdt(){
-
-}
-
-//tss* tss_definir_tarea(){}
+//tss* tss_completar_tarea(short tipo, ??){}
+//llamar a tss_cargar_en_gdt aca?
