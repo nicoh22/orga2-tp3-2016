@@ -10,6 +10,7 @@
 tss tss_inicial;
 tss tss_idle;
 
+
 void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index);
 
 void tss_inicializar() {
@@ -122,5 +123,74 @@ void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 	
 }
 
-//tss* tss_completar_tarea(short tipo, ??){}
-//llamar a tss_cargar_en_gdt aca?
+tss* tss_proxima(){
+	//TODO
+	return NULL;
+}
+
+tss* tss_completar_tarea(taskType tipo, unsigned int cr3_task){
+	//TODO
+	//Necesito un arreglo estatico de tss
+	//sino tendria que pedirle paginas a la mmu
+	//Lo cual es medio mucho cuando sabemos el maximo 
+	//posible de tss
+	
+	//Tiene que tener toda esta responsabilidad esta funcion?
+	//si le decido pasar la responsabilidad a un ser superior
+	//(scheduler?) las funciones tomarian mas parametros
+	
+	tss* new_tss = tss_proxima();
+	
+	//obtener proximo indice libre en la gdt
+	int gdt_index = NULL;//TODO 
+	tss_cargar_en_gdt(new_tss, gdt_index);
+
+	//int fisica = 0;
+	//unsigned int cr3_task =  mmu_inicializar_dir_tarea(tipo, fisica);
+	//esta linea no compila (no esta incluido mmu.h), 
+	//entonces asumo que el scheduler me pasa el cr3
+	
+
+	new_tss->ptl = 0;
+	new_tss->unused0 = 0;
+	new_tss->esp0 = 0;
+	new_tss->ss0 = 0;
+	new_tss->unused1 = 0;
+	new_tss->esp1 = 0;
+	new_tss->ss1 = 0;
+	new_tss->unused2 = 0;
+	new_tss->esp2 = 0;
+	new_tss->ss2 = 0;
+	new_tss->unused3 = 0;
+	new_tss->cr3 = cr3_task;
+	new_tss->eip = 0;
+	new_tss->eflags = 0;
+	new_tss->eax = 0;
+	new_tss->ecx = 0;
+	new_tss->edx = 0;
+	new_tss->ebx = 0;
+	new_tss->esp = 0;
+	new_tss->ebp = 0;
+	new_tss->esi = 0;
+	new_tss->edi = 0;
+	new_tss->es = 0;
+	new_tss->unused4 = 0;
+	new_tss->cs = 0;
+	new_tss->unused5 = 0;
+	new_tss->ss = 0;
+	new_tss->unused6 = 0;
+	new_tss->ds = 0;
+	new_tss->unused7 = 0;
+	new_tss->fs = 0;
+	new_tss->unused8 = 0;
+	new_tss->gs = 0;
+	new_tss->unused9 = 0;
+	new_tss->ldt = 0;
+	new_tss->unused10 = 0;
+	new_tss->dtrap = 0;
+	new_tss->iomap = 0;
+
+
+	return new_tss;
+}
+

@@ -49,7 +49,7 @@ void mmu_inicializar_dir_kernel() {
 	}
 }
 
-unsigned int mmu_inicializar_dir_tarea(unsigned int tipo, int fisica){
+unsigned int mmu_inicializar_dir_tarea(taskType tipo, int fisica){
 	int *page_directory = mmu_proxima_pagina_fisica_libre();
 
 	// Limpiamos el directorio

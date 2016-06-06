@@ -14,7 +14,7 @@
 #define TRUE                    0x00000001
 #define FALSE                   0x00000000
 #define ERROR                   1
-
+#define NULL 					0
 
 /* Misc */
 /* -------------------------------------------------------------------------- */
@@ -52,4 +52,7 @@
 #define PAGE_TABLE_KERN 		0X28000
 #define IDLE_TASK 				0X10000
 #define STACK_BASE_KERN 		0X27000
+
+typedef enum task_type{idle_type, A_type, B_type, H_type} taskType;
+
 #endif  /* !__DEFINES_H__ */
