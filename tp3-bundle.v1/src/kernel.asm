@@ -188,11 +188,13 @@ BITS 32
 
     ; Habilitar interrupciones
 	sti
+	
 ;test interrupcion software
+
 ;	int INT_SOFT
 
 ;fin test
-
+    xchg bx, bx
     ; Saltar a la primera tarea: Idle
     ; Se carga el tr con el selector de segmento de la tarea inicial
     mov ax, GDT_SEL_TSS_INICIAL
