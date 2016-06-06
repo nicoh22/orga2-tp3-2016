@@ -194,12 +194,12 @@ BITS 32
 ;	int INT_SOFT
 
 ;fin test
-    xchg bx, bx
+    ; xchg bx, bx
     ; Saltar a la primera tarea: Idle
     ; Se carga el tr con el selector de segmento de la tarea inicial
     mov ax, GDT_SEL_TSS_INICIAL
     ltr ax
-    xchg bx, bx
+    ; xchg bx, bx
     ; Se intercambian las tareas de la inicial a la idle
     ; El procesador pisa el contexto de la tarea inicial con fruta
     jmp GDT_SEL_TSS_IDLE:0
