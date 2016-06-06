@@ -66,7 +66,7 @@ void tss_inicializar() {
 	tss_idle.unused3 = 0;
 	tss_idle.cr3 = PAGE_DIRECTORY_KERN;
 	tss_idle.eip = 0x10000;
-	tss_idle.eflags = 0x02;//TODO: despues cambiar por 0x202
+	tss_idle.eflags = 0x00000002;//TODO: despues cambiar por 0x00000202
 	tss_idle.eax = 0;
 	tss_idle.ecx = 0;
 	tss_idle.edx = 0;

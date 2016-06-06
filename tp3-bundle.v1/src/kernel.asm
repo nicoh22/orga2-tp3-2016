@@ -16,12 +16,16 @@ extern inicializar_interfaz
 extern print_alligned_right
 extern resetear_pic
 extern habilitar_pic
+extern tss_inicializar
 
 %define PAGE_DIRECTORY 0X27000
 %define PAGE_TABLE 0X28000
 
 %define stackBasePointerKern 0x27000 ; EBOLA
 %define dataSegmentSelectorKern 0x28
+
+%define GDT_SEL_TSS_INICIAL	0x48 
+%define GDT_SEL_TSS_IDLE    0x50
 
 %define INT_SOFT 0x66
 
@@ -130,15 +134,15 @@ BITS 32
 	call inicializar_interfaz
 
 
-    xchg bx, bx
+    ; xchg bx, bx
 	mov ebx, nombre_grupo
 	push ebx
 	call print_alligned_right	
     pop ebx
 
 	; Inicializar tss
-
     ; Inicializar tss de la tarea Idle
+    call tss_inicializar
 
     ; Inicializar el scheduler
 
@@ -157,21 +161,21 @@ BITS 32
 
 ;test mmu
 
-	xor ebx, ebx
-	mov ebx, 1
-	mov ecx, 0x400000 ; direccion base del mapa 
-	push ecx
-	push ebx
+;	xor ebx, ebx
+;	mov ebx, 1
+;	mov ecx, 0x400000 ; direccion base del mapa 
+;	push ecx
+;	push ebx
 	
-	xchg bx, bx
-	call mmu_inicializar_dir_tarea 
-	mov cr3, eax ; la tlb se flushea sola aca
+;	xchg bx, bx
+;	call mmu_inicializar_dir_tarea 
+;	mov cr3, eax ; la tlb se flushea sola aca
 	
-	mov ebx, 0xb8000 ; memoria de video
-	mov byte [ebx + 1], 0x4F
-	mov byte [ebx], 100
-	mov eax, PAGE_DIRECTORY	
-	mov cr3, eax
+;	mov ebx, 0xb8000 ; memoria de video
+;	mov byte [ebx + 1], 0x4F
+;	mov byte [ebx], 100
+;	mov eax, PAGE_DIRECTORY	
+;	mov cr3, eax
 
 ;fin test
 
@@ -190,6 +194,13 @@ BITS 32
 ;fin test
 
     ; Saltar a la primera tarea: Idle
+    ; Se carga el tr con el selector de segmento de la tarea inicial
+    mov ax, GDT_SEL_TSS_INICIAL
+    ltr ax
+    xchg bx, bx
+    ; Se intercambian las tareas de la inicial a la idle
+    ; El procesador pisa el contexto de la tarea inicial con fruta
+    jmp GDT_SEL_TSS_IDLE:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

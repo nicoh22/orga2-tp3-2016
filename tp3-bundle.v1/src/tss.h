@@ -13,6 +13,8 @@
 #include "gdt.h"
 #include "sched.h"
 
+extern void tss_inicializar();
+
 typedef struct str_tss {
     unsigned short  ptl;
     unsigned short  unused0;
