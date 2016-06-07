@@ -85,6 +85,7 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, int fisica){
 	
 	unsigned int cr3Tarea = (int) page_directory;
 	
+	mmu_mapear_pagina(TASK_CODE, cr3Tarea, fisica, ATTR_USER);
 
 	//En principio se mapea a si misma
 	//No esta atacando a nadie
