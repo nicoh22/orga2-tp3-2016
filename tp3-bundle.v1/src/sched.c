@@ -12,9 +12,9 @@
 //		1 : A
 //		2 : B
 // segundo indice: nro de tarea
-task_info[3][15] tareasInfo;
+task_info tareasInfo[3][15];
 
-unsigned short[3] taskIndices;
+unsigned short taskIndices[3];
 
 unsigned short currentType;
 unsigned short currentIndex;
@@ -33,9 +33,9 @@ void sched_init(){
 	enLaIdle = 0;
 	currentType = 0;
 	currentIndex = 0;
-	
-	for(int i = 0; i<3; i++){
-		for(int j = 0; j<getMaxIndex(i); j++){
+	int i, j;	
+	for(i = 0; i<3; i++){
+		for(j = 0; j<getMaxIndex(i); j++){
 			tareasInfo[i][j].alive = 0;
 			tareasInfo[i][j].owner = 0;
 			tareasInfo[i][j].gdtIndex = 0;
@@ -81,7 +81,7 @@ unsigned short sched_proximo_indice() {
 		// en el que quedamos
 		unsigned short currentTypeIndex = taskIndices[nextType];
 		unsigned short nextIndex = taskIndices[nextType]++;
-		if(nextIndex > maxIndex(nextType){
+		if(nextIndex > maxIndex(nextType)){
 			nextIndex = 0;
 		}
 
@@ -93,7 +93,7 @@ unsigned short sched_proximo_indice() {
 				return info.gdtIndex;
 			}
 			nextIndex++;
-			if(nextIndex > maxIndex(nextType){
+			if(nextIndex > maxIndex(nextType)){
 				nextIndex = 0;
 			}
 		}
@@ -106,8 +106,5 @@ unsigned short sched_proximo_indice() {
 	// Si no encontramos otra tarea viva a la que saltar, no saltamos
 	// => devolvemos 0
 	return 0;
-	
-		
-	
 }
 

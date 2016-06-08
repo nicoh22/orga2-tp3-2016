@@ -58,4 +58,5 @@ typedef struct str_tss {
 
 void tss_inicializar();
 extern tss tss_directory[];
+tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica);
 #endif  /* !__TSS_H__ */

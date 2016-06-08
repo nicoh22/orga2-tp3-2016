@@ -10,10 +10,11 @@
 
 #include "tss.h"
 #include "gdt.h"
+#include "defines.h"
 
 typedef struct str_task_info {
     unsigned char alive;
-    task_type owner;
+    taskType owner;
     int gdtIndex;
 } __attribute__((__packed__)) task_info;
 

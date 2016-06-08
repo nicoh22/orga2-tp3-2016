@@ -11,7 +11,7 @@
 #include "screen.h"
 #include "tss.h"
 #include "gdt.h"
-
+#include "taskInfo.h"
 unsigned short sched_proximo_indice();
 
 
