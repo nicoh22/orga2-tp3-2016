@@ -10,6 +10,8 @@
 tss tss_inicial;
 tss tss_idle;
 
+unsigned int proxima_tss_index = 0;
+tss tss_directory[TSS_COUNT];
 
 void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index);
 
@@ -124,36 +126,34 @@ void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 }
 
 tss* tss_proxima(){
-	//TODO
-	return NULL;
+	return tss_directory[proxima_tss_index++];
 }
 
-tss* tss_completar_tarea(taskType tipo, unsigned int cr3_task, unsigned int kernStack){
-	//TODO
-	//Necesito un arreglo estatico de tss
-	//sino tendria que pedirle paginas a la mmu
-	//Lo cual es medio mucho cuando sabemos el maximo 
-	//posible de tss
-	
-	//Tiene que tener toda esta responsabilidad esta funcion?
-	//si le decido pasar la responsabilidad a un ser superior
-	//(scheduler?) las funciones tomarian mas parametros
-	
+/**
+ * Tipo = tipo de tarea (A, B o Idle)
+ * fisica = posicion de memoria fisica 
+ * donde vamos a mapear la tarea (en el mapa)
+*/
+tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica){
+
 	tss* new_tss = tss_proxima();
 	
 	//obtener proximo indice libre en la gdt
-	int gdt_index = NULL;//TODO 
+//	int gdt_index = prox_gdt_entry_index++;
 	tss_cargar_en_gdt(new_tss, gdt_index);
 
-	//int fisica = 0;
-	//unsigned int cr3_task =  mmu_inicializar_dir_tarea(tipo, fisica);
+	int fisica = 0;
+	unsigned int cr3_task =  mmu_inicializar_dir_tarea(tipo, fisica);
+	
+	unsigned int kernStack = mmu_proxima_pagina_libre();
+	
 	//esta linea no compila (no esta incluido mmu.h), 
 	//entonces asumo que el scheduler me pasa el cr3
 	//pero tengo que pedir la pagina para la pila del kernel
 
 	new_tss->ptl = 0;
 	new_tss->unused0 = 0;
-	new_tss->esp0 = kernStack;
+	new_tss->esp0 = kernStack + PAGE_SIZE;
 	new_tss->ss0 = ( GDT_IDX_KERN_DATA << 3 );
 	new_tss->unused1 = 0;
 	new_tss->esp1 = 0;

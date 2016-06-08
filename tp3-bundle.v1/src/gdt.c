@@ -8,6 +8,8 @@
 #include "gdt.h"
 #include "tss.h"
 
+prox_gdt_entry_index = 11;
+
 gdt_entry gdt[GDT_COUNT] = {
     /* Descriptor nulo*/
     /* Offset = 0x00 */
