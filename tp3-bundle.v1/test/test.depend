@@ -1,0 +1,50 @@
+# depslib dependency file v1.0
+1462976583 source:/home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/game.c
+	"game.h"
+
+1462976583 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/game.h
+	"defines.h"
+	"screen.h"
+	"mmu.h"
+
+1465512427 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/defines.h
+
+1464293494 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/screen.h
+	"colors.h"
+	"defines.h"
+
+1462976583 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/colors.h
+
+1465511752 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/mmu.h
+	"defines.h"
+	"i386.h"
+	"tss.h"
+	"game.h"
+
+1462976583 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/i386.h
+
+1465511696 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/tss.h
+	"defines.h"
+	"i386.h"
+	"gdt.h"
+	"sched.h"
+	"mmu.h"
+
+1465510575 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/gdt.h
+	"defines.h"
+
+1465515421 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/sched.h
+	"screen.h"
+	"tss.h"
+	"gdt.h"
+	"taskInfo.h"
+
+1465510575 /home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/taskInfo.h
+	"tss.h"
+	"gdt.h"
+	"defines.h"
+
+1465515652 source:/home/rkapobel/Documents/orga2-tp3-2016/tp3-bundle.v1/test/gdt.c
+	"gdt.h"
+	"tss.h"
+

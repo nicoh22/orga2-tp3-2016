@@ -2,18 +2,20 @@
 ================================================================================
  TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 ================================================================================
-  definicion de funciones del scheduler
+	Informacion sobre tareas
 */
 
-#ifndef __SCHED_H__
-#define __SCHED_H__
+#ifndef __TASK_INFO_H__
+#define __TASK_INFO_H__
 
-#include "screen.h"
 #include "tss.h"
 #include "gdt.h"
-#include "taskInfo.h"
-extern unsigned short sched_proximo_indice();
-void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
-extern void sched_init();
+#include "defines.h"
 
-#endif	/* !__SCHED_H__ */
+typedef struct str_task_info {
+    unsigned char alive;
+    taskType owner;
+    int gdtIndex;
+} __attribute__((__packed__)) task_info;
+
+#endif	/* !__TASK_INFO__ */
