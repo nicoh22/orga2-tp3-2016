@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 LDFLAGS=
 INCDIR=
-SOURCES=main.c, sched.c, mmu.c, tss.c
+SOURCES=main.c sched.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=main
 

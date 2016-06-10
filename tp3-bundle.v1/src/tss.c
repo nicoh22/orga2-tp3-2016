@@ -136,6 +136,7 @@ tss* tss_proxima(){
 */
 tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica){
 
+	//EBOLA
 	tss* new_tss = tss_proxima();
 	
 	tss_cargar_en_gdt(new_tss, gdt_index);
@@ -170,7 +171,7 @@ tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica){
 	new_tss->ebp = TASK_CODE + PAGE_SIZE;
 	new_tss->esi = 0;
 	new_tss->edi = 0;
-	new_tss->es = 0;
+	new_tss->es = ( GDT_IDX_USER_DATA << 3 );
 	new_tss->unused4 = 0;
 	new_tss->cs = ( GDT_IDX_USER_CODE << 3 );
 	new_tss->unused5 = 0;
@@ -178,9 +179,9 @@ tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica){
 	new_tss->unused6 = 0;
 	new_tss->ds = ( GDT_IDX_USER_DATA << 3 );
 	new_tss->unused7 = 0;
-	new_tss->fs = 0;
+	new_tss->fs = ( GDT_IDX_USER_DATA << 3 );
 	new_tss->unused8 = 0;
-	new_tss->gs = 0;
+	new_tss->gs = ( GDT_IDX_USER_DATA << 3 );
 	new_tss->unused9 = 0;
 	new_tss->ldt = 0;
 	new_tss->unused10 = 0;

@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 int main(void){
-	sched_lanzar_tareas(0,0x500000);
+	sched_init();
 	unsigned int indiceGDT = sched_proximo_indice();
-	printf("%d",indiceGDT);
+	printf("%d\n",indiceGDT);
+	return 0;
 }

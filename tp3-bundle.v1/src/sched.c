@@ -65,6 +65,7 @@ int getNextFreeIndex(taskType tipo){
 	for(i = 0; i<getMaxIndex(tipo); i++){
 		if(!tareasInfo[tipo][i].alive){
 			freeTaskIndex = i;
+			break;
 		}
 	}
 	return freeTaskIndex;
@@ -74,7 +75,7 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 	// Busca el primer espacio en los arreglos de tareas
 	int taskIndex = getNextFreeIndex(tipo); 
 	// Si no encontramos lugar para poner la nueva tarea no hacemos nada
-	if(taskIndex < 0){
+	if(taskIndex >= 0){
 		// ultimoGdtKernel + 15 sanas + 5 A + 5 B
 		int gdtIndex = GDT_TASK_INDICES_START + getTypeGdtOffset(tipo) + taskIndex;
 		tss_crear_tarea(tipo, gdtIndex, fisica);
@@ -83,7 +84,6 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;
 	}
 }
-
 unsigned short sched_proximo_indice() {
 	// Buscamos una tarea viva de alguno de los tipos siguientes	
 	unsigned short nextType = currentType + 1; 
@@ -91,14 +91,6 @@ unsigned short sched_proximo_indice() {
 		nextType = 0;
 	}	
 	
-	if(enLaIdle){
-		// Si estamos en la idle *siempre* vamos a querer saltar a otra
-		// tarea, aun si es la misma que estabamos corriendo
-		// (caso de syscall desde la unica tarea viva)
-		currentType = -1;
-		enLaIdle = 0;
-	}
-
 
 	while(nextType != currentType){
 
@@ -106,6 +98,7 @@ unsigned short sched_proximo_indice() {
 		// en el que quedamos
 		unsigned short currentIndexForType = taskIndices[nextType];
 		unsigned short nextIndex = taskIndices[nextType] + 1;
+
 		if(nextIndex > getMaxIndex(nextType)){
 			nextIndex = 0;
 		}
@@ -132,6 +125,13 @@ unsigned short sched_proximo_indice() {
 	
 	// Si no encontramos otra tarea viva a la que saltar, no saltamos
 	// => devolvemos 0
+	if(enLaIdle){
+		task_info info = tareasInfo[currentType][currentIndex];
+		if(info.alive){
+			return info.gdtIndex;
+		}
+	}
 	return 0;
 }
+
 

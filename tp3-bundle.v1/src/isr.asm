@@ -106,10 +106,13 @@ _isr32:
 	
 	call sched_proximo_indice
 	
+	shl ax, 3	
 	cmp ax, 0
 	je .noJump
 		mov [sched_tarea_selector], ax
 		call fin_intr_pic1
+
+		xchg bx, bx
 		jmp far [sched_tarea_offset]
 		jmp .end
 	.noJump:
