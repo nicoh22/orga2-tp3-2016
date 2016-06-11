@@ -10,30 +10,23 @@ unsigned int globalDebug = FALSE;
 
 
 
-uint game_syscall_manejar(uint syscall, uint param1)
-{
-   	uint res;	
- // ~ completar llamando a las funciones que haga falta ~
+unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
    	switch(syscall){
-		case 1: res = game_perro_mover(game_perro_actual, param1); break;
-		case 2: res = game_perro_cavar(game_perro_actual); break;
-		case 3: res = game_perro_olfatear(game_perro_actual); break;
-		case 4: res = (uint) game_perro_recibirOrden(game_perro_actual); break;
-		default: return -1;
+		case 0x124: game_donde( (unsigned int*) param1); break;
+		case 0xA6A: game_soy(param1); break;
+		case 0XFF3: game_mapear(param1, param2); break;
+		default: return 1; //ERROR, deberia desalojarse la tarea por atrevida
 	}
-	 return res;
+	 return 0; //a lo unix, esta todo bien
 }
 
-// ~~~ debe atender la interrupción de reloj para actualizar la pantalla y terminar si es hora,
-// ~~~ recibe el perro que está corriendo actualmente
 
-/*
-void game_atender_tick(perro_t *perro){
-	//pintar? capaz todas las actualizaciones(perro, jugador, se hacen aca)
-	screen_actualizar_reloj_perro(perro);
-	game_terminar_si_es_hora();
+void game_atender_tick(){
+
+//	screen_actualizar_reloj_tarea(tarea_actual);
+	
+	//actualizar cosas del game si corresponde
 }
-*/
 
 
 
@@ -50,16 +43,15 @@ void game_atender_tick(perro_t *perro){
 #define KB_shiftL   0x2a // 0xaa
 #define KB_shiftR   0x36 // 0xb6
 
-#define KB_y        0x15 // ?
+#define KB_y        0x15 // 
 
 
 
 // ~~~ debe atender la interrupción de teclado, se le pasa la tecla presionada
-void game_atender_teclado(unsigned char tecla)
-{
-	switch (tecla)
-	{
-		// ~~~ completar ~~~
+void game_atender_teclado(unsigned char tecla){
+	
+	switch (tecla){
+		// 0 para jugadorA, 1 para jugadorB
 		
 		case KB_w: game_mover_cursor(0, ARB); break;
 		case KB_a: game_mover_cursor(0, IZQ); break;
