@@ -70,7 +70,7 @@ gdt_entry gdt[GDT_COUNT] = {
 		// Type Execute Only - EBOLA
         (unsigned char)     0x08,           /* type         */
         (unsigned char)     0x01,           /* s            */
-        (unsigned char)     0x00,           /* dpl          */
+        (unsigned char)     0x03,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x03,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */

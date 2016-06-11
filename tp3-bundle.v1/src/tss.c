@@ -59,7 +59,7 @@ void tss_inicializar() {
 	tss_idle.ptl = 0;
 	tss_idle.unused0 = 0;
 	tss_idle.esp0 = STACK_BASE_KERN;
-	tss_idle.ss0 = 0x28;
+	tss_idle.ss0 = ( GDT_IDX_KERN_DATA << 3 );
 	tss_idle.unused1 = 0;
 	tss_idle.esp1 = 0;
 	tss_idle.ss1 = 0;
@@ -69,7 +69,7 @@ void tss_inicializar() {
 	tss_idle.unused3 = 0;
 	tss_idle.cr3 = PAGE_DIRECTORY_KERN;
 	tss_idle.eip = 0x10000;
-	tss_idle.eflags = 0x00000202;//TODO: despues cambiar por 0x00000202
+	tss_idle.eflags = 0x00000202;
 	tss_idle.eax = 0;
 	tss_idle.ecx = 0;
 	tss_idle.edx = 0;
@@ -78,7 +78,7 @@ void tss_inicializar() {
 	tss_idle.ebp = STACK_BASE_KERN;
 	tss_idle.esi = 0;
 	tss_idle.edi = 0;
-	tss_idle.es = 0x28;
+	tss_idle.es = ( GDT_IDX_KERN_DATA << 3 );
 	tss_idle.unused4 = 0;
 	tss_idle.cs = 0x20;
 	tss_idle.unused5 = 0;
@@ -107,7 +107,7 @@ void tss_inicializar() {
 void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 	
 	unsigned int tss = (unsigned int) tss_pointer;
-	unsigned int limite = 103;
+	unsigned int limite = 104;
 	
 	gdt[gdt_index].base_0_15 = (tss & 0x0000FFFF);
 	gdt[gdt_index].base_23_16 = ((tss >> 16) & 0x000000FF);
@@ -144,10 +144,6 @@ tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica){
 	unsigned int cr3_task =  mmu_inicializar_dir_tarea(tipo, fisica);
 	
 	unsigned int kernStack = (int) mmu_proxima_pagina_fisica_libre();
-	
-	//esta linea no compila (no esta incluido mmu.h), 
-	//entonces asumo que el scheduler me pasa el cr3
-	//pero tengo que pedir la pagina para la pila del kernel
 
 	new_tss->ptl = 0;
 	new_tss->unused0 = 0;
