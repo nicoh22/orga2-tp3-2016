@@ -35,7 +35,8 @@ extern print
 extern mensajesExcepcion
 
 
-
+extern atender_teclado 
+extern manejar_syscall
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -147,7 +148,22 @@ _isr33:
 	pushad
 	xor eax, eax
 	in al, 0x60
-	
+
+
+
+;;;CODIGO NUEVO
+	push eax
+	call atender_teclado 
+	pop eax
+
+	call fin_intr_pic1	
+	popad
+	iret
+
+;;;FIN CODIGO NUEVO
+
+
+
 	mov edi, LA
 	cmp al, A
 	je .print
@@ -235,8 +251,25 @@ _isr33:
 global _isr102
 
 _isr102:
-	mov eax, 0x42
+
+	pushad
+	
+	push ecx
+	push ebx
+	push eax
+
+	call manejar_syscall
+	
+	pop ecx
+	pop ecx
+	pop ecx
+; quiero conservar eax
+; TODO: analizar el resultado del syscall
+; y desalojar la tarea si corresponde
+
+	popad
 	iret
+
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;

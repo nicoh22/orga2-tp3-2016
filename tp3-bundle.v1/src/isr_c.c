@@ -21,7 +21,7 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 }
 
 
-void game_atender_tick(){
+void game_tick(){
 
 //	screen_actualizar_reloj_tarea(tarea_actual);
 	
@@ -48,7 +48,7 @@ void game_atender_tick(){
 
 
 // ~~~ debe atender la interrupción de teclado, se le pasa la tecla presionada
-void game_atender_teclado(unsigned char tecla){
+void atender_teclado(unsigned char tecla){
 	
 	switch (tecla){
 		// 0 para jugadorA, 1 para jugadorB
