@@ -128,6 +128,7 @@ unsigned short sched_proximo_indice() {
 	if(enLaIdle){
 		task_info info = tareasInfo[currentType][currentIndex];
 		if(info.alive){
+			enLaIdle = 0;
 			return info.gdtIndex;
 		}
 	}
