@@ -89,3 +89,27 @@ void print_alligned_right(const char * text){
 	print(text, pos_inicial, 0, C_FG_WHITE + C_BG_BLACK);
 }
 
+void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
+    char c, color; 
+	if(id == 0){
+		c = 'A';
+		color = C_BG_RED | C_FG_WHITE;
+	} 
+	else{
+		c = 'B';
+		color = C_BG_BLUE | C_FG_WHITE;
+	}
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y][x].c = c; 
+	p[y][x].a = color;
+}
+
+void screen_limpiar_pixel(unsigned short x, unsigned short y){
+	
+
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y][x].c = 0x00; 
+	p[y][x].a = C_BG_LIGHT_GREY;
+
+
+}

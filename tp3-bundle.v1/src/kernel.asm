@@ -18,6 +18,7 @@ extern resetear_pic
 extern habilitar_pic
 extern tss_inicializar
 extern sched_init
+extern game_inicializar
 
 %define PAGE_DIRECTORY 0X27000
 %define PAGE_TABLE 0X28000
@@ -188,7 +189,7 @@ BITS 32
 	
     ;inicializar el scheduler
     call sched_init
-    
+    call game_inicializar 
 
     ; Cargar tarea inicial
   

@@ -13,6 +13,13 @@
 
 typedef enum direccion_e { IZQ = 0xAAA, DER = 0x441, ARB = 0xA33, ABA = 0x883  } direccion;
 
+typedef struct jugador_t{
+	unsigned int tareas_restantes;
+	unsigned short x;
+	unsigned short y;
+	unsigned short id;
+} jugador;
+
 void game_lanzar(unsigned int jugador);
 
 void game_soy(unsigned int soy);
@@ -23,5 +30,6 @@ void game_mapear(int x, int y);
 
 void game_mover_cursor(int jugador, direccion dir);
 
+void game_inicializar();
 
 #endif  /* !__GAME_H__ */

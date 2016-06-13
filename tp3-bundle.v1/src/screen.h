@@ -29,6 +29,11 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+
+void screen_pintar_jugador(char id, unsigned short x, unsigned short y);
+
+void screen_limpiar_pixel(unsigned short x, unsigned short y);
+
 extern void inicializar_interfaz();
 
 extern void print_alligned_right(const char * text);
