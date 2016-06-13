@@ -14,7 +14,7 @@
 
 #include "colors.h"
 #include "defines.h"
-
+#include "i386.h"
 extern void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
 /* Estructura de para acceder a memoria de video */

@@ -11,19 +11,23 @@ jugador jugadores[2];
 void game_inicializar(){
 	jugadores[0].tareas_restantes = 20;
 	jugadores[0].x = 0;
-	jugadores[0].y = 0;
+	jugadores[0].y = 1;
 	jugadores[0].id = 0;
 	
 	jugadores[1].tareas_restantes = 20;
 	jugadores[1].x = 79;
-	jugadores[1].y = 44;
+	jugadores[1].y = 43;
 	jugadores[1].id = 1;
 }
 
 void game_mover_cursor(int index_jugador, direccion dir) {
-	jugador jugador_actual = jugadores[index_jugador];
+	//TODO: check de limites del mapa
+	//en lugar de limpiar el pixel donde estaba,
+	//dibujar ( si corresponde ) una tarea
 	
-	screen_limpiar_pixel(jugador_actual.x, jugador_actual.y);
+	jugador* jugador_actual = &jugadores[index_jugador];
+	
+	screen_limpiar_pixel(jugador_actual->x, jugador_actual->y);
 	
 	switch(dir){
 
@@ -36,7 +40,7 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 		case IZQ: jugadores[index_jugador].x--; break;
 		case DER: jugadores[index_jugador].x++; break;
 	}
-	screen_pintar_jugador(jugador_actual.id, jugador_actual.x, jugador_actual.y);
+	screen_pintar_jugador(jugador_actual->id, jugador_actual->x, jugador_actual->y);
 }
 
 void game_lanzar(unsigned int jugador) {

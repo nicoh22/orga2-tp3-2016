@@ -148,10 +148,7 @@ _isr33:
 	pushad
 	xor eax, eax
 	in al, 0x60
-
-
-
-;;;CODIGO NUEVO
+	
 	push eax
 	call atender_teclado 
 	pop eax
@@ -160,85 +157,8 @@ _isr33:
 	popad
 	iret
 
-;;;FIN CODIGO NUEVO
 
-
-
-	mov edi, LA
-	cmp al, A
-	je .print
-
-.verS:		
-	mov edi, LS
-	cmp al, S
-	je .print
-
-.verD:	
-	mov edi, LD
-	cmp al, D
-	je .print
-
-.verW:	
-	mov edi, LW
-	cmp al, W
-	je .print
-
-.verJ:	
-	mov edi, LJ
-	cmp al, J
-	je .print
-
-.verK:	
-	mov edi, LK
-	cmp al, K
-	je .print
-
-.verL:	
-	mov edi, LL
-	cmp al, L
-	je .print
-
-.verI:
-	mov edi, LI
-	cmp al, I
-	je .print
-
-.verLS:	
-	mov edi, LLESS
-	cmp al, L_SHIFT
-	je .print
-
-.verRS:	
-	cmp al, R_SHIFT
-	jne .fin
-	mov edi, LGREATER
-
-.print:	
-	
-
-	xor ebx, ebx
-	xor ecx, ecx
-	mov ecx, 79
-	xor edx, edx 
-	mov edx, 0x4F
-	
-	push edx
-	push ebx
-	push ecx	
-	push edi
-
-	call print
-
-	pop eax
-	pop eax
-	pop eax
-	pop eax
-
-.fin:	
-	call fin_intr_pic1	
-	popad
-	iret
-;;
+;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 

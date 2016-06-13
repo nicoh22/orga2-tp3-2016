@@ -90,7 +90,7 @@ void print_alligned_right(const char * text){
 }
 
 void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
-    char c, color; 
+	char c, color; 
 	if(id == 0){
 		c = 'A';
 		color = C_BG_RED | C_FG_WHITE;
@@ -106,7 +106,6 @@ void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
 
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
 	
-
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	p[y][x].c = 0x00; 
 	p[y][x].a = C_BG_LIGHT_GREY;
