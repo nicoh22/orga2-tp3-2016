@@ -24,7 +24,7 @@ void game_inicializar(){
 }
 
 void game_mover_cursor(int index_jugador, direccion dir) {
-	// TODO: check de limites del mapa.
+	// TODO: 
 	// en lugar de limpiar el pixel donde estaba,
 	// hacer otra cosa (Referirse al Readme.md)
 	
@@ -36,10 +36,26 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 // La memoria de video labura asi:
 // x crece de izquierda a derecha
 // y crece de arriba hacia abajo (al reves de ejes cartesianos)
-		case ARB: jugadores[index_jugador].y--; break;
-		case ABA: jugadores[index_jugador].y++; break;
-		case IZQ: jugadores[index_jugador].x--; break;
-		case DER: jugadores[index_jugador].x++; break;
+		case ARB:
+			if( jugadores[index_jugador].y != 1 ){
+				jugadores[index_jugador].y--; 
+			}
+			break;
+		case ABA: 
+			if( jugadores[index_jugador].y != 43 ){
+				jugadores[index_jugador].y++; 
+			}
+			break;
+		case IZQ: 
+			if( jugadores[index_jugador].x != 0 ){ 
+				jugadores[index_jugador].x--; 
+			}
+			break;
+		case DER: 
+			if ( jugadores[index_jugador].x != 79 ){ 
+				jugadores[index_jugador].x++; 
+			}
+			break;
 	}
 	
 	screen_pintar_jugador(
@@ -52,6 +68,13 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 }
 
 void game_lanzar(unsigned int jugador) {
+//TODO: completar	
+	if ( jugadores[jugador].tareas_restantes > 0){ 
+		jugadores[jugador].tareas_restantes--;
+	} 
+	else {
+		return; // Jugador no puede lanzar mas tareas
+	}
 }
 
 void game_soy(unsigned int yoSoy) {
