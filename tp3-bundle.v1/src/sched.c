@@ -44,7 +44,9 @@ void sched_init(){
 		}
 	}
 	
-	sched_lanzar_tareas(0,0x500000);
+
+	sched_lanzar_tareas(0,0x580000);
+	sched_lanzar_tareas(0,0x550000);
 	//TODO: Lanzar tareas sanas
 	// rand x e y -> funcion que toma x,y : fisica
 }

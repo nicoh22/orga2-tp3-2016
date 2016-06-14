@@ -80,10 +80,14 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, unsigned int fisica){
 	// y calcular su direccion aca o en un funcion "xyaFisica"
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
-	mmu_mapear_pagina(fisica, PAGE_DIRECTORY_KERN, fisica, ATTR_KERN);
+	breakpoint();
+	mmu_mapear_pagina(fisica, rcr3(), fisica, ATTR_KERN);
+
 	//tipo de tarea
 	int* codigo_fuente = (int*) (IDLE_TASK + (inMemoryCodeOrder(tipo) * PAGE_SIZE));
 	mmu_copiar_pagina(codigo_fuente, (int*) fisica);
+
+	mmu_unmapear_pagina(fisica, rcr3());
 	
 	unsigned int cr3Tarea = (int) page_directory;
 	
@@ -111,21 +115,27 @@ int inMemoryCodeOrder(taskType tipo){
 }
 
 void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fisica, short attr){
-	int *page_directory = (int*) (ALIGN(cr3));
-	int *page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);	
-	
-	if(page_table == 0){
+	breakpoint();
+
+	int* page_directory = (int*) (ALIGN(cr3));
+	int* page_table = 0;
+	int presente = (page_directory[PDE_INDEX(virtual)] && 0x01);
+	if(!presente){ // chequeo presente! 
 		page_table = mmu_proxima_pagina_fisica_libre();
-		page_directory[PDE_INDEX(virtual)] = (int) page_table + attr; 
+		page_directory[PDE_INDEX(virtual)] = ( (unsigned int) page_table ) | attr; 
 		int i = 0;
 		while(i < 1024) {// Limpiamos la tabla nueva
 			page_table[i] = 0; 
 			i++;
 		}
-		
+		breakpoint();
+	}else{
+		page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);
 	}
-	page_table[PTE_INDEX(virtual)] = fisica + attr;
-	tlbflush();	
+	
+	breakpoint();
+	page_table[PTE_INDEX(virtual)] = fisica | attr;
+	tlbflush();
 }
 
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
