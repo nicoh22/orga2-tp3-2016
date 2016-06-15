@@ -80,7 +80,14 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, unsigned int fisica){
 	// y calcular su direccion aca o en un funcion "xyaFisica"
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
+	
+	unsigned int cr3Prev = rcr3();
+	unsigned int cr3Tarea = (int) page_directory;
+	lcr3(cr3Tarea);
+	tlbflush();
 	breakpoint();
+
+	lcr3(cr3Prev);
 	mmu_mapear_pagina(fisica, rcr3(), fisica, ATTR_KERN);
 
 	//tipo de tarea
@@ -89,7 +96,7 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, unsigned int fisica){
 
 	mmu_unmapear_pagina(fisica, rcr3());
 	
-	unsigned int cr3Tarea = (int) page_directory;
+
 	
 	mmu_mapear_pagina(TASK_CODE, cr3Tarea, fisica, ATTR_USER);
 
@@ -116,13 +123,17 @@ int inMemoryCodeOrder(taskType tipo){
 
 void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fisica, short attr){
 	breakpoint();
-
+	unsigned int pageDirIndex = PDE_INDEX(virtual);	//ebp-12
+	unsigned int pageDirTableIndex = PTE_INDEX(virtual); //ebp-16
+	unsigned int page_table_entry = fisica | attr; //ebp-20
+	unsigned int coso = 0;
 	int* page_directory = (int*) (ALIGN(cr3));
 	int* page_table = 0;
-	int presente = (page_directory[PDE_INDEX(virtual)] && 0x01);
+
+	int presente = (page_directory[pageDirIndex] & 0x01);
 	if(!presente){ // chequeo presente! 
 		page_table = mmu_proxima_pagina_fisica_libre();
-		page_directory[PDE_INDEX(virtual)] = ( (unsigned int) page_table ) | attr; 
+		page_directory[pageDirIndex] = ( (unsigned int) page_table ) | attr; 
 		int i = 0;
 		while(i < 1024) {// Limpiamos la tabla nueva
 			page_table[i] = 0; 
@@ -130,11 +141,17 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 		}
 		breakpoint();
 	}else{
-		page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);
+		coso = (page_directory[pageDirIndex]) & 0xFFFFF000;
+		page_table = ((int*) (page_directory[pageDirIndex] & 0xFFFFF000));
+		if(coso){
+		}		
 	}
 	
 	breakpoint();
-	page_table[PTE_INDEX(virtual)] = fisica | attr;
+	
+	page_table[pageDirTableIndex] = page_table_entry;
+
+
 	tlbflush();
 }
 
