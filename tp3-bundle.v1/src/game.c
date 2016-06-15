@@ -8,6 +8,8 @@
 
 jugador jugadores[2];
 
+unsigned int xytofisica( unsigned short x, unsigned short y );
+
 void game_inicializar(){ 
 	//inicializa estructuras del game
 	//Jugadores, puntos, virus, etc
@@ -67,10 +69,16 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 
 }
 
-void game_lanzar(unsigned int jugador) {
-//TODO: completar	
-	if ( jugadores[jugador].tareas_restantes > 0){ 
-		jugadores[jugador].tareas_restantes--;
+void game_lanzar(unsigned int index_jugador) {
+	jugador* jugador_actual = &jugadores[index_jugador];
+	if ( jugador_actual->tareas_restantes > 0){ 
+		jugador_actual->tareas_restantes--;
+		
+		unsigned int fisica = xytofisica(
+								jugador_actual->x, 
+								jugador_actual->y);
+		
+		sched_lanzar_tareas(index_jugador + 1, fisica);
 	} 
 	else {
 		return; // Jugador no puede lanzar mas tareas
@@ -86,3 +94,14 @@ void game_donde(unsigned int* pos) {
 void game_mapear(int x, int y) {
 }
 
+unsigned int xytofisica( unsigned short x, unsigned short y ){
+	if( ( x > 79 ) | 
+		( y == 0 ) | 
+		( y > 43 ) )
+	{
+		//el par (x, y) no corresponde a una posicion valida del mapa
+		return NULL; 
+	}	
+	
+	return BASE_MAP + ( 80*y + x ) * PAGE_SIZE;
+}

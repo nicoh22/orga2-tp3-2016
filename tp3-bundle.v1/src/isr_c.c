@@ -23,9 +23,14 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 
 void game_tick(){
 
-//	screen_actualizar_reloj_tarea(tarea_actual);
+//	screen_actualizar_reloj_tarea(tipo, indice);
+//	screen_actualizar_jugador(index, x, y);
+//	screen_actualizar_tarea(tarea);
+//	screen_actualizar_puntos(puntosA, puntosB)
 	
-	//actualizar cosas del game si corresponde
+//	screen no tiene que conocer nada del juego, las tareas
+//	se le tiene que pasar todo como parametro-
+//	Si no, rompemos encapsulamiento.
 }
 
 

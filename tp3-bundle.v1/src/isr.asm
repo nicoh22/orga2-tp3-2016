@@ -34,9 +34,11 @@ extern sched_proximo_indice
 extern print
 extern mensajesExcepcion
 
-
+;; Rutinas de atencion de alto nivel
 extern atender_teclado 
 extern manejar_syscall
+extern game_tick
+
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -119,9 +121,10 @@ _isr32:
 	.noJump:
 		call fin_intr_pic1		
 	
-;	call game_tick
 
 	.end:
+	call game_tick
+	
 	popad
 	iret
 
