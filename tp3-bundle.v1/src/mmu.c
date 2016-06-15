@@ -139,7 +139,6 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 			page_table[i] = 0; 
 			i++;
 		}
-		breakpoint();
 	}else{
 		coso = (page_directory[pageDirIndex]) & 0xFFFFF000;
 		page_table = ((int*) (page_directory[pageDirIndex] & 0xFFFFF000));
@@ -158,9 +157,22 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 	
 	int *page_directory = (int*) (ALIGN(cr3));
-	int *page_table = (int*) (page_directory[PDE_INDEX(virtual)] && 0xFFFFF000);	
-	if(page_table != 0){
+	int *page_table = (int*) (page_directory[PDE_INDEX(virtual)] & 0xFFFFF000);	
+	int presente = (page_directory[PDE_INDEX(virtual)] & 0x01);
+	int directorioVacio = 1;
+	if(presente){
 		page_table[PTE_INDEX(virtual)] = 0;
+		int i = 0;
+		while(directorioVacio && i < 1024){
+			int tablaVacia = (page_table[i] & 0x01);
+			// Aca usamos and logico. El directorio esta vacio
+			// si ya estaba vacio y la i-esima tabla esta vacia
+			directorioVacio = directorioVacio && tablaVacia;
+			i++;
+		}
+		if(directorioVacio){
+			page_directory[PDE_INDEX(virtual)] = 0;
+		}
 	}
 	tlbflush();
 }
