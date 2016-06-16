@@ -86,8 +86,8 @@ void inicializar_interfaz() {
 	}
 	//TODO: imprimir "vidas", puntos, indicadores de clocks
 	int i, j;
-	for(i = 0, i < 3, i++){
-		for( j = 0, j < 15, j++){
+	for( i = 0; i < 3; i++ ){
+		for( j = 0; j < 15; j++ ){
 			clockState[i][j] = 0;
 		}
 	}
@@ -178,3 +178,5 @@ void screen_actualizar_reloj_tarea(tipo, indice){
 	p[y][x].c = c; 
 	p[y][x].a = C_BG_BLACK | C_FG_WHITE;
 }
+
+
