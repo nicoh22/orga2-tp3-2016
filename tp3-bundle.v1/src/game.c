@@ -6,8 +6,6 @@
 
 #include "game.h"
 
-jugador jugadores[2];
-
 unsigned int xytofisica( unsigned short x, unsigned short y );
 
 void game_inicializar(){ 
@@ -26,10 +24,6 @@ void game_inicializar(){
 }
 
 void game_mover_cursor(int index_jugador, direccion dir) {
-	// TODO: 
-	// en lugar de limpiar el pixel donde estaba,
-	// hacer otra cosa (Referirse al Readme.md)
-	
 	jugador* jugador_actual = &jugadores[index_jugador];
 	
 	screen_limpiar_pixel(jugador_actual->x, jugador_actual->y);
@@ -60,18 +54,20 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 			break;
 	}
 	
+/*
 	screen_pintar_jugador(
 			jugador_actual->id, 
 			jugador_actual->x, 
 			jugador_actual->y
 		);
-	
+	//ahora se hace esto en game_tick
+*/	
 
 }
 
 void game_lanzar(unsigned int index_jugador) {
 	jugador* jugador_actual = &jugadores[index_jugador];
-	if ( jugador_actual->tareas_restantes > 0){ 
+	if ( jugador_actual->tareas_restantes > 0 ){ 
 		jugador_actual->tareas_restantes--;
 		
 		unsigned int fisica = xytofisica(

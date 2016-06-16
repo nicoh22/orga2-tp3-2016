@@ -11,6 +11,7 @@
 #include "screen.h"
 #include "mmu.h"
 
+
 typedef enum direccion_e { IZQ = 0xAAA, DER = 0x441, ARB = 0xA33, ABA = 0x883  } direccion;
 
 typedef struct jugador_t{
@@ -19,6 +20,8 @@ typedef struct jugador_t{
 	unsigned short y;
 	unsigned short id;
 } jugador;
+
+jugador jugadores[2];
 
 void game_lanzar(unsigned int jugador);
 
