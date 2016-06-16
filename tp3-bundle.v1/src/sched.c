@@ -91,7 +91,7 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 	if(taskIndex >= 0){
 		// ultimoGdtKernel + 15 sanas + 5 A + 5 B
 		int gdtIndex = GDT_TASK_INDICES_START + getTypeGdtOffset(tipo) + taskIndex;
-		tss_crear_tarea(tipo, gdtIndex, fisica);
+		tss_crear_tarea(tipo, taskIndex, gdtIndex, fisica);
 		tareasInfo[tipo][taskIndex].alive = 1;
 		tareasInfo[tipo][taskIndex].owner = tipo;
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;

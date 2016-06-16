@@ -58,6 +58,5 @@ typedef struct str_tss {
 } __attribute__((__packed__, aligned (8))) tss;
 
 void tss_inicializar();
-extern tss* tss_directory[];
-tss* tss_crear_tarea(taskType tipo, int gdt_index, unsigned int fisica);
+tss* tss_crear_tarea(taskType tipo, unsigned short tarea_id, int gdt_index, unsigned int fisica);
 #endif  /* !__TSS_H__ */
