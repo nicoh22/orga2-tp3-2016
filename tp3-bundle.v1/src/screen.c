@@ -14,7 +14,7 @@
 
 char clock[4] = { '|', '/', '-', '\\' };
 
-unsigned short clockState[3][15];
+unsigned short clock_State[3][15];
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -88,7 +88,7 @@ void inicializar_interfaz() {
 	int i, j;
 	for( i = 0; i < 3; i++ ){
 		for( j = 0; j < 15; j++ ){
-			clockState[i][j] = 0;
+			clock_State[i][j] = 0;
 		}
 	}
 
@@ -156,13 +156,13 @@ void screen_limpiar_pixel(unsigned short x, unsigned short y){
 
 
 void screen_actualizar_reloj_tarea(tipo, indice){
-	if(clockState[tipo][indice] < 4){
-		clockState[tipo][indice]++;
+	if(clock_State[tipo][indice] < 4){
+		clock_State[tipo][indice]++;
 	}else {
-		clockState[tipo][indice] = 0;
+		clock_State[tipo][indice] = 0;
 	}
 
-	char c = clockState[tipo][indice];
+	char c = clock_State[tipo][indice];
 	short x, y, base;
 
    	switch(indice){
