@@ -1,65 +1,17 @@
 \section{Desarrollo}
 
-\textbf{TODO}: agregar introducción a lo que hicimos?
+{\LARGE \textbf{TODO}: agregar introducción a lo que hicimos?}
 
-\subsection{Segmentación y manejo de excepciones}
+\input{segmentacion.tex}
 
-De acuerdo a lo indicado en el enunciado, definimos segmentos de código y datos en la GDT a partir del indice 4, un par con privilegios de kernel y otro con privilegios de usuario. 
-Direccionamos los primeros $878$MB de memoria con estos segmentos.
-Para ello, establecimos la base de cada segmento en la dirección 0x0 y, para poder representar el número en 20 bits, calculamos el limite de cada uno en bloques de 4KB. 
-Adicionalmente, definimos un segmento de datos con privilegios de kernel para la memoria de video, basado en la dirección 0xB8000. Dado que las dimensiones de la pantalla son 80x50 caracteres y que para representar cada uno se necesitan dos bytes, el tamaño de este segmento es de 8000 Bytes. En función de esto definimos el limite del segmento en 7999, su ultimo byte direccionable.\\
+\input{paginacion.tex}
 
-Resolvimos el manejo de excepciones definiendo los primeros veinte indices (de 0 a 19) en la tabla de descriptores de interrupción. 
-Para ello utilizamos un macro en el cual referimos cada entrada $N$ al segmento de código de kernel, con el offset correspondiente su rutina de atención \_isr$N$. 
-En cuanto los atributos de cada descriptor, dejamos en 1 el bit de presencia, asignamos nivel de privilegios de kernel y usamos el tipo \textit{interrupt}.
+\input{interrupciones.tex}
 
-Para atender excepciones escribimos rutinas que muestran sus mensajes de error por pantalla.
-Definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-ésimo mensaje de un arreglo donde los guardamos previamente.\\
+\input{tareas.tex} 
 
-
-\subsection{Paginación}
-
-Siguiendo las indicaciones del enunciado, mapeamos las direcciones \textit{0x000000} a \textit{0x3FFFFF} usando \textit{identity mapping}.
-Para lograrlo en primer lugar inicializamos los primeros 4KB de memoria a partir de la dirección \textit{0x27000} con ceros, donde luego definimos el directorio de páginas del kernel.
-Ubicamos la primer página del directorio en la dirección \textit{0x28000}, con atributos de lectura y escritura, nivel de privilegios cero y el bit presente activo.
-Luego, para mapear el sección de memoria pedida, llenamos la tabla con las direcciones de los primeros 1024 bloques de 4KB de memoria física. 
-De esta manera definimos la última entrada de la tabla con la dirección base 0x3FF000, haciendo direccionables las siguientes 4096-1 direcciones. 
-Al igual que la definición de la tabla de páginas en el directorio, cada página fue definida con atributos de lectura y escritura, privilegios de kernel y bit presente activo.
-
-Teniendo armado un directorio de páginas con una tabla de páginas definida, habilitamos paginación moviendo la dirección del directorio a CR3 y levantando el bit correspondiente en CR0.\\
-
-Para el manejo de páginas libres utilizamos el puntero \verb|proxima_pagina_libre| que denota la dirección de la próxima página libre, al que inicializamos apuntando al inicio del área libre, en la dirección \textit{0x100000}.
-Administramos este puntero con la función \verb|mmu_proxima_pagina_fisica_libre|, que devuelve un puntero a la proxima página e incrementa el valor de \verb|proxima_pagina_libre| en 4KB.
-
-Controlamos la inicialización de directorios para tareas con la función \verb|mmu_inicializar_dir_tarea|. 
-Para ella requerimos los parámetros \verb|int tipo|, que indica cual de los tres tipos de tarea se esta mapeando (sana, A o B), y \verb|int fisica|, que define la dirección de memoria física dentro del mapa que debemos mapear. 
-
-
- 
+\input{scheduler.tex}
 
 
 
-\textbf{TODO: Explicar ej. 4}\\
-\begin{comment}
-a) Escribir una rutina (inicializar mmu) que se encargue de inicializar las estructuras ne-
-cesarias para administrar la memoria en el area libre (un contador de paginas libres).
-
-
-b) Escribir una rutina (mmu inicializar dir tarea) encargada de inicializar un directorio
-de páginas y tablas de páginas para una tarea, respetando la figura 3. La rutina debe copiar
-el código de la tarea a su área asignada, es decir la posición indicada por el jugador dentro
-de el mapa y mapear dichas páginas a partir de la dirección virtual 0x08000000(128MB).
-Sugerencia: agregar a esta función todos los parámentros que considere necesarios para los
-distintos tipos de tareas.
-
-
-c) Escribir dos rutinas encargadas de mapear y desmapear páginas de memoria.
-
-I- mmu mapear pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica)
-Permite mapear la página fı́sica correspondiente a fisica en la dirección virtual
-virtual utilizando cr3.
-
-II- mmu unmapear pagina(unsigned int virtual, unsigned int cr3)
-Borra el mapeo creado en la dirección virtual virtual utilizando cr3.
-\end{comment}
 
