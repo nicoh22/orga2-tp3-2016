@@ -20,6 +20,7 @@ short currentType;
 short currentIndex;
 
 unsigned short enLaIdle;
+unsigned short indicesInicializados;
 
 void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
 
@@ -33,6 +34,7 @@ unsigned short getMaxIndex(short current){
 
 void sched_init(){
 	enLaIdle = 1;
+	indicesInicializados = 0;
 	currentType = 0;
 	currentIndex = 0;
 	int i, j;	
@@ -42,8 +44,8 @@ void sched_init(){
 			tareasInfo[i][j].owner = 0;
 			tareasInfo[i][j].gdtIndex = 0;
 		}
+		taskIndices[i] = 0;
 	}
-	
 
 	sched_lanzar_tareas(0,0x580000);
 	sched_lanzar_tareas(0,0x550000);
@@ -86,7 +88,24 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;
 	}
 }
+
+
+
 unsigned short sched_proximo_indice() {
+	// Manejamos el caso borde de que tenemos que saltar a la primer tarea
+	if(!indicesInicializados){
+		indicesInicializados = 1;
+		// Saltamos a la primer tarea sana al empezar una partida
+		// siempre que exista. Sino nos quedamos en la idle
+		task_info info = tareasInfo[0][0];
+		if(info.alive){
+			enLaIdle = 0;
+			return info.gdtIndex;
+		}else{
+			return 0;
+		}
+	}
+
 	// Buscamos una tarea viva de alguno de los tipos siguientes	
 	unsigned short nextType = currentType + 1; 
 	if(nextType > 2){
@@ -94,7 +113,10 @@ unsigned short sched_proximo_indice() {
 	}	
 	
 
-	while(nextType != currentType){
+	// Iteramos 3 veces para volver a considerar el tipo actual si no
+	// encontramos tareas de otros tipos
+	int i = 0;
+	while(i < 3){
 
 		// Para cada tipo loopeamos en los indices a partir del ultimo
 		// en el que quedamos
@@ -123,6 +145,8 @@ unsigned short sched_proximo_indice() {
 		if(nextType > 2){
 			nextType = 0;
 		}
+
+		i++;
 	}
 	
 	// Si no encontramos otra tarea viva a la que saltar, no saltamos
