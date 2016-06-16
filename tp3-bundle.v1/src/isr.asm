@@ -171,6 +171,9 @@ _isr33:
 
 %define VIRUS_ROJO 0x841
 %define VIRUS_AZUL 0x325
+
+%define GDT_SEL_TSS_IDLE	0x50
+
 global _isr102
 
 _isr102:
@@ -180,15 +183,16 @@ _isr102:
 	push ecx
 	push ebx
 	push eax
-
+	
 	call manejar_syscall
 	
 	pop ecx
 	pop ecx
-	pop ecx
-; quiero conservar eax
-; TODO: analizar el resultado del syscall
-; y desalojar la tarea si corresponde
+	pop eax
+	; quiero conservar eax
+
+	; saltamos a la idle hasta el proximo tick
+	jmp GDT_SEL_TSS_IDLE:0
 
 	popad
 	iret

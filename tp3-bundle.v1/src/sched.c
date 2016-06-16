@@ -23,13 +23,13 @@ short currentIndex;
 unsigned short enLaIdle;
 unsigned short indicesInicializados;
 
-unsigned int randInRange(unsigned int min, unsigned int max){
+unsigned int rand_in_range(unsigned int min, unsigned int max){
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
 
 void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
 
-unsigned short getMaxIndex(short current){
+unsigned short task_max_index(short current){
 	if(current == 0){
 		return 14;
 	}else{
@@ -44,7 +44,7 @@ void sched_init(){
 	currentIndex = 0;
 	int i, j;	
 	for(i = 0; i<3; i++){
-		for(j = 0; j<getMaxIndex(i); j++){
+		for(j = 0; j<task_max_index(i); j++){
 			tareasInfo[i][j].alive = 0;
 			tareasInfo[i][j].owner = 0;
 			tareasInfo[i][j].gdtIndex = 0;
@@ -56,7 +56,7 @@ void sched_init(){
 	// Y luego shifteamos 12 bits
 	srand(0);
 	for(i = 0; i<15; i++){
-		unsigned int fisica = randInRange(0x400,0x11BF);
+		unsigned int fisica = rand_in_range(0x400,0x11BF);
 		fisica = fisica << 12;
 		sched_lanzar_tareas(0,fisica);
 	}
@@ -75,7 +75,7 @@ int getTypeGdtOffset(taskType tipo){
 int getNextFreeIndex(taskType tipo){
 	int freeTaskIndex = -1;
 	int i = 0;
-	for(i = 0; i<getMaxIndex(tipo); i++){
+	for(i = 0; i<task_max_index(tipo); i++){
 		if(!tareasInfo[tipo][i].alive){
 			freeTaskIndex = i;
 			break;
@@ -132,7 +132,7 @@ unsigned short sched_proximo_indice() {
 		unsigned short currentIndexForType = taskIndices[nextType];
 		unsigned short nextIndex = taskIndices[nextType] + 1;
 
-		if(nextIndex > getMaxIndex(nextType)){
+		if(nextIndex > task_max_index(nextType)){
 			nextIndex = 0;
 		}
 
@@ -145,7 +145,7 @@ unsigned short sched_proximo_indice() {
 				return info.gdtIndex;
 			}
 			nextIndex++;
-			if(nextIndex > getMaxIndex(nextType)){
+			if(nextIndex > task_max_index(nextType)){
 				nextIndex = 0;
 			}
 		}
@@ -170,4 +170,6 @@ unsigned short sched_proximo_indice() {
 	return 0;
 }
 
-
+void sched_set_enLaIdle(){
+	enLaIdle = 1;
+}

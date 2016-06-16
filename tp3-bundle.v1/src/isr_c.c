@@ -2,6 +2,7 @@
 #include "mmu.h"
 #include "tss.h"
 #include "screen.h"
+#include "sched.h"
 #include "defines.h"
 
 extern unsigned int globalDebug;
@@ -11,6 +12,7 @@ unsigned int globalDebug = FALSE;
 
 
 unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
+	enLaIdle = 1;
    	switch(syscall){
 		case 0x124: game_donde( (unsigned int*) param1); break;
 		case 0xA6A: game_soy(param1); break;
@@ -24,9 +26,23 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 void game_tick(){
 
 //	screen_actualizar_reloj_tarea(tipo, indice);
+	int i,j;
+	for(i = 0; i<3; i++){
+		for(j = 0; j<task_max_index(i); j++){
+			task_info info = tareasInfo[i][j];
+			if(info.alive){
+				screen_pintar_tarea(info.owner,
+					info.x,
+					info.y);
+			}
+		}
+	}
+
+//	screen_actualizar_tarea(tarea);
+
 	screen_pintar_jugador(0, jugadores[0].x, jugadores[0].y);
 	screen_pintar_jugador(1, jugadores[1].x, jugadores[1].y);
-//	screen_actualizar_tarea(tarea);
+
 //	screen_actualizar_puntos(puntosA, puntosB)
 	
 //	screen no tiene que conocer nada del juego, las tareas

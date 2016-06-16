@@ -29,6 +29,7 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y);
 
 void screen_pintar_jugador(char id, unsigned short x, unsigned short y);
 

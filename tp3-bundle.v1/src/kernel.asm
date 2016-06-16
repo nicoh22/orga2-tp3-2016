@@ -27,7 +27,7 @@ extern game_inicializar
 %define dataSegmentSelectorKern 0x28
 
 %define GDT_SEL_TSS_INICIAL	0x48 
-%define GDT_SEL_TSS_IDLE    0x50
+%define GDT_SEL_TSS_IDLE	0x50
 
 %define INT_SOFT 0x66
 
@@ -40,11 +40,11 @@ jmp start
 ;;
 ;; Seccion de datos.
 ;; -------------------------------------------------------------------------- ;;
-iniciando_mr_msg db     'Iniciando kernel (Modo Real)...'
-iniciando_mr_len equ    $ - iniciando_mr_msg
+iniciando_mr_msg db	 'Iniciando kernel (Modo Real)...'
+iniciando_mr_len equ	$ - iniciando_mr_msg
 
-iniciando_mp_msg db     'Iniciando kernel (Modo Protegido)...'
-iniciando_mp_len equ    $ - iniciando_mp_msg
+iniciando_mp_msg db	 'Iniciando kernel (Modo Protegido)...'
+iniciando_mp_len equ	$ - iniciando_mp_msg
 
 nombre_grupo db 'A PC regalado no se le mira procesador', 0
 ;;
@@ -54,37 +54,37 @@ nombre_grupo db 'A PC regalado no se le mira procesador', 0
 ;; Punto de entrada del kernel.
 BITS 16
 start:
-    ; Deshabilitar interrupciones
-    cli
+	; Deshabilitar interrupciones
+	cli
 
-    ; Cambiar modo de video a 80 X 50
+	; Cambiar modo de video a 80 X 50
 	; EBOLA
-    mov ax, 0003h
-    int 10h ; set mode 03h
-    xor bx, bx
-    mov ax, 1112h
-    int 10h ; load 8x8 font
+	mov ax, 0003h
+	int 10h ; set mode 03h
+	xor bx, bx
+	mov ax, 1112h
+	int 10h ; load 8x8 font
 
-    ; Imprimir mensaje de bienvenida
-    imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
-    ; EBOLA FIN
+	; Imprimir mensaje de bienvenida
+	imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
+	; EBOLA FIN
 
-    ; Habilitar A20 - no hay que salver registros
+	; Habilitar A20 - no hay que salver registros
 	call habilitar_A20
-    ; Cargar la GDT
+	; Cargar la GDT
 	lgdt [GDT_DESC] ; EBOLA
 
-    ; Setear el bit PE del registro CR0
+	; Setear el bit PE del registro CR0
 	mov eax, cr0
 	or al, 1 ; set PE (Protection Enable) bit in CR0 (Control Register 0)
 	mov cr0, eax
 
-    ; Saltar a modo protegido
+	; Saltar a modo protegido
 	; 20h es el selector de segmento de codigo de kernel
 	JMP 20h:protectedMode
 
 protectedMode:
-    ; Establecer selectores de segmentos
+	; Establecer selectores de segmentos
 BITS 32
 
 	mov ax, dataSegmentSelectorKern
@@ -94,15 +94,15 @@ BITS 32
 	mov fs, ax
 	mov gs, ax
 	
-    ; Establecer la base de la pila
-    mov ebp, stackBasePointerKern
+	; Establecer la base de la pila
+	mov ebp, stackBasePointerKern
 	mov esp, ebp
 		
 	
-    ; Imprimir mensaje de bienvenida
-    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 3
+	; Imprimir mensaje de bienvenida
+	imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 3
 
-    ; Inicializar pantalla
+	; Inicializar pantalla
 	mov ecx, 0
 	.inicializarPantalla:
 	; 80x50 * 2 bytes: 	8000 bytes
@@ -115,10 +115,10 @@ BITS 32
 	add ecx, 2
 	cmp ecx, 8000
 	JL .inicializarPantalla
-    
-    ; Inicializar el manejador de memoria
+	
+	; Inicializar el manejador de memoria
 	call mmu_inicializar
-    ; Inicializar el directorio de paginas
+	; Inicializar el directorio de paginas
 	; Cargar directorio de paginas
 
 	call mmu_inicializar_dir_kernel ; inicializa y carga el dir
@@ -136,22 +136,22 @@ BITS 32
 	call inicializar_interfaz
 
 
-    ; xchg bx, bx
+	; xchg bx, bx
 	mov ebx, nombre_grupo
 	push ebx
 	call print_alligned_right	
-    pop ebx
+	pop ebx
 
 	; Inicializar tss
-    ; Inicializar tss de la tarea Idle
-    call tss_inicializar
+	; Inicializar tss de la tarea Idle
+	call tss_inicializar
 
-    ; Inicializar el scheduler
+	; Inicializar el scheduler
 
-    ; Inicializar la IDT
+	; Inicializar la IDT
 	call idt_inicializar
   
-    ; Cargar IDT
+	; Cargar IDT
 	lidt [IDT_DESC]		
 
 ;test interrupciones
@@ -181,31 +181,31 @@ BITS 32
 
 ;fin test
 
-    ; Configurar controlador de interrupciones
+	; Configurar controlador de interrupciones
 	
 	call resetear_pic
 	call habilitar_pic
 	
 	
-    ;inicializar el scheduler
-    call sched_init
-    call game_inicializar 
+	;inicializar el scheduler
+	call sched_init
+	call game_inicializar 
 
-    ; Cargar tarea inicial
+	; Cargar tarea inicial
   
-    ; xchg bx, bx
-    ; Se carga el tr con el selector de segmento de la tarea inicial
-    mov ax, GDT_SEL_TSS_INICIAL
-    ltr ax
-    ; xchg bx, bx
-    ; Se intercambian las tareas de la inicial a la idle
-    ; El procesador pisa el contexto de la tarea inicial con fruta
-      
-    ; Habilitar interrupciones
+	; xchg bx, bx
+	; Se carga el tr con el selector de segmento de la tarea inicial
+	mov ax, GDT_SEL_TSS_INICIAL
+	ltr ax
+	; xchg bx, bx
+	; Se intercambian las tareas de la inicial a la idle
+	; El procesador pisa el contexto de la tarea inicial con fruta
+	  
+	; Habilitar interrupciones
 	sti
 	; Saltar a la primera tarea: Idle
-    jmp GDT_SEL_TSS_IDLE:0
-    
+	jmp GDT_SEL_TSS_IDLE:0
+	
 	
 ;test interrupcion software
 
@@ -214,13 +214,13 @@ BITS 32
 ;fin test
    
 
-    ; Ciclar infinitamente (por si algo sale mal...)
-    mov eax, 0xFFFF
-    mov ebx, 0xFFFF
-    mov ecx, 0xFFFF
-    mov edx, 0xFFFF
-    jmp $
-    jmp $
+	; Ciclar infinitamente (por si algo sale mal...)
+	mov eax, 0xFFFF
+	mov ebx, 0xFFFF
+	mov ecx, 0xFFFF
+	mov edx, 0xFFFF
+	jmp $
+	jmp $
 
 ;; -------------------------------------------------------------------------- ;;
 

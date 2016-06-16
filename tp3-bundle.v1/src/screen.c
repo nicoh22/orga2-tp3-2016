@@ -104,6 +104,30 @@ void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
 	p[y][x].a = color;
 }
 
+
+void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y){
+	char c, color; 
+	switch(id){
+		case H_type:
+			c = ' ';
+			color = C_BG_GREEN | C_FG_WHITE;
+			break;
+		case A_type:
+			c = ' ';
+			color = C_BG_RED | C_FG_WHITE;
+			break;
+		case B_type:
+			c = ' ';
+			color = C_BG_BLUE | C_FG_WHITE;
+			break;
+		default:
+			break;
+	}
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y][x].c = c; 
+	p[y][x].a = color;
+}
+
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
 	
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
