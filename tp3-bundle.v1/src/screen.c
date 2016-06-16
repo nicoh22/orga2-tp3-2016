@@ -85,7 +85,12 @@ void inicializar_interfaz() {
 		y++;
 	}
 	//TODO: imprimir "vidas", puntos, indicadores de clocks
-	
+	int i, j;
+	for(i = 0, i < 3, i++){
+		for( j = 0, j < 15, j++){
+			clockState[i][j] = 0;
+		}
+	}
 
 }
 
