@@ -81,13 +81,8 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, unsigned int fisica){
 	// Mapeamos a la estructura de paginacion del kernel
 	// la direccion fisica donde vamos a copiar el codigo de la tarea
 	
-	unsigned int cr3Prev = rcr3();
 	unsigned int cr3Tarea = (int) page_directory;
-	lcr3(cr3Tarea);
-	tlbflush();
-	breakpoint();
 
-	lcr3(cr3Prev);
 	mmu_mapear_pagina(fisica, rcr3(), fisica, ATTR_KERN);
 
 	//tipo de tarea
