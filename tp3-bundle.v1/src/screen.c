@@ -7,6 +7,15 @@
 
 #include "screen.h"
 
+#define CLOCK_BASE_H 5
+#define CLOCK_BASE_A 5
+#define CLOCK_BASE_B 20
+
+
+char clock[4] = { '|', '/', '-', '\\' };
+
+unsigned short clockState[3][15];
+
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
     int i;
@@ -75,6 +84,9 @@ void inicializar_interfaz() {
 		x = 0;
 		y++;
 	}
+	//TODO: imprimir "vidas", puntos, indicadores de clocks
+	
+
 }
 
 void print_alligned_right(const char * text){
@@ -135,4 +147,29 @@ void screen_limpiar_pixel(unsigned short x, unsigned short y){
 	p[y][x].a = C_BG_LIGHT_GREY;
 
 
+}
+
+
+void screen_actualizar_reloj_tarea(tipo, indice){
+	if(clockState[tipo][indice] < 4){
+		clockState[tipo][indice]++;
+	}else {
+		clockState[tipo][indice] = 0;
+	}
+
+	char c = clockState[tipo][indice];
+	short x, y, base;
+
+   	switch(indice){
+		case H_type: base = CLOCK_BASE_H; break;
+		case A_type: base = CLOCK_BASE_A; break;
+		case B_type: base = CLOCK_BASE_B; break;
+	}
+	
+	x = base + indice * 2;
+	y = (tipo == H_type) ? 48 : 46 ; 	
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y][x].c = c; 
+	p[y][x].a = C_BG_BLACK | C_FG_WHITE;
 }
