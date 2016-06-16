@@ -173,3 +173,9 @@ unsigned short sched_proximo_indice() {
 void sched_set_enLaIdle(){
 	enLaIdle = 1;
 }
+
+void sched_desalojar_tarea(){
+	//TODO
+	//Se le pasa como parametro la tarea
+	//o asumimos que queremos desalojar la actual?
+}
