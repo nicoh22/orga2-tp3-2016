@@ -6,6 +6,7 @@
 */
 
 #include "sched.h"
+#include "rand.c"
 
 // primer indice: tipo de tarea
 //		0 : H
@@ -21,6 +22,10 @@ short currentIndex;
 
 unsigned short enLaIdle;
 unsigned short indicesInicializados;
+
+unsigned int randInRange(unsigned int min, unsigned int max){
+	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
+}
 
 void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
 
@@ -46,11 +51,15 @@ void sched_init(){
 		}
 		taskIndices[i] = 0;
 	}
-
-	sched_lanzar_tareas(0,0x580000);
-	sched_lanzar_tareas(0,0x550000);
-	//TODO: Lanzar tareas sanas
-	// rand x e y -> funcion que toma x,y : fisica
+	// Area de la pantalla: desde 0x400000 a 0x11BF000
+	// Hacemos un random entre 0x400 y 0x11BF
+	// Y luego shifteamos 12 bits
+	srand(0);
+	for(i = 0; i<15; i++){
+		unsigned int fisica = randInRange(0x400,0x11BF);
+		fisica = fisica << 12;
+		sched_lanzar_tareas(0,fisica);
+	}
 }
 
 int getTypeGdtOffset(taskType tipo){
