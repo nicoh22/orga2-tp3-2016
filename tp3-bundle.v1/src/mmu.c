@@ -117,7 +117,6 @@ int inMemoryCodeOrder(taskType tipo){
 }
 
 void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fisica, short attr){
-	breakpoint();
 	unsigned int pageDirIndex = PDE_INDEX(virtual);	//ebp-12
 	unsigned int pageDirTableIndex = PTE_INDEX(virtual); //ebp-16
 	unsigned int page_table_entry = fisica | attr; //ebp-20
@@ -141,10 +140,7 @@ void mmu_mapear_pagina( unsigned int virtual, unsigned int cr3, unsigned int fis
 		}		
 	}
 	
-	breakpoint();
-	
 	page_table[pageDirTableIndex] = page_table_entry;
-
 
 	tlbflush();
 }

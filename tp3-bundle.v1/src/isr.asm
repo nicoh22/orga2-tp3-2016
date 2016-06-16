@@ -115,7 +115,6 @@ _isr32:
 		mov [sched_tarea_selector], ax
 		call fin_intr_pic1
 
-		xchg bx, bx
 		jmp far [sched_tarea_offset]
 		jmp .end
 	.noJump:

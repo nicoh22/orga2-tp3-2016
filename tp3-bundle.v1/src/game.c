@@ -99,5 +99,6 @@ unsigned int xytofisica( unsigned short x, unsigned short y ){
 		return NULL; 
 	}	
 	
-	return BASE_MAP + ( 80*y + x ) * PAGE_SIZE;
+	return BASE_MAP + ( 80*(y + 1) + x ) * PAGE_SIZE;
+	// y + 1 porque la primera fila de video no representa direcciones del mapa
 }
