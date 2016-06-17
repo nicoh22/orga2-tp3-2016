@@ -156,19 +156,20 @@ void screen_limpiar_pixel(unsigned short x, unsigned short y){
 
 
 void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
-	if(clock_State[tipo][indice] < 4){
+	if(clock_State[tipo][indice] < 3){
 		clock_State[tipo][indice]++;
 	}else {
 		clock_State[tipo][indice] = 0;
 	}
 
-	char c = clock_State[tipo][indice];
+	char c = clock[ clock_State[tipo][indice] ];
 	short x, y, base;
 
    	switch(indice){
 		case H_type: base = CLOCK_BASE_H; break;
 		case A_type: base = CLOCK_BASE_A; break;
 		case B_type: base = CLOCK_BASE_B; break;
+		default: return;
 	}
 	
 	x = base + indice * 2;

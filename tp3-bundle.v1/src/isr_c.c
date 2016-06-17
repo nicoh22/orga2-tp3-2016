@@ -26,7 +26,7 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 void game_tick(){
 	
 	task_info* tarea_actual = sched_tarea_actual();
-		//&tareasInfo[currentType][currentIndex];
+	//En el ciclo de clock actual solo pintamos el clock que corresponde
 	screen_actualizar_reloj_tarea(tarea_actual->owner, tarea_actual->index);
 	int i,j;
 	for(i = 0; i<3; i++){
