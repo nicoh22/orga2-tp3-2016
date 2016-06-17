@@ -55,6 +55,7 @@
 #define IDLE_TASK 				0X10000
 #define STACK_BASE_KERN 		0X27000
 #define BASE_MAP				0x400000 
+#define EXTRA_PAGE				TASK_CODE + PAGE_SIZE
 typedef enum task_type{H_type, A_type, B_type, idle_type} taskType;
 
 #endif  /* !__DEFINES_H__ */

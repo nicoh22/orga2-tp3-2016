@@ -80,17 +80,35 @@ void game_lanzar(unsigned int index_jugador) {
 		return; // Jugador no puede lanzar mas tareas
 	}
 }
+#define VIRUS_ROJO 0x841
+#define VIRUS_AZUL 0x325
 
 void game_soy(unsigned int yoSoy) {
+	task_info* tarea_actual = sched_tarea_actual();
+	switch(yoSoy){
+		case VIRUS_ROJO: tarea_actual->owner = A_type; break;
+		case VIRUS_AZUL: tarea_actual->owner = B_type; break;
+		default: tarea_actual->owner = H_type; break;
+	}
 }
 
 void game_donde(unsigned int* pos) {
+	task_info* tarea_actual = sched_tarea_actual();
+	unsigned short* res = ( unsigned short* ) pos;
+	res[0] = tarea_actual->x;
+	res[1] = tarea_actual->y;
 }
 
 void game_mapear(int x, int y) {
+	unsigned int fisica = xytofisica(x, y);
+	//cr3 tarea?? es el cr3 actual
+	unsigned int cr3Tarea = rcr3();
+	mmu_mapear_pagina(EXTRA_PAGE, cr3Tarea, fisica, ATTR_USER);
 }
 
 unsigned int xytofisica( unsigned short x, unsigned short y ){
+	//TODO correjir, asumiendo que el x y el y 
+	//son del mapa y no de video 
 	if( ( x > 79 ) | 
 		( y == 0 ) | 
 		( y > 43 ) )
