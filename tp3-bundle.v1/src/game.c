@@ -101,22 +101,25 @@ void game_donde(unsigned int* pos) {
 
 void game_mapear(int x, int y) {
 	unsigned int fisica = xytofisica(x, y);
+	if(fisica == NULL){
+		return;
+		//TODO: MATAR TAREA
+	}
 	//cr3 tarea?? es el cr3 actual
 	unsigned int cr3Tarea = rcr3();
 	mmu_mapear_pagina(EXTRA_PAGE, cr3Tarea, fisica, ATTR_USER);
 }
 
 unsigned int xytofisica( unsigned short x, unsigned short y ){
-	//TODO correjir, asumiendo que el x y el y 
-	//son del mapa y no de video 
-	if( ( x > 79 ) | 
-		( y == 0 ) | 
-		( y > 43 ) )
-	{
+	//Cito enunciado:
+	//Cada tarea tendra asignada inicialmente una sola pagina de memoria de 4kb,
+	//esta pagina estara ubicada dentro del area de memoria denominada el mapa.
+	//Este correspondera a un area de memoria fısica de 80 × 44 paginas de 4kb
+
+	if( ( x > 79 ) | ( y > 43 ) ){
 		//el par (x, y) no corresponde a una posicion valida del mapa
 		return NULL; 
 	}	
 	
-	return BASE_MAP + ( 80*(y + 1) + x ) * PAGE_SIZE;
-	// y + 1 porque la primera fila de video no representa direcciones del mapa
+	return BASE_MAP + ( 80*y  + x ) * PAGE_SIZE;
 }
