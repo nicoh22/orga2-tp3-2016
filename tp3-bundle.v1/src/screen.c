@@ -155,7 +155,7 @@ void screen_limpiar_pixel(unsigned short x, unsigned short y){
 }
 
 
-void screen_actualizar_reloj_tarea(tipo, indice){
+void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
 	if(clock_State[tipo][indice] < 4){
 		clock_State[tipo][indice]++;
 	}else {
