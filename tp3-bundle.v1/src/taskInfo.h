@@ -15,9 +15,10 @@
 typedef struct str_task_info {
     unsigned char alive;
     taskType owner;
-unsigned short x;
+	unsigned short x;
 	unsigned short y;
     int gdtIndex;
+	unsigned short index;
 } __attribute__((__packed__)) task_info;
 
 #endif	/* !__TASK_INFO__ */

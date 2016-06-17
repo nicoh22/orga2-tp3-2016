@@ -95,6 +95,7 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 		tareasInfo[tipo][taskIndex].alive = 1;
 		tareasInfo[tipo][taskIndex].owner = tipo;
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;
+		tareasInfo[tipo][taskIndex].index = taskIndex;
 	}
 }
 
@@ -172,6 +173,10 @@ unsigned short sched_proximo_indice() {
 
 void sched_set_enLaIdle(){
 	enLaIdle = 1;
+}
+
+task_info* sched_tarea_actual(){
+	return &tareasInfo[currentType][currentIndex];
 }
 
 void sched_desalojar_tarea(){

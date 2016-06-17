@@ -24,8 +24,10 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 
 
 void game_tick(){
-
-//	screen_actualizar_reloj_tarea(tipo, indice);
+	
+	task_info* tarea_actual = sched_tarea_actual();
+		//&tareasInfo[currentType][currentIndex];
+	screen_actualizar_reloj_tarea(tarea_actual->owner, tarea_actual->index);
 	int i,j;
 	for(i = 0; i<3; i++){
 		for(j = 0; j<task_max_index(i); j++){

@@ -39,4 +39,5 @@ extern void inicializar_interfaz();
 
 extern void print_alligned_right(const char * text);
 
+void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice);
 #endif  /* !__SCREEN_H__ */
