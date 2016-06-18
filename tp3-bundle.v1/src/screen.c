@@ -141,8 +141,8 @@ void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y){
 			break;
 	}
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y][x].c = c; 
-	p[y][x].a = color;
+	p[y+1][x].c = c;
+	p[y+1][x].a = color;
 }
 
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
@@ -165,7 +165,7 @@ void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
 	char c = clock[ clock_State[tipo][indice] ];
 	short x, y, base;
 
-   	switch(indice){
+   	switch(tipo){
 		case H_type: base = CLOCK_BASE_H; break;
 		case A_type: base = CLOCK_BASE_A; break;
 		case B_type: base = CLOCK_BASE_B; break;

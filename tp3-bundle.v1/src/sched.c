@@ -23,11 +23,11 @@ short currentIndex;
 unsigned short enLaIdle;
 unsigned short indicesInicializados;
 
+int exc = 0;
+
 unsigned int rand_in_range(unsigned int min, unsigned int max){
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
-
-void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
 
 unsigned short task_max_index(short current){
 	if(current == 0){
@@ -44,21 +44,21 @@ void sched_init(){
 	currentIndex = 0;
 	int i, j;	
 	for(i = 0; i<3; i++){
-		for(j = 0; j<task_max_index(i); j++){
+		for(j = 0; j<=task_max_index(i); j++){
 			tareasInfo[i][j].alive = 0;
 			tareasInfo[i][j].owner = 0;
 			tareasInfo[i][j].gdtIndex = 0;
+			tareasInfo[i][j].x = 0;
+			tareasInfo[i][j].y = 0;
 		}
 		taskIndices[i] = 0;
 	}
-	// Area de la pantalla: desde 0x400000 a 0x11BF000
-	// Hacemos un random entre 0x400 y 0x11BF
-	// Y luego shifteamos 12 bits
+
 	srand(0);
 	for(i = 0; i<15; i++){
-		unsigned int fisica = rand_in_range(0x400,0x11BF);
-		fisica = fisica << 12;
-		sched_lanzar_tareas(0,fisica);
+		unsigned short y = rand_in_range(0,43);
+		unsigned short x = rand_in_range(0,79);
+		sched_lanzar_tareas(0,x,y);
 	}
 }
 
@@ -75,7 +75,7 @@ int getTypeGdtOffset(taskType tipo){
 int getNextFreeIndex(taskType tipo){
 	int freeTaskIndex = -1;
 	int i = 0;
-	for(i = 0; i<task_max_index(tipo); i++){
+	for(i = 0; i<=task_max_index(tipo); i++){
 		if(!tareasInfo[tipo][i].alive){
 			freeTaskIndex = i;
 			break;
@@ -84,7 +84,8 @@ int getNextFreeIndex(taskType tipo){
 	return freeTaskIndex;
 }
 
-void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
+void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y ){
+	unsigned int fisica = xytofisica(x,y);
 	// Busca el primer espacio en los arreglos de tareas
 	int taskIndex = getNextFreeIndex(tipo); 
 	// Si no encontramos lugar para poner la nueva tarea no hacemos nada
@@ -93,6 +94,8 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 		int gdtIndex = GDT_TASK_INDICES_START + getTypeGdtOffset(tipo) + taskIndex;
 		tss_crear_tarea(tipo, taskIndex, gdtIndex, fisica);
 		tareasInfo[tipo][taskIndex].alive = 1;
+		tareasInfo[tipo][taskIndex].x = x;
+		tareasInfo[tipo][taskIndex].y = y;
 		tareasInfo[tipo][taskIndex].owner = tipo;
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;
 		tareasInfo[tipo][taskIndex].index = taskIndex;
@@ -102,6 +105,8 @@ void sched_lanzar_tareas(taskType tipo, unsigned int fisica ){
 
 
 unsigned short sched_proximo_indice() {
+	unsigned short attr = C_FG_WHITE | C_BG_BLACK;
+
 	// Manejamos el caso borde de que tenemos que saltar a la primer tarea
 	if(!indicesInicializados){
 		indicesInicializados = 1;
@@ -143,6 +148,23 @@ unsigned short sched_proximo_indice() {
 				taskIndices[nextType] = nextIndex;
 				currentType = nextType;
 				currentIndex = nextIndex;
+
+				////////////////// DEBUG /////////////////////
+				switch(currentType){
+					case A_type: attr = C_FG_RED | C_BG_BLACK; break;
+					case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
+					default: attr = C_FG_WHITE | C_BG_BLACK; break;
+				}
+				print_int(currentType,11,0, attr);
+				print(":  ",12,0, attr);
+				print_int(currentIndex,14,0, attr);
+
+				if(exc){
+					breakpoint();
+				}
+				////////////////// DEBUG /////////////////////
+
+
 				return info.gdtIndex;
 			}
 			nextIndex++;
@@ -168,6 +190,30 @@ unsigned short sched_proximo_indice() {
 			return info.gdtIndex;
 		}
 	}
+	return 0;
+}
+
+
+unsigned int sched_desalojar_actual(){
+	task_info* actual = sched_tarea_actual();
+	unsigned short attr = C_FG_WHITE | C_BG_BLACK;
+	switch(currentType){
+		case A_type: attr = C_FG_RED | C_BG_BLACK; break;
+		case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
+		default: attr = C_FG_WHITE | C_BG_BLACK; break;
+	}
+
+	exc = 1;
+	print("DES:",20,0, attr);
+	print_int(currentIndex,26,0, attr);
+	breakpoint();
+	actual->alive = 0;
+	actual->alive = 0;
+	actual->owner = 0;
+	actual->gdtIndex = 0;
+	actual->x = 0;
+	actual->y = 0;
+	enLaIdle = 1;
 	return 0;
 }
 

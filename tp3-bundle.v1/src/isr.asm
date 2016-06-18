@@ -5,12 +5,13 @@
 ; definicion de rutinas de atencion de interrupciones
 
 %include "imprimir.mac"
-
+%define GDT_SEL_TSS_IDLE	0x50
 
 BITS 32
 
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
+debug_flag: db 0
 
 
 LA: db 'A', 0 
@@ -29,6 +30,7 @@ extern fin_intr_pic1
 
 ;; Sched
 extern sched_proximo_indice
+extern sched_desalojar_actual
 
 ;; Screen
 extern print
@@ -50,18 +52,25 @@ _isr%1:
     mov eax, %1
 	shl eax, 2
 	mov eax, [eax + mensajesExcepcion]
+	mov byte [debug_flag], 1
 	
 	push 0x7 ; color
 	push 0   ; y
 	push 0   ; x
 	push eax;
 	call print
+
+	call sched_desalojar_actual
+	jmp GDT_SEL_TSS_IDLE:0
+	xchg bx, bx
+
 	pop eax
 	pop ecx
 	pop ecx
 	pop ecx
 	xor eax, eax
 	jmp $
+
 
 %endmacro
 
@@ -108,22 +117,25 @@ _isr32:
 	call proximo_reloj	
 	
 	call sched_proximo_indice
-	
 	shl ax, 3	
 	cmp ax, 0
 	je .noJump
 		mov [sched_tarea_selector], ax
+
+		cmp byte [debug_flag], 0
+		je .cont
+		xchg bx, bx
+		.cont:
+
 		call fin_intr_pic1
 
 		jmp far [sched_tarea_offset]
 		jmp .end
 	.noJump:
 		call fin_intr_pic1		
-	
 
 	.end:
 	call game_tick
-	
 	popad
 	iret
 

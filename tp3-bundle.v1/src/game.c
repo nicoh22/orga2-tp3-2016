@@ -6,8 +6,6 @@
 
 #include "game.h"
 
-unsigned int xytofisica( unsigned short x, unsigned short y );
-
 void game_inicializar(){ 
 	//inicializa estructuras del game
 	//Jugadores, puntos, virus, etc
@@ -70,11 +68,7 @@ void game_lanzar(unsigned int index_jugador) {
 	if ( jugador_actual->tareas_restantes > 0 ){ 
 		jugador_actual->tareas_restantes--;
 		
-		unsigned int fisica = xytofisica(
-								jugador_actual->x, 
-								jugador_actual->y);
-		
-		sched_lanzar_tareas(index_jugador + 1, fisica);
+		sched_lanzar_tareas(index_jugador + 1, jugador_actual->x, jugador_actual->y);
 	} 
 	else {
 		return; // Jugador no puede lanzar mas tareas

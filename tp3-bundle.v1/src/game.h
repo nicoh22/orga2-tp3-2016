@@ -35,4 +35,6 @@ void game_mover_cursor(int jugador, direccion dir);
 
 void game_inicializar();
 
+unsigned int xytofisica( unsigned short x, unsigned short y );
+
 #endif  /* !__GAME_H__ */

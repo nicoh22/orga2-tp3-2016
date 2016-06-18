@@ -26,11 +26,12 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 void game_tick(){
 	
 	task_info* tarea_actual = sched_tarea_actual();
+
 	//En el ciclo de clock actual solo pintamos el clock que corresponde
 	screen_actualizar_reloj_tarea(tarea_actual->owner, tarea_actual->index);
 	int i,j;
 	for(i = 0; i<3; i++){
-		for(j = 0; j<task_max_index(i); j++){
+		for(j = 0; j<=task_max_index(i); j++){
 			task_info info = tareasInfo[i][j];
 			if(info.alive){
 				screen_pintar_tarea(info.owner,
@@ -50,6 +51,7 @@ void game_tick(){
 //	screen no tiene que conocer nada del juego, las tareas
 //	se le tiene que pasar todo como parametro-
 //	Si no, rompemos encapsulamiento.
+
 }
 
 

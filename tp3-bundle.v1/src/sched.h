@@ -10,10 +10,11 @@
 
 #include "screen.h"
 #include "tss.h"
+#include "game.h"
 #include "gdt.h"
 #include "taskInfo.h"
 extern unsigned short sched_proximo_indice();
-void sched_lanzar_tareas(taskType tipo, unsigned int fisica );
+void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y );
 extern void sched_init();
 extern void sched_set_enLaIdle();
 task_info* sched_tarea_actual();
