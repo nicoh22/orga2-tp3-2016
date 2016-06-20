@@ -19,6 +19,7 @@ typedef struct jugador_t{
 	unsigned short x;
 	unsigned short y;
 	unsigned short id;
+	unsigned short puntos;
 } jugador;
 
 jugador jugadores[2];

@@ -181,3 +181,12 @@ void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
 }
 
 
+void screen_actualizar_puntos(unsigned short puntosA, unsigned short puntosB){
+	print_int(puntosA, 53, 47, C_BG_RED | C_FG_WHITE);
+	print_int(puntosB, 58, 47, C_BG_BLUE  | C_FG_WHITE);
+}
+
+void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
+	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
+	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
+}

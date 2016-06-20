@@ -28,6 +28,9 @@ void game_tick(){
 	task_info* tarea_actual = sched_tarea_actual();
 
 	//En el ciclo de clock actual solo pintamos el clock que corresponde
+	
+	//screen_pintar_fondo(); //TODO parecida a inicializar interfaz
+	
 	screen_actualizar_reloj_tarea(tarea_actual->owner, tarea_actual->index);
 	int i,j;
 	for(i = 0; i<3; i++){
@@ -41,12 +44,12 @@ void game_tick(){
 		}
 	}
 
-//	screen_actualizar_tarea(tarea);
 
 	screen_pintar_jugador(0, jugadores[0].x, jugadores[0].y);
 	screen_pintar_jugador(1, jugadores[1].x, jugadores[1].y);
 
-//	screen_actualizar_puntos(puntosA, puntosB)
+	screen_actualizar_puntos( jugadores[0].puntos, jugadores[1].puntos);
+	screen_actualizar_vidas( jugadores[0].tareas_restantes, jugadores[1].tareas_restantes);
 	
 //	screen no tiene que conocer nada del juego, las tareas
 //	se le tiene que pasar todo como parametro-
