@@ -14,11 +14,14 @@ void game_inicializar(){
 	jugadores[0].x = 1;// Totalmente arbitrario
 	jugadores[0].y = 1;
 	jugadores[0].id = 0;
+	jugadores[0].puntos = 0;
 	
 	jugadores[1].tareas_restantes = 20;
 	jugadores[1].x = 78;
 	jugadores[1].y = 43;
 	jugadores[1].id = 1;
+	jugadores[1].puntos = 0;
+	
 }
 
 void game_mover_cursor(int index_jugador, direccion dir) {
