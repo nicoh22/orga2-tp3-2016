@@ -10,6 +10,8 @@
 
 extern char* mensajesExcepcion[];
 
+extern debugStateType debugState;
+
 void _isr0();
 void _isr1();
 void _isr2();

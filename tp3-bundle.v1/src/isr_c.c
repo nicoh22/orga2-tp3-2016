@@ -6,10 +6,8 @@
 #include "defines.h"
 
 extern unsigned int globalDebug;
-
-unsigned int globalDebug = FALSE;
-
-
+extern enableDebugMode()
+extern disableDebugMode()
 
 unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
 	enLaIdle = 1;
@@ -57,8 +55,6 @@ void game_tick(){
 
 }
 
-
-
 #define KB_w        0x11 // 0x91
 #define KB_s        0x1f // 0x9f
 #define KB_a        0x1e // 0x9e
@@ -73,8 +69,6 @@ void game_tick(){
 #define KB_shiftR   0x36 // 0xb6
 
 #define KB_y        0x15 // 
-
-
 
 // ~~~ debe atender la interrupción de teclado, se le pasa la tecla presionada
 void atender_teclado(unsigned char tecla){
@@ -94,10 +88,17 @@ void atender_teclado(unsigned char tecla){
 
 		case KB_shiftL: game_lanzar(0); break;
 		case KB_shiftR: game_lanzar(1); break;
-
-		case KB_y: globalDebug = !globalDebug; break;
-		default: break;
+		
+		case KB_y: controlDebugMode(); break;
+		default: break;F
 	}
+}
 
+void controlDebugMode() {
+	if (debugState == enable) {
+		disableDebugMode();
+	}else if (debugState == disable) {
+		enableDebugMode();
+	}
 }
 

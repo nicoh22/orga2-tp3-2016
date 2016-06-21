@@ -9,10 +9,12 @@
 
 BITS 32
 
+global enableDebugMode
+global disableDebugMode
+
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 debug_flag: db 0
-
 
 LA: db 'A', 0 
 LS: db 'S', 0 
@@ -143,7 +145,6 @@ _isr32:
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 
-
 %define A 0x1e
 %define S 0x1f
 %define D 0x20
@@ -154,7 +155,6 @@ _isr32:
 %define I 0x17
 %define L_SHIFT 0x2a
 %define R_SHIFT 0x36
-
 
 global _isr33
 
@@ -224,5 +224,15 @@ proximo_reloj:
                 imprimir_texto_mp ebx, 1, 0x0f, 49, 79
                 popad
         ret
-        
-        
+
+;; Debug Mode controllers
+;; -------------------------------------------------------------------------- ;;        
+enableDebugMode:
+		pushad
+		popad
+		ret
+		
+disableDebugMode:
+		pushad
+		popad	
+		ret
