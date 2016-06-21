@@ -141,7 +141,6 @@ unsigned short sched_proximo_indice() {
 		if(nextIndex > task_max_index(nextType)){
 			nextIndex = 0;
 		}
-
 		while(nextIndex != currentIndexForType){
 			task_info info = tareasInfo[nextType][nextIndex];
 			if(info.alive){
@@ -150,6 +149,10 @@ unsigned short sched_proximo_indice() {
 				currentIndex = nextIndex;
 
 				////////////////// DEBUG /////////////////////
+				if(currentType == A_type){
+					breakpoint();	
+				}
+				
 				switch(currentType){
 					case A_type: attr = C_FG_RED | C_BG_BLACK; break;
 					case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
@@ -173,11 +176,16 @@ unsigned short sched_proximo_indice() {
 			}
 		}
 		
+		if( tareasInfo[nextType][currentIndexForType].alive ){
+			currentType = nextType;
+			currentIndex = currentIndexForType;
+			return tareasInfo[nextType][currentIndexForType].gdtIndex;
+		}
+
 		nextType++;
 		if(nextType > 2){
 			nextType = 0;
 		}
-
 		i++;
 	}
 	
