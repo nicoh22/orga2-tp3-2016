@@ -9,7 +9,7 @@
 
 #define CLOCK_BASE_H 5
 #define CLOCK_BASE_A 5
-#define CLOCK_BASE_B 20
+#define CLOCK_BASE_B 22
 
 
 char clock[4] = { '|', '/', '-', '\\' };
@@ -156,6 +156,9 @@ void screen_limpiar_pixel(unsigned short x, unsigned short y){
 
 
 void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
+	print("<A", 17, 46, C_BG_BLACK | C_FG_WHITE);	
+	print("B>", 20, 46, C_BG_BLACK | C_FG_WHITE);	
+	
 	if(clock_State[tipo][indice] < 3){
 		clock_State[tipo][indice]++;
 	}else {
@@ -187,6 +190,8 @@ void screen_actualizar_puntos(unsigned short puntosA, unsigned short puntosB){
 }
 
 void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
+	print("vidas", 44, 45, C_BG_BLACK | C_FG_WHITE);
+	print("vidas", 63, 45, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }
