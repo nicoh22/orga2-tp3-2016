@@ -10,7 +10,8 @@
 #include "syscall.h" 
 
 void task() {
-  __asm __volatile("nop\n");  
+ 	breakpoint();
+   	__asm __volatile("nop\n");  
   __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");
   __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  
   __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  __asm __volatile("nop\n");  

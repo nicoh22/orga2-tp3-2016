@@ -37,6 +37,18 @@ unsigned short task_max_index(short current){
 	}
 }
 
+void print_saltando(){
+	unsigned short attr;
+	switch(currentType){
+				case A_type: attr = C_FG_RED | C_BG_BLACK; break;
+				case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
+				default: attr = C_FG_WHITE | C_BG_BLACK; break;
+			}
+				print_int(currentType,11,0, attr);
+				print(":  ",12,0, attr);
+				print_int(currentIndex,14,0, attr);
+}
+
 void sched_init(){
 	enLaIdle = 1;
 	indicesInicializados = 0;
@@ -105,7 +117,6 @@ void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y ){
 
 
 unsigned short sched_proximo_indice() {
-	unsigned short attr = C_FG_WHITE | C_BG_BLACK;
 
 	// Manejamos el caso borde de que tenemos que saltar a la primer tarea
 	if(!indicesInicializados){
@@ -132,7 +143,6 @@ unsigned short sched_proximo_indice() {
 	// encontramos tareas de otros tipos
 	int i = 0;
 	while(i < 3){
-
 		// Para cada tipo loopeamos en los indices a partir del ultimo
 		// en el que quedamos
 		unsigned short currentIndexForType = taskIndices[nextType];
@@ -150,17 +160,10 @@ unsigned short sched_proximo_indice() {
 
 				////////////////// DEBUG /////////////////////
 				if(currentType == A_type){
-					breakpoint();	
+			//		breakpoint();	
 				}
 				
-				switch(currentType){
-					case A_type: attr = C_FG_RED | C_BG_BLACK; break;
-					case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
-					default: attr = C_FG_WHITE | C_BG_BLACK; break;
-				}
-				print_int(currentType,11,0, attr);
-				print(":  ",12,0, attr);
-				print_int(currentIndex,14,0, attr);
+				print_saltando();
 
 				if(exc){
 					breakpoint();
@@ -179,6 +182,11 @@ unsigned short sched_proximo_indice() {
 		if( tareasInfo[nextType][currentIndexForType].alive ){
 			currentType = nextType;
 			currentIndex = currentIndexForType;
+			print_saltando();
+			if( nextType == A_type){
+			//	breakpoint();	
+				
+			}
 			return tareasInfo[nextType][currentIndexForType].gdtIndex;
 		}
 
