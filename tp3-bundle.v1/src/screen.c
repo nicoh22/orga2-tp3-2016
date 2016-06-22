@@ -195,7 +195,7 @@ void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
 	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }
-
+/*
 void imprimir_log(unsigned int *esp) {
 	unsigned int eax = esp[0]; 
 	unsigned int ebx = esp[1]; 
@@ -235,8 +235,9 @@ void imprimir_log(unsigned int *esp) {
 	char bg_color = C_BG_LIGHT_GREY | C_FG_LIGHT_GREY;
 	char border_color = C_BG_BLACK | C_FG_BLACK;
 	char bg_title_color = C_BG_RED | C_FG_RED;
-	for(int y = 7; y < 43; y++) {
-		for(int x = 25; x < 55; x++) {
+	int y,x;
+	for(y = 7; y < 43; y++) {
+		for(x = 25; x < 55; x++) {
 			if (y == 7 || y == 42 || x == 25 || x == 54) {
 				print(" ", x, y, border_color);			
 			}else if (y == 8) {
@@ -296,4 +297,4 @@ void imprimir_log(unsigned int *esp) {
 	print(&stack2, 45, 30, textAttr); 
 	print(&stack3, 45, 32, textAttr); 
 	print(&stack4, 45, 34, textAttr); 
-}
+}*/
