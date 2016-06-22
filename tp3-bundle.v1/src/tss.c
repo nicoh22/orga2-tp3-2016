@@ -11,7 +11,7 @@ tss tss_inicial;
 tss tss_idle;
 
 unsigned int proxima_tss_index = 0;
-tss* tss_directory[3][15];
+tss tss_directory[3][15];
 
 void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index);
 
@@ -133,7 +133,7 @@ void tss_cargar_en_gdt(tss* tss_pointer, int gdt_index){
 tss* tss_crear_tarea(taskType tipo, unsigned short id_tarea, int gdt_index, unsigned int fisica){
 
 	//EBOLA
-	tss* new_tss = tss_directory[tipo][id_tarea];
+	tss* new_tss = &tss_directory[tipo][id_tarea];
 	
 	tss_cargar_en_gdt(new_tss, gdt_index);
 

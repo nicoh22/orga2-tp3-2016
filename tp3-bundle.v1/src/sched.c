@@ -241,8 +241,3 @@ task_info* sched_tarea_actual(){
 	return &tareasInfo[currentType][currentIndex];
 }
 
-void sched_desalojar_tarea(){
-	//TODO
-	//Se le pasa como parametro la tarea
-	//o asumimos que queremos desalojar la actual?
-}

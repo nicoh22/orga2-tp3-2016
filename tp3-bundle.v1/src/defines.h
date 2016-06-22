@@ -26,7 +26,7 @@
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 66 
+#define GDT_COUNT 40
 // 9 iniciales + tss idle + tss inicial + 20 por jugador + 15 sanas
 
 #define GDT_IDX_NULL_DESC           0
