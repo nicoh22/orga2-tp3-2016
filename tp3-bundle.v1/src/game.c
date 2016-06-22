@@ -98,11 +98,11 @@ void game_donde(unsigned int* pos) {
 
 void game_mapear(int x, int y) {
 	unsigned int fisica = xytofisica(x, y);
-	if(fisica == NULL){
+	if(fisica == NULL){	
+		//error en los checks del mapa
+		sched_desalojar_actual();
 		return;
-		//TODO: MATAR TAREA
 	}
-	//cr3 tarea?? es el cr3 actual
 	unsigned int cr3Tarea = rcr3();
 	mmu_mapear_pagina(EXTRA_PAGE, cr3Tarea, fisica, ATTR_USER);
 }

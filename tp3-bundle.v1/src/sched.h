@@ -21,4 +21,5 @@ task_info* sched_tarea_actual();
 task_info tareasInfo[3][15];
 unsigned short enLaIdle;
 unsigned short task_max_index(short current);
+unsigned int sched_desalojar_actual();
 #endif	/* !__SCHED_H__ */
