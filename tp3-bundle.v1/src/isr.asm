@@ -9,9 +9,6 @@
 
 BITS 32
 
-global enableDebugMode
-global disableDebugMode
-
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 debug_flag: db 0
@@ -224,15 +221,3 @@ proximo_reloj:
                 imprimir_texto_mp ebx, 1, 0x0f, 49, 79
                 popad
         ret
-
-;; Debug Mode controllers
-;; -------------------------------------------------------------------------- ;;        
-enableDebugMode:
-		pushad
-		popad
-		ret
-		
-disableDebugMode:
-		pushad
-		popad	
-		ret

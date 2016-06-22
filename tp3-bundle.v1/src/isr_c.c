@@ -6,8 +6,6 @@
 #include "defines.h"
 
 extern unsigned int globalDebug;
-extern enableDebugMode()
-extern disableDebugMode()
 
 unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
 	enLaIdle = 1;
@@ -95,10 +93,9 @@ void atender_teclado(unsigned char tecla){
 }
 
 void controlDebugMode() {
-	if (debugState == enable) {
-		disableDebugMode();
-	}else if (debugState == disable) {
-		enableDebugMode();
+	if (debugState == enableDebug) {
+		debugState == disableDebug;
+	}else if (debugState == disableDebug) {
+		debugState = enableDebug
 	}
 }
-

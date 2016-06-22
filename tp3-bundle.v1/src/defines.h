@@ -57,7 +57,7 @@
 #define BASE_MAP				0x400000 
 #define EXTRA_PAGE				TASK_CODE + PAGE_SIZE
 typedef enum task_type{H_type, A_type, B_type, idle_type} taskType;
-typedef enum debug_state_type{enable, enableIntr, disable} debugStateType;
+typedef enum debug_state_type{enableDebug, enableDebugIntr, disableDebug} debugStateType;
 
 
 #endif  /* !__DEFINES_H__ */

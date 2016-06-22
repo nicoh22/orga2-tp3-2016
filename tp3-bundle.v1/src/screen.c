@@ -195,3 +195,105 @@ void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
 	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }
+
+void imprimir_log(unsigned int *esp) {
+	unsigned int eax = esp[0]; 
+	unsigned int ebx = esp[1]; 
+	unsigned int ecx = esp[2]; 
+	unsigned int edx = esp[3]; 
+	unsigned int esi = esp[4]; 
+	unsigned int edi = esp[5]; 
+	unsigned int ebp = esp[6]; 
+	unsigned int esp = esp[7]; 
+	unsigned int eip = esp[8];
+	unsigned short *espShort = (unsigned short *)esp;
+	offset = 72;
+	unsigned short cs = espShort[offset]; 
+	unsigned short ds = espShort[offset + 2];
+	unsigned short es = espShort[offset + 4];
+	unsigned short fs = espShort[offset + 6];
+	unsigned short gs = espShort[offset + 8];
+	unsigned short ss = espShort[offset + 10];
+	unsigned short eflags = espShort[offset + 12];
+	unsigned int cr0 = esp[17];
+	unsigned int cr2 = esp[18];
+	unsigned int cr3 = esp[19];
+	unsigned int cr4 = esp[20];
+	unsigned int stack0 = esp[21];
+	unsigned int stack1 = esp[22];
+	unsigned int stack2 = esp[23];
+	unsigned int stack3 = esp[24];
+	unsigned int stack4 = esp[25];
+	unsigned int virus  = esp[26]; //ocupa 8 chares
+	
+	// desde la posicion x: 25 a 54 y: 7 -> negro una fila 
+	// para x: 25 y x: 54, desde y:7 hasta 42 negro una columna
+	// desde la posicion x: 25 a 54 y: 42 -> negro una fila
+	// desde la posicion x: 26 a 53 y: 8 -> rojo una fila
+	// limpiar el resto
+	
+	char bg_color = C_BG_LIGHT_GREY | C_FG_LIGHT_GREY;
+	char border_color = C_BG_BLACK | C_FG_BLACK;
+	char bg_title_color = C_BG_RED | C_FG_RED;
+	for(int y = 7; y < 43; y++) {
+		for(int x = 25; x < 55; x++) {
+			if (y == 7 || y == 42 || x == 25 || x == 54) {
+				print(" ", x, y, border_color);			
+			}else if (y == 8) {
+				print(" ", x, y, bg_title_color);
+			}else {
+				print(" ", x, y, bg_color);
+			}
+		}
+	}
+	
+	char titleAttr = C_BG_LIGHT_GREY | C_FG_BLACK;
+	char textAttr = C_BG_LIGHT_GREY | C_FG_WHITE;
+	print(virus, 26, 8, textAttr);
+	print("eax ", 27, 10, titleAttr);
+	print(&eax, 31, 10, textAttr);
+	print("ebx ", 27, 12, titleAttr);
+	print(&ebx, 31, 12, textAttr); 	
+	print("ecx ", 27, 14, titleAttr);
+	print(&ecx, 31, 14, textAttr); 
+	print("edx ", 27, 16, titleAttr);
+	print(&edx, 31, 16, textAttr); 
+	print("esi ", 27, 18, titleAttr);
+	print(&esi, 31, 18, textAttr); 
+	print("edi ", 27, 20, titleAttr);
+	print(&edi, 31, 20, textAttr); 
+	print("ebp ", 27, 22, titleAttr);
+	print(&ebp, 31, 22, textAttr); 
+	print("esp ", 27, 24, titleAttr);
+	print(&esp, 31, 24, textAttr); 
+	print("eip ", 27, 26, titleAttr);
+	print(&eip, 31, 26, textAttr); 
+	print("cs ", 28, 26, titleAttr);
+	print(&cs, 32, 26, textAttr); 
+	print("ds ", 28, 28, titleAttr);
+	print(&ds, 32, 28, textAttr); 
+	print("es ", 28, 30, titleAttr);
+	print(&es, 32, 30, textAttr); 
+	print("fs ", 28, 32, titleAttr);
+	print(&fs, 32, 32, textAttr); 
+	print("gs ", 28, 34, titleAttr);
+	print(&gs, 32, 34, textAttr); 
+	print("ss ", 28, 36, titleAttr);
+	print(&ss, 32, 36, textAttr); 
+	print("eflags ", 28, 38, titleAttr);
+	print(&eflags, 32, 38, textAttr); 
+	print("cr0 ", 41, 10, titleAttr);
+	print(&cr0, 45, 10, textAttr); 
+	print("cr1 ", 41, 12, titleAttr);
+	print(&cr1, 45, 12, textAttr); 
+	print("cr3 ", 41, 14, titleAttr);
+	print(&cr3, 45, 14, textAttr); 
+	print("cr4 ", 41, 16, titleAttr);
+	print(&cr4, 45, 16, textAttr); 
+	print("stack ", 41, 22, titleAttr);
+	print(&stack0, 45, 26, textAttr); 
+	print(&stack1, 45, 28, textAttr); 
+	print(&stack2, 45, 30, textAttr); 
+	print(&stack3, 45, 32, textAttr); 
+	print(&stack4, 45, 34, textAttr); 
+}
