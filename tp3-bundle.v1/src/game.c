@@ -68,10 +68,13 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 
 void game_lanzar(unsigned int index_jugador) {
 	jugador* jugador_actual = &jugadores[index_jugador];
-	if ( jugador_actual->tareas_restantes > 0 ){ 
+	if ( jugador_actual->tareas_restantes > 0 &&
+		 (getNextFreeIndex(index_jugador + 1)  != -1) )
+	{ 
 		jugador_actual->tareas_restantes--;
-		
-		sched_lanzar_tareas(index_jugador + 1, jugador_actual->x, jugador_actual->y);
+		sched_lanzar_tareas(index_jugador + 1, 
+							jugador_actual->x, 
+							jugador_actual->y);
 	} 
 	else {
 		return; // Jugador no puede lanzar mas tareas
