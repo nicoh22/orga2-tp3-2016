@@ -141,8 +141,8 @@ void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y){
 			break;
 	}
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y+1][x].c = c;
-	p[y+1][x].a = color;
+	p[y][x].c = c;
+	p[y][x].a = color;
 }
 
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
