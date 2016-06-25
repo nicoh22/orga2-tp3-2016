@@ -37,7 +37,7 @@ void screen_pintar_mapeo_tarea(taskType id, unsigned short x, unsigned short y);
 
 void screen_pintar_jugador(char id, unsigned short x, unsigned short y);
 
-void screen_limpiar_pixel(unsigned short x, unsigned short y);
+void screen_limpiar_posicion(unsigned short x, unsigned short y);
 
 extern void inicializar_interfaz();
 

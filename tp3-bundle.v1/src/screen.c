@@ -175,9 +175,7 @@ void screen_pintar_mapeo_tarea(taskType id, unsigned short x, unsigned short y){
 }
 
 
-void screen_limpiar_pixel(unsigned short x, unsigned short y){
-	//el nombre de esta funcion implica control directo 
-	//asi que la dejo sin que corrija.
+void screen_limpiar_posicion(unsigned short x, unsigned short y){
 	
 	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	p[y+1][x].c = 0x00;

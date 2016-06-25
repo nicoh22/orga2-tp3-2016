@@ -27,7 +27,7 @@ void game_inicializar(){
 void game_mover_cursor(int index_jugador, direccion dir) {
 	jugador* jugador_actual = &jugadores[index_jugador];
 	
-	screen_limpiar_pixel(jugador_actual->x, jugador_actual->y + 1); 
+	screen_limpiar_posicion(jugador_actual->x, jugador_actual->y + 1); 
 	//Esta funcion implica control directo de un pixel 
 	//por eso el ajuste respecto a las coordenadas del mapa
 	
@@ -101,7 +101,7 @@ void game_mapear(int x, int y) {
 	unsigned int cr3Tarea = rcr3();
 	mmu_mapear_pagina(EXTRA_PAGE, cr3Tarea, fisica, ATTR_USER);
 	task_info* tareaActual = sched_tarea_actual();
-	screen_limpiar_pixel(tareaActual->mapped_x, tareaActual->mapped_y);
+	screen_limpiar_posicion(tareaActual->mapped_x, tareaActual->mapped_y);
 	tareaActual->mapped_x = x;
 	tareaActual->mapped_y = y;
 

@@ -63,7 +63,7 @@ void game_tick(){
 					info->mapped_x,
 					info->mapped_y);
 			}else{
-				screen_limpiar_pixel(info->mapped_x,
+				screen_limpiar_posicion(info->mapped_x,
 					info->mapped_y);
 			}
 		}
@@ -79,7 +79,7 @@ void game_tick(){
 					info->x,
 					info->y);
 			}else{
-				screen_limpiar_pixel(info->x,
+				screen_limpiar_posicion(info->x,
 									info->y);
 				screen_actualizar_reloj_tarea(i, j, 0, info->owner);
 			}
