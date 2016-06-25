@@ -36,7 +36,7 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 // x crece de izquierda a derecha
 // y crece de arriba hacia abajo (al reves de ejes cartesianos)
 		case ARB:
-			if( jugadores[index_jugador].y != 1 ){
+			if( jugadores[index_jugador].y != 0 ){
 				jugadores[index_jugador].y--; 
 			}
 			break;
