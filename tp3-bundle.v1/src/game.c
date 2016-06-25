@@ -27,7 +27,9 @@ void game_inicializar(){
 void game_mover_cursor(int index_jugador, direccion dir) {
 	jugador* jugador_actual = &jugadores[index_jugador];
 	
-	screen_limpiar_pixel(jugador_actual->x, jugador_actual->y);
+	screen_limpiar_pixel(jugador_actual->x, jugador_actual->y + 1); 
+	//Esta funcion implica control directo de un pixel 
+	//por eso el ajuste respecto a las coordenadas del mapa
 	
 	switch(dir){
 // La memoria de video labura asi:

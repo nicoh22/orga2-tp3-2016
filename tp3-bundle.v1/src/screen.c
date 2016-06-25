@@ -69,7 +69,10 @@ void inicializar_interfaz() {
 	}
 
 	x = 0;
-	y = 44;
+	y = 45; 
+	// y = 0 linea de status
+	// 1 <= y <= 44 las 44 filas del mapa 
+	// y > 45 status del game
 	while (y < 50) {
 		while (x < 80) {
 			if(x <= 50 || x > 60) {
@@ -84,7 +87,7 @@ void inicializar_interfaz() {
 		x = 0;
 		y++;
 	}
-	//TODO: imprimir "vidas", puntos, indicadores de clocks
+	
 	int i, j;
 	for( i = 0; i < 3; i++ ){
 		for( j = 0; j < 15; j++ ){
@@ -117,8 +120,8 @@ void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
 		color = C_BG_BLUE | C_FG_WHITE;
 	}
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y][x].c = c; 
-	p[y][x].a = color;
+	p[y + 1][x].c = c; 
+	p[y + 1][x].a = color;
 }
 
 
@@ -141,11 +144,13 @@ void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y){
 			break;
 	}
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y][x].c = c;
-	p[y][x].a = color;
+	p[y + 1][x].c = c;
+	p[y + 1][x].a = color;
 }
 
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
+	//el nombre de esta funcion implica control directo 
+	//asi que la dejo sin que corrija.
 	
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	p[y][x].c = 0x00; 
