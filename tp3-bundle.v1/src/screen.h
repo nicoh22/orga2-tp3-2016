@@ -21,7 +21,7 @@ extern void print(const char * text, unsigned int x, unsigned int y, unsigned sh
 typedef struct ca_s {
     unsigned char c;
     unsigned char a;
-} ca;
+} char_attr;
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
@@ -29,7 +29,11 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+void screen_pintar_mapa();
+
 void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y);
+
+void screen_pintar_mapeo_tarea(taskType id, unsigned short x, unsigned short y);
 
 void screen_pintar_jugador(char id, unsigned short x, unsigned short y);
 
@@ -41,7 +45,8 @@ extern void print_alligned_right(const char * text);
 
 extern void imprimir_log(unsigned int *esp);
 
-void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice);
+void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice, unsigned char alive, taskType owner );
 void screen_actualizar_puntos(unsigned short puntosA, unsigned short puntosB);
 void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB);
+
 #endif  /* !__SCREEN_H__ */

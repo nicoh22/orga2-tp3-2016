@@ -23,7 +23,6 @@ short currentIndex;
 unsigned short enLaIdle;
 unsigned short indicesInicializados;
 
-int exc = 0;
 
 unsigned int rand_in_range(unsigned int min, unsigned int max){
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
@@ -62,6 +61,8 @@ void sched_init(){
 			tareasInfo[i][j].gdtIndex = 0;
 			tareasInfo[i][j].x = 0;
 			tareasInfo[i][j].y = 0;
+			tareasInfo[i][j].mapped_x = 0;
+			tareasInfo[i][j].mapped_y = 0;
 		}
 		taskIndices[i] = 0;
 	}
@@ -84,7 +85,7 @@ int getTypeGdtOffset(taskType tipo){
 	}
 }
 
-int getNextFreeIndex(taskType tipo){
+int sched_proximo_slot_tarea_libre(taskType tipo){
 	int freeTaskIndex = -1;
 	int i = 0;
 	for(i = 0; i<=task_max_index(tipo); i++){
@@ -99,7 +100,7 @@ int getNextFreeIndex(taskType tipo){
 void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y ){
 	unsigned int fisica = xytofisica(x,y);
 	// Busca el primer espacio en los arreglos de tareas
-	int taskIndex = getNextFreeIndex(tipo); 
+	int taskIndex = sched_proximo_slot_tarea_libre(tipo); 
 	// Si no encontramos lugar para poner la nueva tarea no hacemos nada
 	if(taskIndex >= 0){
 		// ultimoGdtKernel + 15 sanas + 5 A + 5 B
@@ -108,6 +109,8 @@ void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y ){
 		tareasInfo[tipo][taskIndex].alive = 1;
 		tareasInfo[tipo][taskIndex].x = x;
 		tareasInfo[tipo][taskIndex].y = y;
+		tareasInfo[tipo][taskIndex].mapped_x = x;
+		tareasInfo[tipo][taskIndex].mapped_y = y;
 		tareasInfo[tipo][taskIndex].owner = tipo;
 		tareasInfo[tipo][taskIndex].gdtIndex = gdtIndex;
 		tareasInfo[tipo][taskIndex].index = taskIndex;
@@ -159,15 +162,9 @@ unsigned short sched_proximo_indice() {
 				currentIndex = nextIndex;
 
 				////////////////// DEBUG /////////////////////
-				if(currentType == A_type){
-			//		breakpoint();	
-				}
 				
 				print_saltando();
 
-				if(exc){
-					breakpoint();
-				}
 				////////////////// DEBUG /////////////////////
 
 
@@ -212,23 +209,21 @@ unsigned short sched_proximo_indice() {
 
 unsigned int sched_desalojar_actual(){
 	task_info* actual = sched_tarea_actual();
+
+	///// DEBUG //////
 	unsigned short attr = C_FG_WHITE | C_BG_BLACK;
 	switch(currentType){
 		case A_type: attr = C_FG_RED | C_BG_BLACK; break;
 		case B_type: attr = C_FG_BLUE | C_BG_BLACK; break;
 		default: attr = C_FG_WHITE | C_BG_BLACK; break;
 	}
-
-	exc = 1;
 	print("DES:",20,0, attr);
 	print_int(currentIndex,26,0, attr);
-	breakpoint();
+	///// DEBUG //////
+
+	// Solo bajamos el flag alive
+	// Podemos usar el resto de la informacion para limpiar la pantalla
 	actual->alive = 0;
-	actual->alive = 0;
-	actual->owner = 0;
-	actual->gdtIndex = 0;
-	actual->x = 0;
-	actual->y = 0;
 	enLaIdle = 1;
 	return 0;
 }
@@ -239,5 +234,13 @@ void sched_set_enLaIdle(){
 
 task_info* sched_tarea_actual(){
 	return &tareasInfo[currentType][currentIndex];
+}
+
+short sched_tipo_actual(){
+	return currentType;
+}
+
+short sched_indice_actual(){
+	return currentIndex;
 }
 

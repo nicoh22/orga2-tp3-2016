@@ -17,6 +17,10 @@ typedef struct str_task_info {
     taskType owner;
 	unsigned short x;
 	unsigned short y;
+
+	unsigned short mapped_x;
+	unsigned short mapped_y;
+
     int gdtIndex;
 	unsigned short index;
 } __attribute__((__packed__)) task_info;

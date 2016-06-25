@@ -14,33 +14,83 @@ unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsign
 		case 0x124: game_donde( (unsigned int*) param1); break;
 		case 0xA6A: game_soy(param1); break;
 		case 0XFF3: game_mapear(param1, param2); break;
-		default: return 1; //ERROR, deberia desalojarse la tarea por atrevida
+		default:
+			//ERROR, deberia desalojarse la tarea por atrevida
+			sched_desalojar_actual();
+			return 1;
 	}
 	 return 0; //a lo unix, esta todo bien
 }
 
 
+void actualizar_puntos(){
+	jugadores[0].puntos = 0;
+	jugadores[1].puntos = 0;
+	int i,j;
+		for(i = 0; i<3; i++){
+			for(j = 0; j<=task_max_index(i); j++){
+				task_info* info = &tareasInfo[i][j];
+				if(info->alive){
+					// Usamos el offset -1 porque owner es task_type,
+					// Que incluye el a las tareas sanas como indice 0
+					jugadores[info->owner-1].puntos++;
+				}
+			}
+		}
+}
+
 void game_tick(){
+	// El ciclo de actualización de la pantalla sigue este orden:
+	// Actualizar reloj tarea
+	// Pintar tareas
+	// Pintar paginas mapeadas
+	// Pintar jugadores
+	// Mostrar pantalla de debug
+	// Actualizar puntos
+	// Actualizar vidas
 	
 	task_info* tarea_actual = sched_tarea_actual();
 
 	//En el ciclo de clock actual solo pintamos el clock que corresponde
-	
-	//screen_pintar_fondo(); //TODO parecida a inicializar interfaz
-	
-	screen_actualizar_reloj_tarea(tarea_actual->owner, tarea_actual->index);
-	int i,j;
-	for(i = 0; i<3; i++){
+	screen_actualizar_reloj_tarea(sched_tipo_actual(), sched_indice_actual(), tarea_actual->alive, tarea_actual->owner);
+	short i,j;
+
+	for(i = 1; i<3; i++){
 		for(j = 0; j<=task_max_index(i); j++){
-			task_info info = tareasInfo[i][j];
-			if(info.alive){
-				screen_pintar_tarea(info.owner,
-					info.x,
-					info.y);
+			task_info* info = &tareasInfo[i][j];
+			if(info->alive){
+				screen_pintar_mapeo_tarea(info->owner,
+					info->mapped_x,
+					info->mapped_y);
+			}else{
+				screen_limpiar_pixel(info->mapped_x,
+					info->mapped_y);
 			}
 		}
 	}
 
+
+
+	for(i = 0; i<3; i++){
+		for(j = 0; j<=task_max_index(i); j++){
+			task_info* info = &tareasInfo[i][j];
+			if(info->alive){
+				screen_pintar_tarea(info->owner,
+					info->x,
+					info->y);
+			}else{
+				screen_limpiar_pixel(info->x,
+									info->y);
+				screen_actualizar_reloj_tarea(i, j, 0, info->owner);
+			}
+		}
+	}
+
+
+
+
+
+	actualizar_puntos();
 
 	screen_pintar_jugador(0, jugadores[0].x, jugadores[0].y);
 	screen_pintar_jugador(1, jugadores[1].x, jugadores[1].y);

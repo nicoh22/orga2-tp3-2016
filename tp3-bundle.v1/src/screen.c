@@ -17,7 +17,7 @@ char clock[4] = { '|', '/', '-', '\\' };
 unsigned short clock_State[3][15];
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+    char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
     int i;
     for (i = 0; text[i] != 0; i++) {
         p[y][x].c = (unsigned char) text[i];
@@ -31,7 +31,7 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
 }
 
 void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+    char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
     int i;
     char hexa[8];
     char letras[16] = "0123456789ABCDEF";
@@ -50,7 +50,7 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 }
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+    char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
     if( n > 9 ) {
       int a = n / 10;
       n -= 10 * a;
@@ -88,6 +88,13 @@ void inicializar_interfaz() {
 		y++;
 	}
 	
+
+	print("<A", 17, 46, C_BG_BLACK | C_FG_WHITE);
+	print("B>", 20, 46, C_BG_BLACK | C_FG_WHITE);
+
+	print("vidas", 44, 45, C_BG_BLACK | C_FG_WHITE);
+	print("vidas", 63, 45, C_BG_BLACK | C_FG_WHITE);
+
 	int i, j;
 	for( i = 0; i < 3; i++ ){
 		for( j = 0; j < 15; j++ ){
@@ -119,9 +126,9 @@ void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
 		c = 'B';
 		color = C_BG_BLUE | C_FG_WHITE;
 	}
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y + 1][x].c = c; 
-	p[y + 1][x].a = color;
+	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y+1][x].c = c;
+	p[y+1][x].a = color;
 }
 
 
@@ -143,49 +150,82 @@ void screen_pintar_tarea(taskType id, unsigned short x, unsigned short y){
 		default:
 			break;
 	}
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y + 1][x].c = c;
-	p[y + 1][x].a = color;
+	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y+1][x].c = c;
+	p[y+1][x].a = color;
 }
+
+void screen_pintar_mapeo_tarea(taskType id, unsigned short x, unsigned short y){
+	char c, color;
+	switch(id){
+		case A_type:
+			c = 'A';
+			color = C_BG_RED | C_FG_LIGHT_GREY;
+			break;
+		case B_type:
+			c = 'B';
+			color = C_BG_BLUE | C_FG_LIGHT_GREY;
+			break;
+		default:
+			break;
+	}
+	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y+1][x].c = c;
+	p[y+1][x].a = color;
+}
+
 
 void screen_limpiar_pixel(unsigned short x, unsigned short y){
 	//el nombre de esta funcion implica control directo 
 	//asi que la dejo sin que corrija.
 	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	p[y][x].c = 0x00; 
-	p[y][x].a = C_BG_LIGHT_GREY;
+	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	p[y+1][x].c = 0x00;
+	p[y+1][x].a = C_BG_LIGHT_GREY;
 
 
 }
 
 
-void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice){
-	print("<A", 17, 46, C_BG_BLACK | C_FG_WHITE);	
-	print("B>", 20, 46, C_BG_BLACK | C_FG_WHITE);	
-	
-	if(clock_State[tipo][indice] < 3){
-		clock_State[tipo][indice]++;
-	}else {
+void screen_actualizar_reloj_tarea( taskType tipo,  unsigned short indice, unsigned char alive, taskType owner){
+	char c = ' ';
+	if(alive){
+		if(clock_State[tipo][indice] < 3){
+			clock_State[tipo][indice]++;
+		}else {
+			clock_State[tipo][indice] = 0;
+		}
+
+		c = clock[ clock_State[tipo][indice] ];
+	}else{
 		clock_State[tipo][indice] = 0;
 	}
 
-	char c = clock[ clock_State[tipo][indice] ];
 	short x, y, base;
 
+	unsigned char fg_color = C_FG_WHITE;
    	switch(tipo){
 		case H_type: base = CLOCK_BASE_H; break;
 		case A_type: base = CLOCK_BASE_A; break;
 		case B_type: base = CLOCK_BASE_B; break;
 		default: return;
 	}
+
+   	switch(owner){
+   			case H_type: fg_color = C_FG_WHITE; break;
+   			case A_type: fg_color = C_FG_LIGHT_RED; break;
+   			case B_type: fg_color = C_FG_LIGHT_BLUE; break;
+   			default: return;
+   		}
 	
 	x = base + indice * 2;
 	y = (tipo == H_type) ? 48 : 46 ; 	
 	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	char_attr (*p)[VIDEO_COLS] = (char_attr (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	p[y][x].c = c; 
-	p[y][x].a = C_BG_BLACK | C_FG_WHITE;
+
+
+	p[y][x].a = C_BG_BLACK | fg_color;
 }
 
 
@@ -195,8 +235,6 @@ void screen_actualizar_puntos(unsigned short puntosA, unsigned short puntosB){
 }
 
 void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
-	print("vidas", 44, 45, C_BG_BLACK | C_FG_WHITE);
-	print("vidas", 63, 45, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }

@@ -121,11 +121,6 @@ _isr32:
 	je .noJump
 		mov [sched_tarea_selector], ax
 
-		cmp byte [debug_flag], 0
-		je .cont
-		xchg bx, bx
-		.cont:
-
 		call fin_intr_pic1
 
 		jmp far [sched_tarea_offset]

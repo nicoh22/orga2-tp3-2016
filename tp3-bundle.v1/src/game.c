@@ -11,13 +11,13 @@ void game_inicializar(){
 	//Jugadores, puntos, virus, etc
 
 	jugadores[0].tareas_restantes = 20;
-	jugadores[0].x = 1;// Totalmente arbitrario
-	jugadores[0].y = 1;
+	jugadores[0].x = 0;// Totalmente arbitrario
+	jugadores[0].y = 0;
 	jugadores[0].id = 0;
 	jugadores[0].puntos = 0;
 	
 	jugadores[1].tareas_restantes = 20;
-	jugadores[1].x = 78;
+	jugadores[1].x = 79;
 	jugadores[1].y = 43;
 	jugadores[1].id = 1;
 	jugadores[1].puntos = 0;
@@ -57,21 +57,12 @@ void game_mover_cursor(int index_jugador, direccion dir) {
 			break;
 	}
 	
-/*
-	screen_pintar_jugador(
-			jugador_actual->id, 
-			jugador_actual->x, 
-			jugador_actual->y
-		);
-	//ahora se hace esto en game_tick
-*/	
-
 }
 
 void game_lanzar(unsigned int index_jugador) {
 	jugador* jugador_actual = &jugadores[index_jugador];
 	if ( jugador_actual->tareas_restantes > 0 &&
-		 (getNextFreeIndex(index_jugador + 1)  != -1) )
+		 (sched_proximo_slot_tarea_libre(index_jugador + 1)  != -1) )
 	{ 
 		jugador_actual->tareas_restantes--;
 		sched_lanzar_tareas(index_jugador + 1, 
@@ -96,9 +87,8 @@ void game_soy(unsigned int yoSoy) {
 
 void game_donde(unsigned int* pos) {
 	task_info* tarea_actual = sched_tarea_actual();
-	unsigned short* res = ( unsigned short* ) pos;
-	res[0] = tarea_actual->x;
-	res[1] = tarea_actual->y;
+	pos[0] = (int) tarea_actual->x;
+	pos[1] = (int) tarea_actual->y;
 }
 
 void game_mapear(int x, int y) {
@@ -110,6 +100,11 @@ void game_mapear(int x, int y) {
 	}
 	unsigned int cr3Tarea = rcr3();
 	mmu_mapear_pagina(EXTRA_PAGE, cr3Tarea, fisica, ATTR_USER);
+	task_info* tareaActual = sched_tarea_actual();
+	screen_limpiar_pixel(tareaActual->mapped_x, tareaActual->mapped_y);
+	tareaActual->mapped_x = x;
+	tareaActual->mapped_y = y;
+
 }
 
 unsigned int xytofisica( unsigned short x, unsigned short y ){
