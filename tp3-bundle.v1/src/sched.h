@@ -13,7 +13,10 @@
 #include "game.h"
 #include "gdt.h"
 #include "taskInfo.h"
+#include "isr.h"
+
 extern unsigned short sched_proximo_indice();
+extern char* sched_tarea_actual_owner();
 void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y );
 extern void sched_init();
 extern void sched_set_enLaIdle();

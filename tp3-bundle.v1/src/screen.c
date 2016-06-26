@@ -236,36 +236,41 @@ void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
 	print_int(vidasA, 46, 47, C_BG_BLACK | C_FG_WHITE);
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }
-/*
-void imprimir_log(unsigned int *esp) {
-	unsigned int eax = esp[0]; 
-	unsigned int ebx = esp[1]; 
-	unsigned int ecx = esp[2]; 
-	unsigned int edx = esp[3]; 
-	unsigned int esi = esp[4]; 
-	unsigned int edi = esp[5]; 
-	unsigned int ebp = esp[6]; 
-	unsigned int esp = esp[7]; 
-	unsigned int eip = esp[8];
-	unsigned short *espShort = (unsigned short *)esp;
-	offset = 72;
-	unsigned short cs = espShort[offset]; 
-	unsigned short ds = espShort[offset + 2];
-	unsigned short es = espShort[offset + 4];
-	unsigned short fs = espShort[offset + 6];
-	unsigned short gs = espShort[offset + 8];
-	unsigned short ss = espShort[offset + 10];
-	unsigned short eflags = espShort[offset + 12];
-	unsigned int cr0 = esp[17];
-	unsigned int cr2 = esp[18];
-	unsigned int cr3 = esp[19];
-	unsigned int cr4 = esp[20];
-	unsigned int stack0 = esp[21];
-	unsigned int stack1 = esp[22];
-	unsigned int stack2 = esp[23];
-	unsigned int stack3 = esp[24];
-	unsigned int stack4 = esp[25];
-	unsigned int virus  = esp[26]; //ocupa 8 chares
+
+void imprimir_log(unsigned int *espPtr) {
+	
+	unsigned int stack4 = espPtr[0];
+	unsigned int stack3 = espPtr[1];
+	unsigned int stack2 = espPtr[2];
+	unsigned int stack1 = espPtr[3];
+	unsigned int stack0 = espPtr[4];
+
+    char *virus  = (char*)espPtr[5]; //ocupa 8 chares
+	
+	unsigned int cr4 = espPtr[6];
+	unsigned int cr3 = espPtr[7];
+	unsigned int cr2 = espPtr[8];
+	unsigned int cr0 = espPtr[9];
+
+	unsigned short *espPtrShort = (unsigned short *)espPtr;
+	unsigned short ds = espPtrShort[20];
+	unsigned short es = ds;
+	unsigned short fs = ds;
+	unsigned short gs = ds;
+
+	unsigned int ebp = espPtr[11]; 
+	unsigned int edi = espPtr[12]; 
+	unsigned int esi = espPtr[13]; 
+	unsigned int edx = espPtr[14]; 
+	unsigned int ecx = espPtr[15]; 
+	unsigned int ebx = espPtr[16]; 
+	unsigned int eax = espPtr[17]; 	
+
+	unsigned int eip = espPtr[18]; // espPtr[17]; = error code
+    unsigned short cs = espPtrShort[38];
+	unsigned short eflags = espPtrShort[40];
+    unsigned int esp = espPtr[21]; 
+	unsigned short ss = espPtrShort[44];
 	
 	// desde la posicion x: 25 a 54 y: 7 -> negro una fila 
 	// para x: 25 y x: 54, desde y:7 hasta 42 negro una columna
@@ -291,51 +296,52 @@ void imprimir_log(unsigned int *esp) {
 	
 	char titleAttr = C_BG_LIGHT_GREY | C_FG_BLACK;
 	char textAttr = C_BG_LIGHT_GREY | C_FG_WHITE;
-	print(virus, 26, 8, textAttr);
+	print(virus, 26, 8, C_BG_RED | C_FG_WHITE);
 	print("eax ", 27, 10, titleAttr);
-	print(&eax, 31, 10, textAttr);
+	print_hex(eax, 8, 31, 10, textAttr);
 	print("ebx ", 27, 12, titleAttr);
-	print(&ebx, 31, 12, textAttr); 	
+	print_hex(ebx, 8, 31, 12, textAttr); 	
 	print("ecx ", 27, 14, titleAttr);
-	print(&ecx, 31, 14, textAttr); 
+	print_hex(ecx, 8, 31, 14, textAttr); 
 	print("edx ", 27, 16, titleAttr);
-	print(&edx, 31, 16, textAttr); 
+	print_hex(edx, 8, 31, 16, textAttr); 
 	print("esi ", 27, 18, titleAttr);
-	print(&esi, 31, 18, textAttr); 
+	print_hex(esi, 8, 31, 18, textAttr); 
 	print("edi ", 27, 20, titleAttr);
-	print(&edi, 31, 20, textAttr); 
+	print_hex(edi, 8, 31, 20, textAttr); 
 	print("ebp ", 27, 22, titleAttr);
-	print(&ebp, 31, 22, textAttr); 
+	print_hex(ebp, 8, 31, 22, textAttr); 
 	print("esp ", 27, 24, titleAttr);
-	print(&esp, 31, 24, textAttr); 
+	print_hex(esp, 8, 31, 24, textAttr); 
 	print("eip ", 27, 26, titleAttr);
-	print(&eip, 31, 26, textAttr); 
-	print("cs ", 28, 26, titleAttr);
-	print(&cs, 32, 26, textAttr); 
-	print("ds ", 28, 28, titleAttr);
-	print(&ds, 32, 28, textAttr); 
-	print("es ", 28, 30, titleAttr);
-	print(&es, 32, 30, textAttr); 
-	print("fs ", 28, 32, titleAttr);
-	print(&fs, 32, 32, textAttr); 
-	print("gs ", 28, 34, titleAttr);
-	print(&gs, 32, 34, textAttr); 
-	print("ss ", 28, 36, titleAttr);
-	print(&ss, 32, 36, textAttr); 
-	print("eflags ", 28, 38, titleAttr);
-	print(&eflags, 32, 38, textAttr); 
+	print_hex(eip, 8, 31, 26, textAttr); 
+	print("cs ", 28, 28, titleAttr);
+	print_hex((unsigned int)cs, 4, 32, 28, textAttr); 
+	print("ds ", 28, 30, titleAttr);
+	print_hex((unsigned int)ds, 4, 32, 30, textAttr); 
+	print("es ", 28, 32, titleAttr);
+	print_hex((unsigned int)es, 4, 32, 32, textAttr); 
+	print("fs ", 28, 34, titleAttr);
+	print_hex((unsigned int)fs, 4, 32, 34, textAttr); 
+	print("gs ", 28, 36, titleAttr);
+	print_hex((unsigned int)gs, 4, 32, 36, textAttr); 
+	print("ss ", 28, 38, titleAttr);
+	print_hex((unsigned int)ss, 4, 32, 38, textAttr); 
+	print("eflags ", 28, 40, titleAttr);
+	print_hex((int)eflags, 4, 36, 40, textAttr); 
 	print("cr0 ", 41, 10, titleAttr);
-	print(&cr0, 45, 10, textAttr); 
+	print_hex(cr0, 8, 45, 10, textAttr); 
 	print("cr1 ", 41, 12, titleAttr);
-	print(&cr1, 45, 12, textAttr); 
+	print_hex(cr2, 8, 45, 12, textAttr); 
 	print("cr3 ", 41, 14, titleAttr);
-	print(&cr3, 45, 14, textAttr); 
+	print_hex(cr3, 8, 45, 14, textAttr); 
 	print("cr4 ", 41, 16, titleAttr);
-	print(&cr4, 45, 16, textAttr); 
+	print_hex(cr4, 8, 45, 16, textAttr); 
 	print("stack ", 41, 22, titleAttr);
-	print(&stack0, 45, 26, textAttr); 
-	print(&stack1, 45, 28, textAttr); 
-	print(&stack2, 45, 30, textAttr); 
-	print(&stack3, 45, 32, textAttr); 
-	print(&stack4, 45, 34, textAttr); 
-}*/
+	print_hex(stack0, 8, 45, 26, textAttr); 
+	print_hex(stack1, 8, 45, 28, textAttr); 
+	print_hex(stack2, 8, 45, 30, textAttr); 
+	print_hex(stack3, 8, 45, 32, textAttr); 
+	print_hex(stack4, 8, 45, 34, textAttr); 
+
+}

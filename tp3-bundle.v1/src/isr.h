@@ -8,8 +8,9 @@
 #ifndef __ISR_H__
 #define __ISR_H__
 
-extern char* mensajesExcepcion[];
+#include "defines.h"
 
+extern char* mensajesExcepcion[];
 extern debugStateType debugState;
 
 void _isr0();
@@ -36,28 +37,6 @@ void _isr32();
 void _isr33();
 void _isr102();
 
-char* mensajesExcepcion[20] = 
-{ "Divide Error",
- "RESERVED",
- "NMI Interrupt",
- "Breakpoint",
- "Overflow",
- "BOUND Range Exceeded",
- "Invalid Opcode (Undefined Opcode)",
- "Device Not Available (No Math Coprocessor)",
- "Double Fault",
- "Coprocessor Segment Overrun (reserved)",
- "Invalid TSS",
- "Segment Not Present",
- "Stack-Segment Fault",
- "General Protection",
- "Page Fault",
- "(Intel reserved. Do not use.)",
- "x87 FPU Floating-Point Error (Math Fault)",
- "Alignment Check",
- "Machine Check",
- "SIMD Floating-Point Exception"
-};
-
+extern int enableDebugIntrMode();
 
 #endif  /* !__ISR_H__ */

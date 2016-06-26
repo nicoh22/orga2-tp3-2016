@@ -3,10 +3,32 @@
 #include "tss.h"
 #include "screen.h"
 #include "sched.h"
-#include "defines.h"
 
-extern unsigned int globalDebug;
 void controlDebugMode();
+debugStateType debugState;
+
+char* mensajesExcepcion[20] = 
+{ "Divide Error",
+ "RESERVED",
+ "NMI Interrupt",
+ "Breakpoint",
+ "Overflow",
+ "BOUND Range Exceeded",
+ "Invalid Opcode (Undefined Opcode)",
+ "Device Not Available (No Math Coprocessor)",
+ "Double Fault",
+ "Coprocessor Segment Overrun (reserved)",
+ "Invalid TSS",
+ "Segment Not Present",
+ "Stack-Segment Fault",
+ "General Protection",
+ "Page Fault",
+ "(Intel reserved. Do not use.)",
+ "x87 FPU Floating-Point Error (Math Fault)",
+ "Alignment Check",
+ "Machine Check",
+ "SIMD Floating-Point Exception"
+};
 
 unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
 	enLaIdle = 1;
@@ -121,6 +143,11 @@ void game_tick(){
 
 // ~~~ debe atender la interrupción de teclado, se le pasa la tecla presionada
 void atender_teclado(unsigned char tecla){
+
+    //Ocurrio una excepcion. Estoy en la idle y apreto una tecla. La ignoro.
+    if (debugState == enableDebugIntr && tecla != KB_y) {
+        return;
+    }
 	
 	switch (tecla){
 		// 0 para jugadorA, 1 para jugadorB
@@ -144,11 +171,20 @@ void atender_teclado(unsigned char tecla){
 }
 
 void controlDebugMode() {
-/*
+
 	if (debugState == enableDebug) {
 		debugState = disableDebug;
-	}else if (debugState == disableDebug) {
+	}else if (debugState == disableDebug  || debugState == enableDebugIntr) {
 		debugState = enableDebug;
 	}
-*/
+
+}
+
+// retorno 1 o 0 para indicar al llamador que estaba en modo debug y puede printear el log
+int enableDebugIntrMode() {
+    if (debugState == enableDebug) {
+        debugState = enableDebugIntr;
+        return 1;
+    }
+    return 0;
 }

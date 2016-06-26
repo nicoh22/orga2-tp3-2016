@@ -23,6 +23,9 @@ short currentIndex;
 unsigned short enLaIdle;
 unsigned short indicesInicializados;
 
+char *tareaH = "Tarea H";
+char *tareaA = "Tarea A";
+char *tareaB = "Tarea B";
 
 unsigned int rand_in_range(unsigned int min, unsigned int max){
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
@@ -49,6 +52,8 @@ void print_saltando(){
 }
 
 void sched_init(){
+    debugState = disableDebug;
+
 	enLaIdle = 1;
 	indicesInicializados = 0;
 	currentType = 0;
@@ -120,6 +125,11 @@ void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y ){
 
 
 unsigned short sched_proximo_indice() {
+
+    // Estoy en la idle y previamente habia ocurrido una excepcion. No salto.
+    if (enLaIdle && debugState == enableDebugIntr) {
+        return 0;
+    }
 
 	// Manejamos el caso borde de que tenemos que saltar a la primer tarea
 	if(!indicesInicializados){
@@ -196,7 +206,7 @@ unsigned short sched_proximo_indice() {
 	
 	// Si no encontramos otra tarea viva a la que saltar, no saltamos
 	// => devolvemos 0
-	if(enLaIdle){
+	if(enLaIdle){	
 		task_info info = tareasInfo[currentType][currentIndex];
 		if(info.alive){
 			enLaIdle = 0;
@@ -234,6 +244,19 @@ void sched_set_enLaIdle(){
 
 task_info* sched_tarea_actual(){
 	return &tareasInfo[currentType][currentIndex];
+}
+
+char* sched_tarea_actual_owner(){
+	short type = sched_tipo_actual();
+	
+	if (type == H_type){
+	    return tareaH;
+	}else if(type == A_type) {
+	    return tareaA;
+	}
+	    
+	return tareaB;
+	
 }
 
 short sched_tipo_actual(){

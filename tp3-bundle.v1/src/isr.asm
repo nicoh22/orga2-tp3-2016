@@ -11,7 +11,6 @@ BITS 32
 
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
-debug_flag: db 0
 
 LA: db 'A', 0 
 LS: db 'S', 0 
@@ -30,15 +29,20 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_proximo_indice
 extern sched_desalojar_actual
+extern sched_tarea_actual_owner
 
 ;; Screen
 extern print
 extern mensajesExcepcion
+extern imprimir_log
 
 ;; Rutinas de atencion de alto nivel
 extern atender_teclado 
 extern manejar_syscall
 extern game_tick
+
+;; Debug
+extern enableDebugIntrMode
 
 ;;
 ;; Definición de MACROS
@@ -48,10 +52,54 @@ extern game_tick
 global _isr%1
 
 _isr%1:
+
+    ; En la pila actualmente:
+    ; ss
+    ; esp
+    ; eflags
+    ; cs
+    ; eip
+    ; error code
+    push eax
+    call enableDebugIntrMode
+    cmp eax, 1
+    jne _isr%1.debugDisable
+    push ebx
+    mov ebx, [esp + 24] ; esp nivel 3
+    push ecx
+    push edx
+    push esi
+    push edi
+    push ebp
+    push 0x3B ; ds = ss = fs = gs? gdt index user data EBOLA: en teoria no puede cambiar...
+    mov ecx, cr0
+    push ecx
+    mov ecx, cr2
+    push ecx
+    mov ecx, cr3
+    push ecx
+    mov ecx, cr4
+    push ecx 
+    call sched_tarea_actual_owner
+    push eax
+    mov ecx, [ebx] ; stack0
+    push ecx
+    mov ecx, [ebx + 4] ; stack1
+    push ecx
+    mov ecx, [ebx + 8] ; stack2
+    push ecx
+    mov ecx, [ebx + 12] ; stac3
+    push ecx
+    mov ecx, [ebx + 16] ; stack4
+    push ecx
+    push esp
+    call imprimir_log
+
+_isr%1.debugDisable:
+
     mov eax, %1
 	shl eax, 2
 	mov eax, [eax + mensajesExcepcion]
-	mov byte [debug_flag], 1
 	
 	push 0x7 ; color
 	push 0   ; y
@@ -216,3 +264,4 @@ proximo_reloj:
                 imprimir_texto_mp ebx, 1, 0x0f, 49, 79
                 popad
         ret
+
