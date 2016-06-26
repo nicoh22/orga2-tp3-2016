@@ -5,6 +5,7 @@
 #include "sched.h"
 
 void controlDebugMode();
+unsigned char redraw = 0;
 debugStateType debugState;
 
 char* mensajesExcepcion[20] = 
@@ -71,59 +72,61 @@ void game_tick(){
 	// Actualizar puntos
 	// Actualizar vidas
 	
-	task_info* tarea_actual = sched_tarea_actual();
+	if(debugState != enableDebugIntr){
+		if(redraw){
+			redraw = 0;
+			screen_pintar_fondo();
+		}
 
-	//En el ciclo de clock actual solo pintamos el clock que corresponde
-	screen_actualizar_reloj_tarea(sched_tipo_actual(), sched_indice_actual(), tarea_actual->alive, tarea_actual->owner);
-	short i,j;
+		task_info* tarea_actual = sched_tarea_actual();
 
-	for(i = 1; i<3; i++){
-		for(j = 0; j<=task_max_index(i); j++){
-			task_info* info = &tareasInfo[i][j];
-			if(info->alive){
-				screen_pintar_mapeo_tarea(info->owner,
-					info->mapped_x,
-					info->mapped_y);
-			}else{
-				screen_limpiar_posicion(info->mapped_x,
-					info->mapped_y);
+		//En el ciclo de clock actual solo pintamos el clock que corresponde
+		screen_actualizar_reloj_tarea(sched_tipo_actual(), sched_indice_actual(), tarea_actual->alive, tarea_actual->owner);
+		short i,j;
+
+		for(i = 1; i<3; i++){
+			for(j = 0; j<=task_max_index(i); j++){
+				task_info* info = &tareasInfo[i][j];
+				if(info->alive){
+					screen_pintar_mapeo_tarea(info->owner,
+						info->mapped_x,
+						info->mapped_y);
+				}else{
+					screen_limpiar_posicion(info->mapped_x,
+						info->mapped_y);
+				}
 			}
 		}
-	}
 
 
 
-	for(i = 0; i<3; i++){
-		for(j = 0; j<=task_max_index(i); j++){
-			task_info* info = &tareasInfo[i][j];
-			if(info->alive){
-				screen_pintar_tarea(info->owner,
-					info->x,
-					info->y);
-			}else{
-				screen_limpiar_posicion(info->x,
-									info->y);
-				screen_actualizar_reloj_tarea(i, j, 0, info->owner);
+		for(i = 0; i<3; i++){
+			for(j = 0; j<=task_max_index(i); j++){
+				task_info* info = &tareasInfo[i][j];
+				if(info->alive){
+					screen_pintar_tarea(info->owner,
+						info->x,
+						info->y);
+				}else{
+					screen_limpiar_posicion(info->x,
+										info->y);
+					screen_actualizar_reloj_tarea(i, j, 0, info->owner);
+				}
 			}
 		}
+
+
+
+
+
+		actualizar_puntos();
+
+		screen_pintar_jugador(0, jugadores[0].x, jugadores[0].y);
+		screen_pintar_jugador(1, jugadores[1].x, jugadores[1].y);
+
+		screen_actualizar_puntos( jugadores[0].puntos, jugadores[1].puntos);
+		screen_actualizar_vidas( jugadores[0].tareas_restantes, jugadores[1].tareas_restantes);
 	}
-
-
-
-
-
-	actualizar_puntos();
-
-	screen_pintar_jugador(0, jugadores[0].x, jugadores[0].y);
-	screen_pintar_jugador(1, jugadores[1].x, jugadores[1].y);
-
-	screen_actualizar_puntos( jugadores[0].puntos, jugadores[1].puntos);
-	screen_actualizar_vidas( jugadores[0].tareas_restantes, jugadores[1].tareas_restantes);
-	
-//	screen no tiene que conocer nada del juego, las tareas
-//	se le tiene que pasar todo como parametro-
-//	Si no, rompemos encapsulamiento.
-
 }
 
 #define KB_w        0x11 // 0x91
@@ -171,11 +174,13 @@ void atender_teclado(unsigned char tecla){
 }
 
 void controlDebugMode() {
-
 	if (debugState == enableDebug) {
 		debugState = disableDebug;
-	}else if (debugState == disableDebug  || debugState == enableDebugIntr) {
+	}else if (debugState == disableDebug){
 		debugState = enableDebug;
+	}else if(debugState == enableDebugIntr) {
+		debugState = enableDebug;
+		redraw = 1;
 	}
 
 }

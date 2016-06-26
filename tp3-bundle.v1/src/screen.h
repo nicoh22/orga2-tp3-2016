@@ -45,6 +45,8 @@ extern void print_alligned_right(const char * text);
 
 extern void imprimir_log(unsigned int *esp);
 
+void screen_pintar_fondo();
+
 void screen_actualizar_reloj_tarea( taskType tipo, unsigned short indice, unsigned char alive, taskType owner );
 void screen_actualizar_puntos(unsigned short puntosA, unsigned short puntosB);
 void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB);

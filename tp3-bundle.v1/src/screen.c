@@ -116,6 +116,19 @@ void print_alligned_right(const char * text){
 	print(text, pos_inicial, 0, C_FG_WHITE + C_BG_BLACK);
 }
 
+void screen_pintar_fondo() {
+	int x = 0;
+	int y = 1;
+	while (y < 45) {
+		while (x < 80) {
+			print(" ", x, y, C_BG_LIGHT_GREY);
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+}
+
 void screen_pintar_jugador(char id, unsigned short x, unsigned short y){
 	char c, color; 
 	if(id == 0){
@@ -289,7 +302,7 @@ void imprimir_log(unsigned int *espPtr) {
 			}else if (y == 8) {
 				print(" ", x, y, bg_title_color);
 			}else {
-				print(" ", x, y, bg_color);
+				print("A", x, y, bg_color);
 			}
 		}
 	}
