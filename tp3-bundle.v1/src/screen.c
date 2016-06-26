@@ -254,23 +254,23 @@ void imprimir_log(unsigned int *espPtr) {
 
 	unsigned short *espPtrShort = (unsigned short *)espPtr;
 	unsigned short ds = espPtrShort[20];
-	unsigned short es = ds;
-	unsigned short fs = ds;
-	unsigned short gs = ds;
+	unsigned short es = espPtrShort[22];
+	unsigned short fs = espPtrShort[24];
+	unsigned short gs = espPtrShort[26];
 
-	unsigned int ebp = espPtr[11]; 
-	unsigned int edi = espPtr[12]; 
-	unsigned int esi = espPtr[13]; 
-	unsigned int edx = espPtr[14]; 
-	unsigned int ecx = espPtr[15]; 
-	unsigned int ebx = espPtr[16]; 
-	unsigned int eax = espPtr[17]; 	
+	unsigned int ebp = espPtr[14]; 
+	unsigned int edi = espPtr[15]; 
+	unsigned int esi = espPtr[16]; 
+	unsigned int edx = espPtr[17]; 
+	unsigned int ecx = espPtr[18]; 
+	unsigned int ebx = espPtr[19]; 
+	unsigned int eax = espPtr[20]; 	
 
-	unsigned int eip = espPtr[18]; // espPtr[17]; = error code
-    unsigned short cs = espPtrShort[38];
-	unsigned short eflags = espPtrShort[40];
-    unsigned int esp = espPtr[21]; 
-	unsigned short ss = espPtrShort[44];
+	unsigned int eip = espPtr[22]; // espPtr[17]; = error code
+    unsigned short cs = espPtrShort[46];
+	unsigned short eflags = espPtrShort[48];
+    unsigned int esp = espPtr[25]; 
+	unsigned short ss = espPtrShort[52];
 	
 	// desde la posicion x: 25 a 54 y: 7 -> negro una fila 
 	// para x: 25 y x: 54, desde y:7 hasta 42 negro una columna

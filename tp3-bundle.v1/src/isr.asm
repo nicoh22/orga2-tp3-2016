@@ -71,7 +71,15 @@ _isr%1:
     push esi
     push edi
     push ebp
-    push 0x3B ; ds = ss = fs = gs? gdt index user data EBOLA: en teoria no puede cambiar...
+    xor ecx, ecx
+    mov cx, ds
+    push ecx ; ds = ss = fs = gs? gdt index user data EBOLA: en teoria no puede cambiar...
+    mov cx, es
+    push ecx
+    mov cx, fs
+    push ecx
+    mov cx, gs
+    push ecx
     mov ecx, cr0
     push ecx
     mov ecx, cr2
