@@ -22,7 +22,6 @@ typedef struct str_task_info {
 	unsigned short mapped_y;
 
     int gdtIndex;
-	unsigned short index;
 } __attribute__((__packed__)) task_info;
 
 #endif	/* !__TASK_INFO__ */

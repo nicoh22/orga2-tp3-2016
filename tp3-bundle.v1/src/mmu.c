@@ -75,12 +75,7 @@ unsigned int mmu_inicializar_dir_tarea(taskType tipo, unsigned int fisica){
 		base_page_addr += 4096;						
 		i++;
 	}
-	// logica para determinar direccion fisica (en el mapa)
-	// TODO en vez del parametro fisica podemos recibir el X y el Y
-	// y calcular su direccion aca o en un funcion "xyaFisica"
-	// Mapeamos a la estructura de paginacion del kernel
-	// la direccion fisica donde vamos a copiar el codigo de la tarea
-	
+
 	unsigned int cr3Tarea = (int) page_directory;
 
 	mmu_mapear_pagina(fisica, rcr3(), fisica, ATTR_KERN);

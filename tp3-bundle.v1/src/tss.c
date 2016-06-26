@@ -134,7 +134,6 @@ tss* tss_crear_tarea(taskType tipo, unsigned short id_tarea, int gdt_index, unsi
 
 	//EBOLA
 	tss* new_tss = &tss_directory[tipo][id_tarea];
-	
 	tss_cargar_en_gdt(new_tss, gdt_index);
 
 	unsigned int cr3_task =  mmu_inicializar_dir_tarea(tipo, fisica);
