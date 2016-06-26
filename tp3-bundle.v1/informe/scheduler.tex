@@ -1,9 +1,41 @@
 \subsection{Scheduler de tareas}
 
+\begin{comment}
+4.7.
+Ejercicio 7
+
+a) Construir una función para inicializar las estructuras de datos del scheduler.
 
 
-{\LARGE \textbf{TODO: Explicar como manejamos las tareas que estan corriendo (matriz de taskInfo, sched\_proximo\_indice)}}
+b) Crear la función sched proximo indice() que devuelve el ındice en la GDT de la próxima
+tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
+por vez según se explica en la sección 3.2
+
+c) Modificar la rutina de la interrupción 0x66, para que implemente los tres servicios según
+se indica en la sección 3.1.1.
+
+
+d) Modificar el código necesario para que se realice el intercambio de tareas por cada ciclo de
+reloj. El intercambio se realizará según indique la función sched proximo indice().
+
+
+e) Modificar las rutinas de excepciones del procesador para que desalojen y destruyan a la
+tarea que estaba corriendo y corran la próxima.
+
+
+f) Implementar el mecanismo de debugging explicado en la sección 3.4 que indicará en pan-
+talla la razón del desalojo de una tarea.
+
+
+Nota: Se recomienda construir funciones en C que ayuden a resolver problemas como
+convertir direcciones de el mapa a direcciones fısicas o buscar la proxima tarea a ejecutar.
+
+\end{comment}
+
+
+{\LARGE \textbf{TODO: Explicar como manejamos las tareas que estan corriendo (sched\_proximo\_indice)}}
 
 
 \subsubsection{Desalojo de tareas}
 \label{sec-desalojo}
+

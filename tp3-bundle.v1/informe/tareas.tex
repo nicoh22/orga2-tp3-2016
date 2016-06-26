@@ -1,4 +1,88 @@
 \subsection{Gestión de tareas}
 
+\textbf{REVISAR/REESCRIBIR DESDE ACA}
 
-{\LARGE \textbf{TODO: Explicar inicializacion de tss vacia, idle y función para llenar tss}}
+Para tareas usamos una inicial, con tss vacia, a donde metemos el contexto al momento de realizar el primer salto. Este salto lo hacemos justo despues de habilitar interrupciones y es la ultima linea de código de kernel que se ejecuta.\\
+
+Todos los descriptores de TSS que cargamos estan en el anillo de privilegio 0.
+La tss de la tarea inicial la cargamos vacía y ubicamos su descriptor en el indice 9 de la GDT.
+Para la tarea idle usamos un descriptor en el indice 10 de la gdt, apuntando a una tss donde definimos un contexto de kernel (esp a la base del stack de kernel, directorio de paginacion, segmentos de datos y codigo de kernel).\\
+\textbf{REVISAR/REESCRIBIR HASTA ACA}\\
+
+
+Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta matriz tiene dimensiones 3x15, para acomodar todas las tareas en juego. La primer coordenada se corresponde con el enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_max_index|, que devuelve 14 para tareas sanas, y 4 para los virus.
+El tipo de esta matriz es una estructura que llamamos \verb|task_info|.
+En ésta guardamos los siguientes campos:\\
+
+\textbf{METER ESTO EN UNA TABLA:}\\
+alive : flag para denotar si una tarea esta en juego. \\
+owner : dueño de la tarea. Utiliza el tipo enumerado \verb|task_type|\\
+x,y   : coordenadas en el mapa donde esta ubicada la tarea\\
+mapped\_x y mapped\_y : coordenadas en el mapa de la pagina mapeada por la tarea\\
+gdtIndex : indice de la gdt correspondiente a esta tarea\\
+
+Para manejar los TSSs de las tareas del juego optamos por una matriz, llamada \verb|tss_directory|, de la estructura \verb|tss|. Esta matriz tiene las mismas dimensiones que \verb|tareasInfo|, de manera que los indices de cada tss se corresponden con los de la tarea cuyo contexto representa. 
+\\
+
+Utilizamos también estos indices para definir en que posición de la GDT ubicamos el descriptor de TSS, correspondiendo cada posición válida en la matriz con una ubicación en la GDT. De esta manera, partiendo del indice 11 de la tabla de descriptores globales, los primeros 15 consecutivos corresponden a las tareas sanas, los siguientes 5 a tareas del virus A y los últimos 5 a tareas del virus B.
+En función de esto, para cada tarea de \verb|tareasInfo| calculamos su posición en la GDT con la siguiente formula: $ 11 + offset(tipo) + indice$\\
+
+
+Basándonos en estas variables y estructuras, al lanzar una tarea creamos su contexto a partir del tipo de tarea, su indice en \verb|tareasInfo|, su indice en la GDT, y la dirección de memoria física correspondiente a su posición en el mapa. 
+Para ello generamos un directorio de paginas siguiendo el procedimiento descrito en la sección \ref{sec-paginacion-tareas} y obtenemos una página de memoria libre para la pila de nivel 0 de la tarea. Luego cargamos su descriptor en la entrada de GDT indicada y llenamos la tss ubicada en \verb|tss_directory[tipo][indice]| con los siguientes datos:\\
+
+\textbf{METER ESTO EN UNA TABLA:}\\
+esp0 : pagina de memoria libre\\
+ss0  : seg datos kernel\\
+cr3  : dir paginas creado para la tarea\\
+eip  : 0x1000\\
+esp y ebp : final de la pagina de codigo de la tarea (0x8001000)\\
+regs de prop gral : 0\\
+flags : 0x202\\
+cs : seg codigo user\\
+ds y demas seg datos : seg datos user\\
+
+
+Al inicializar las estructuras del juego y scheduler, dejamos en 0 todos los campos de cada entrada en \verb|tareasInfo|. Hecho esto se lanzan las 15 tareas sanas en posiciones al azar dentro del mapa usando el procedimiento que describimos en esta sección. A continuación se detalla cómo implementamos los saltos entre tareas y utilizamos las estructuras que introducimos aquí.
+
+
+
+
+
+
+\begin{comment}
+4.6.
+Ejercicio 6
+
+
+a) Definir las entradas en la GDT que considere necesarias para ser usadas como descriptores
+de TSS. Minimamente, una para ser utilizada por la tarea inicial y otra para la tarea
+Idle. Sugerencia: Hacer una función para obtener entradas libres en la gdt.
+
+
+b) Completar la entrada de la TSS de la tarea Idle con la información de la tarea Idle. Esta
+información se encuentra en el archivo TSS.C. La tarea Idle se encuentra en la dirección
+0x00010000. La pila se alojará en la misma dirección que la pila del kernel y será mapeada
+con identity mapping. Esta tarea ocupa 1 pagina de 4KB y debe ser “mapeada” con identity
+mapping. Además la misma debe compartir el mismo CR3 que el kernel.
+
+
+c) Construir una función que complete una TSS libre con los datos correspondientes a una
+tarea. El código de las tareas se encuentra a partir de la dirección 0x00011000 ocupando
+una pagina de 4kb cada una según indica la figura 1. Para la dirección de la pila de
+nivel 3 se debe utilizar el mismo espacio de la tarea, la misma crecerá desde la base de
+la tarea. Para el mapa de memoria se debe construir uno nuevo utilizando la función
+mmu inicializar dir tarea. Además, tener en cuenta que cada tarea utilizará una pila
+distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin.
+
+
+d) Completar la entrada de la GDT correspondiente a la tarea inicial.
+
+
+e) Completar la entrada de la GDT correspondiente a la tarea Idle.
+
+
+f) Escribir el código necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
+TSS, entre la tarea inicial y la tarea Idle.
+
+\end{comment}
