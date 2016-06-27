@@ -1,11 +1,39 @@
 \subsection{Paginación}
 \label{sec-paginacion} 
 
-Para el manejo de páginas libres utilizamos el puntero \verb|proxima_pagina_libre| que denota la dirección de la próxima página libre, al que inicializamos apuntando al inicio del área libre, en la dirección \textit{0x100000}.
-Administramos este puntero con la función \verb|mmu_proxima_pagina_fisica_libre|, que devuelve un puntero a la proxima página e incrementa el valor de \verb|proxima_pagina_libre| en 4KB.
+Implementamos paginación de dos niveles, donde construimos las estructuras necesarias en  el area libre de memoria, que comienza en la dirección \textit{0x100000}.\\
+Para el manejo de páginas libres utilizamos el puntero \verb|proxima_pagina_libre| que denota la dirección de la próxima página libre, al que inicializamos apuntando al inicio del área libre.
+Administramos este puntero con la función \verb|mmu_proxima_pagina_fisica_libre|, que devuelve un puntero a la proxima página e incrementa el valor de \verb|proxima_pagina_libre| en 4KB.\\
+
+A través de estos mecanismos, una vez que ubicamos un directorio de páginas en una página libre, hacemos uso de las funciones \verb|mmu_mapear_pagina| y \verb|mmu_unmapear_pagina| para agregarle y sacarle mapeos de páginas.\\
+
+En la función \verb|mmu_mapear_pagina| tomamos los siguientes atributos:
+
+\textbf{METER ESTO EN UNA TABLA:}\\
+virtual :  dirección virtual a mapear\\
+cr3 :  la dirección física del page directory al que queremos agregar una página\\
+fisica :  una dirección física\\
+attr : los atributos a definir en las entradas de la tabla y directorio.\\
 
 
-{\LARGE \textbf{TODO: Explicar funciones mapear y desmapear}}\\
+A partir de estos parámetros, al mapear una página tenemos en cuenta primero si es necesario crear la entrada en el page directory, revisando el bit \textbf{P} de la entrada correspondiente a la dirección virtual.
+De ser así obtenemos una nueva página libre para la tabla de páginas, que inicializamos en 0 para todas sus entradas, y agregamos la entrada en el directorio apuntando a ella usando los atributos de \verb|attr|.
+Luego de obtener la page table, sea recién creada o previamente existente, asignamos la dirección física alineada a 4KB con los atributos pedidos a la entrada indicada por \verb|virtual|.
+Hecho esto quedan mapeadas las direcciones \verb|virtual| a \verb|fisica|, y llamamos a la función \verb|tblflush| para limpiar la TLB.\\
+
+
+En el contexto de este trabajo solo usamos los bits \textbf{P}, \textbf{R/W} y \textbf{U/S} de los atributos, que coinciden en ambas estructuras. 
+Como en el esquema que utilizamos no necesitamos entradas en tablas con atributos distintos a los definidos en la entrada de directorio correspondiente, usamos los atributos definidos en \verb|attr| para todas las estructuras requeridas en cada mapeo.
+Asimismo, como veremos en las secciones subsiguientes, el area libre esta mapeada por identity mapping para el kernel y todas las tareas. Debido a esto la dirección física del directorio de páginas se corresponde con su dirección virtual en todo contexto.\\
+
+Para la función \verb|mmu_unmapear_pagina| requerimos una dirección virtual y el directorio en el cual queremos deshacer el mapeo. 
+Con estos datos buscamos la entrada en el directorio, la cual de no estar presente no hacemos nada, y la entrada correspondiente en la tabla apuntada por ella.
+Anulamos ésta última, dejando todos sus bits en cero. 
+Luego verificamos si hay al menos una entrada presente en la tabla y de no ser así, anulamos también la entrada del page directory.
+Finalmente, limpaiamos la TLB con la función \verb|tblflush|.\\
+
+A continuación detallamos los procedimientos a través de los cuales construimos los directorios que usamos en este trabajo tanto para el kernel, como para las tareas del juego.
+
 
 \subsubsection{Directorio de kernel}
 Siguiendo las indicaciones del enunciado, para el directorio del kernel mapeamos las direcciones \textit{0x000000} a \textit{0x3FFFFF} usando \textit{identity mapping}.
