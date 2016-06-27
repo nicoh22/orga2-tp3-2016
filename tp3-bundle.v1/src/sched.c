@@ -15,13 +15,12 @@
 // segundo indice: nro de tarea
 task_info tareasInfo[3][15];
 
-unsigned short taskIndices[3];
+unsigned short tareasIndices[3];
 
 short currentType;
 short currentIndex;
 
-unsigned short enLaIdle;
-unsigned short indicesInicializados;
+unsigned short en_idle;
 
 char *tareaH = "Tarea H";
 char *tareaA = "Tarea A";
@@ -31,11 +30,11 @@ unsigned int rand_in_range(unsigned int min, unsigned int max) {
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
 
-unsigned short task_max_index(short current) {
+unsigned short task_type_max(short current) {
 	if (current == 0) {
-		return 14;
+		return 15;
 	} else {
-		return 4;
+		return 5;
 	}
 }
 
@@ -60,13 +59,12 @@ void print_saltando() {
 void sched_init() {
 	debugState = disableDebug;
 
-	enLaIdle = 1;
-	indicesInicializados = 0;
+	en_idle = 1;
 	currentType = 0;
 	currentIndex = 0;
 	int i, j;
 	for (i = 0; i < 3; i++) {
-		for (j = 0; j <= task_max_index(i); j++) {
+		for (j = 0; j < task_type_max(i); j++) {
 			tareasInfo[i][j].alive = 0;
 			tareasInfo[i][j].owner = 0;
 			tareasInfo[i][j].gdtIndex = 0;
@@ -75,7 +73,7 @@ void sched_init() {
 			tareasInfo[i][j].mapped_x = 0;
 			tareasInfo[i][j].mapped_y = 0;
 		}
-		taskIndices[i] = 0;
+		tareasIndices[i] = 0;
 	}
 
 	srand(0);
@@ -99,7 +97,7 @@ int task_type_gdt_offset(taskType tipo) {
 int sched_proximo_slot_tarea_libre(taskType tipo) {
 	int freeTaskIndex = -1;
 	int i = 0;
-	for (i = 0; i <= task_max_index(tipo); i++) {
+	for (i = 0; i < task_type_max(tipo); i++) {
 		if (!tareasInfo[tipo][i].alive) {
 			freeTaskIndex = i;
 			break;
@@ -130,29 +128,12 @@ void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y) {
 unsigned short sched_proximo_indice() {
 
 	// Estoy en la idle y previamente habia ocurrido una excepcion. No salto.
-	if (enLaIdle && debugState == enableDebugIntr) {
+	if (en_idle && debugState == enableDebugIntr) {
 		return 0;
 	}
 
-	// Manejamos el caso borde de que tenemos que saltar a la primer tarea
-	if (!indicesInicializados) {
-		indicesInicializados = 1;
-		// Saltamos a la primer tarea sana al empezar una partida
-		// siempre que exista. Sino nos quedamos en la idle
-		task_info info = tareasInfo[0][0];
-		if (info.alive) {
-			enLaIdle = 0;
-			return info.gdtIndex;
-		} else {
-			return 0;
-		}
-	}
-
 	// Buscamos una tarea viva de alguno de los tipos siguientes	
-	unsigned short nextType = currentType + 1;
-	if (nextType > 2) {
-		nextType = 0;
-	}
+	unsigned short nextType = ((currentType + 1) % 3);
 
 	// Iteramos 3 veces para volver a considerar el tipo actual si no
 	// encontramos tareas de otros tipos
@@ -160,57 +141,41 @@ unsigned short sched_proximo_indice() {
 	while (i < 3) {
 		// Para cada tipo loopeamos en los indices a partir del ultimo
 		// en el que quedamos
-		unsigned short currentIndexForType = taskIndices[nextType];
-		unsigned short nextIndex = taskIndices[nextType] + 1;
-
-		if (nextIndex > task_max_index(nextType)) {
-			nextIndex = 0;
-		}
+		unsigned short currentIndexForType = tareasIndices[nextType];
+		unsigned short nextIndex = (tareasIndices[nextType] + 1) % task_type_max(nextType) ;
 		while (nextIndex != currentIndexForType) {
 			task_info info = tareasInfo[nextType][nextIndex];
 			if (info.alive) {
-				taskIndices[nextType] = nextIndex;
+				en_idle = 0;
+				tareasIndices[nextType] = nextIndex;
 				currentType = nextType;
 				currentIndex = nextIndex;
-
-				////////////////// DEBUG /////////////////////
-
-				print_saltando();
-
-				////////////////// DEBUG /////////////////////
-
 				return info.gdtIndex;
 			}
-			nextIndex++;
-			if (nextIndex > task_max_index(nextType)) {
-				nextIndex = 0;
-			}
+			nextIndex = (nextIndex + 1) % task_type_max(nextType) ;
 		}
 
-		if (tareasInfo[nextType][currentIndexForType].alive) {
+		// Si la única tarea del tipo siguiente es la última que se ejecuto,
+		// saltamos a esa de todas formas.
+		// Como iteramos 3 veces para considerar el tipo actual: si hay solo 1 tarea de 1 tipo
+		// no saltamos.
+		if (tareasInfo[nextType][currentIndexForType].alive && nextType != currentType) {
+			en_idle = 0;
 			currentType = nextType;
 			currentIndex = currentIndexForType;
-			////////////////// DEBUG /////////////////////
-
-			print_saltando();
-
-			////////////////// DEBUG /////////////////////
 			return tareasInfo[nextType][currentIndexForType].gdtIndex;
 		}
 
-		nextType++;
-		if (nextType > 2) {
-			nextType = 0;
-		}
+		nextType = ((nextType + 1) % 3);
 		i++;
 	}
 
 	// Si no encontramos otra tarea viva a la que saltar, no saltamos
 	// => devolvemos 0
-	if (enLaIdle) {
+	if (en_idle) {
 		task_info info = tareasInfo[currentType][currentIndex];
 		if (info.alive) {
-			enLaIdle = 0;
+			en_idle = 0;
 			return info.gdtIndex;
 		}
 	}
@@ -240,12 +205,12 @@ unsigned int sched_desalojar_actual() {
 	// Solo bajamos el flag alive
 	// Podemos usar el resto de la informacion para limpiar la pantalla
 	actual->alive = 0;
-	enLaIdle = 1;
+	en_idle = 1;
 	return 0;
 }
 
 void sched_set_enLaIdle() {
-	enLaIdle = 1;
+	en_idle = 1;
 }
 
 task_info* sched_tarea_actual() {

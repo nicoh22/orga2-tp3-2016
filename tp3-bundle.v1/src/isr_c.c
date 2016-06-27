@@ -32,7 +32,7 @@ char* mensajesExcepcion[20] =
 };
 
 unsigned short manejar_syscall(unsigned int syscall, unsigned int param1, unsigned int param2){
-	enLaIdle = 1;
+	en_idle = 1;
    	switch(syscall){
 		case 0x124: game_donde( (unsigned int*) param1); break;
 		case 0xA6A: game_soy(param1); break;
@@ -51,7 +51,7 @@ void actualizar_puntos(){
 	jugadores[1].puntos = 0;
 	int i,j;
 		for(i = 0; i<3; i++){
-			for(j = 0; j<=task_max_index(i); j++){
+			for(j = 0; j<task_type_max(i); j++){
 				task_info* info = &tareasInfo[i][j];
 				if(info->alive){
 					// Usamos el offset -1 porque owner es task_type,
@@ -85,7 +85,7 @@ void game_tick(){
 		short i,j;
 
 		for(i = 1; i<3; i++){
-			for(j = 0; j<=task_max_index(i); j++){
+			for(j = 0; j<task_type_max(i); j++){
 				task_info* info = &tareasInfo[i][j];
 				if(info->alive){
 					screen_pintar_mapeo_tarea(info->owner,
@@ -101,7 +101,7 @@ void game_tick(){
 
 
 		for(i = 0; i<3; i++){
-			for(j = 0; j<=task_max_index(i); j++){
+			for(j = 0; j<task_type_max(i); j++){
 				task_info* info = &tareasInfo[i][j];
 				if(info->alive){
 					screen_pintar_tarea(info->owner,

@@ -10,7 +10,7 @@ Para la tarea idle usamos un descriptor en el indice 10 de la gdt, apuntando a u
 \textbf{REVISAR/REESCRIBIR HASTA ACA}\\
 
 
-Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta matriz tiene dimensiones 3x15, para acomodar todas las tareas en juego. La primer coordenada se corresponde con el enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_max_index|, que devuelve 14 para tareas sanas, y 4 para los virus.
+Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta matriz tiene dimensiones 3x15, para acomodar todas las tareas en juego. La primer coordenada se corresponde con el enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_type_max|, que devuelve 14 para tareas sanas, y 4 para los virus.
 El tipo de esta matriz es una estructura que llamamos \verb|task_info|.
 En ésta guardamos los siguientes campos:\\
 

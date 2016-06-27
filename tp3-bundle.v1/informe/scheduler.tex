@@ -1,5 +1,47 @@
 \subsection{Scheduler de tareas}
 
+Una vez terminada la configuración del procesador y construidas las estructuras necesarias, saltamos a la tarea idle. A partir de ese momento controlamos los saltos entre tareas a través de un scheduler.
+Como se mencionó en la sección \ref{sec-int-reloj}, en cada interrupción de reloj el código del scheduler decide si debe saltar, y de ser asi a que tarea, hasta el próximo tick de reloj.
+
+Manejamos esto con la función \verb|sched_proximo_indice|, que retorna el indice en la gdt de la tarea a la que se debe saltar, o cero si no es necesario cambiar de tarea. 
+
+Ésta se apoya en las siguientes variables: \\
+
+\verb|en_idle|, un flag que denota si el último salto fue a la tarea idle\\
+\verb|tareasIndices|, un arreglo de tres posiciones indexado por el enum \verb|task_type|, que guarda cual fué la última tarea que se ejecutó para cada tipo. Tambien nos referiremos a este como el indice actual para un tipo\\
+\verb|tareasInfo|, la estructura descrita en la sección anterior.
+\verb|currentType|, de tipo \verb|task_type|, que guarda el tipo de la tarea corriendo actualmente.\\
+\verb|currentIndex|, un entero que indica el indice de la tarea correindo actualmente.\\
+
+Estas variables se inicializan a la vez que \verb|tareasInfo|, con todos los valores en 0.
+En primer lugar controlamos si estamos en un estado de interrupción por debug, en cuyo caso no debe cambiarse de tarea. Más detalles sobre este comportamiento se describen en la sección \ref{sec-debug}.
+
+Para buscar el indice en la GDT de la próxima tarea iteramos circularmente tres veces, guardando en la variable \verb|nextType| el tipo que estamos considerando en cada iteración. Ésta variable toma inicialmente el tipo siguiente al actual, siguiendo el orden de tareas sanas luego virus A y por último virus B. Al ciclar tres veces, \verb|nextType| toma el valor del tipo actual en la última vuelta, para manejar el caso en que todas las tareas corriendo son del mismo tipo.
+
+A partir de esto, obtenemos el indice de la última tarea ejecutada para este tipo y partiendo de el, recorremos circularmente todos los indices válidos para el tipo en orden de menor a mayor, sin pasar por el último utilizado.
+
+Si la tarea correspondiente al par tipo-indice con los cuales estamos iterando tiene su flag \verb|alive| alto en \verb|tareasInfo|, bajamos el flag \verb|en_idle|, actualizamos las variables \verb|currentType| y \verb|currentIndex| al tipo e indice que encontramos, así como la entrada correspondiente en \verb|tareasIndices|, y devolvemos el indice en la GDT que almacenamos en \verb|tareasInfo|.
+\\
+
+Si al ciclar sobre los indices del tipo \verb|nextType| no encontramos ninguna tarea con indice distinto al actual y la entrada en \verb|tareasInfo[nextType][indiceActual]| tiene su indicador \verb|alive| en 1, estamos en un caso particular. 
+Esto se da cuando hay solo una tarea corriendo para un tipo en particular. 
+En esta situación cambiamos a esa tarea si su tipo es distinto al actual, para lo que indicamos que no estaremos en la tarea idle y actualizamos las variables de tipo e indice actuales antes de devolver el indice de la GDT correspondiente. \\
+Si por el contrario el tipo es el mismo que el actual y el campo \verb|alive| correspondiente es igual a 1, estamos en el caso en que solo hay una tarea corriendo, por lo que se sigue ejecutando y no necesitamos cambiar a otra. En estas circunstancias devolvemos 0, excepto que se estuviera ejecutando la tarea idle. Si así fuera, es necesario saltar a la única tarea existente, para lo que solo bajamos el flag \verb|en_idle| y retornamos el valor indice de la GDT almacenado para esa tarea.\\
+
+Siguiendo este procedimiento implementamos el comportamiento descrito las consignas de este trabajo para la distribución del tiempo de ejecución entre las tareas. A continuación detallamos los mecanismos que utilizamos para lanzar y dasalojar tareas.
+
+
+\subsubsection{Lanzado y desalojo de tareas}
+
+Como describimos en la sección anterior, dejando de lado el orden, el factor determinante para definir si se salta o no a una tarea es el campo \verb|alive| en su entrada correspondiente en \verb|tareasInfo|. Vale la pena recordar que, de acuerdo a lo mencionado en la sección \ref{sec-tareas}, este campo se deja en 0 al inicializar las estructuras.
+
+Tal como se describió en la sección \ref{sec-int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor.
+
+
+
+
+
+
 \begin{comment}
 4.7.
 Ejercicio 7
@@ -33,9 +75,5 @@ convertir direcciones de el mapa a direcciones fısicas o buscar la proxima tare
 \end{comment}
 
 
-{\LARGE \textbf{TODO: Explicar como manejamos las tareas que estan corriendo (sched\_proximo\_indice)}}
-
-
-\subsubsection{Desalojo de tareas}
 \label{sec-desalojo}
 
