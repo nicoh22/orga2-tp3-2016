@@ -2,7 +2,22 @@
 
 \subsubsection{Interrupción de reloj}
 
+\label{subsec:int-reloj}
+
+Cuando nos llega desde el PIC un tick de reloj, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Esto lo logramos llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:scheduler}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
+
+Tanto si cambiamos de tarea como si no, se llama a la funcion \verb|game_tick|, una funcion que por conveniencia decidimos escribirla en C y se encarga de mantener la consistencia entre el estado del juego y los datos mostrados en pantalla. Esto implica volver a pintar el fondo si se sale de modo debug (ver \ref{sec:modo_debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, sus relojes y p\´aginas mapeadas.
+
+
+
 \subsubsection{Interrupciones de teclado}
 
-\subsubsection{Servicios de sistema}
+El handler de interrupcion de teclado solo lee el puerto del teclado ($0x60$) y se lo pasa a la funcion \verb|atender_teclado|. Esta decide el curso de accion en base a la tecla presionada. 
 
+Las teclas 'w', 'a' , 's' y 'd' mueven al jugador 1 y las teclas 'i', 'j', 'k' y 'l' al jugador 2. Las teclas 'shift' permiten a los jugadores lanzar tareas. 
+
+Sin embargo estas teclas son ignoradas si se produjo una excepcion mientras el sistema se encontraba en modo debug. La tecla 'y' nos permite en todo momento activar o desactivar el modo debug.
+
+
+\subsubsection{Servicios de sistema}
+º
