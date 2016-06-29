@@ -27,4 +27,13 @@ Sin embargo estas teclas son ignoradas si se produjo una excepcion mientras el s
 
 
 \subsubsection{Servicios de sistema}
-º
+
+El handler de esta interrupcion pasa como parametros a la funcion \verb|manejar_syscall| los registros eax, ebx y ecx. Esta funcion setea el parametro global \verb|en_idle| ya que tanto en el caso de ejecutarse exitosamente la operacion requerida como no, debemos poner a correr la tarea idle. Luego chequeamos si la tarea nos paso correctamente el parametro \verb|syscall|, de no ser asi la tarea es desalojada. Caso contrario llamamos a la funcion correspondiente al servicio pedido. Estas funciones son responsables de verificar el/los parametros recibidos.
+%Para mas informacion sobre  las funciones encontradas en \verb|manejar_syscall| ver la seccion \ref{sec:game}
+
+%	Esto probablemente no va aca, quiza deberia haber una parte para hablar del game en si
+%	Ahi decir que es la estructura jugador y que contiene
+
+La funcion \verb|game_soy| recibe un parametro que determina si una tarea es roja, azul o verde. Se setea acoremente el parametro \verb|owner| de la tarea actual.
+\verb|game_donde| recibe un puntero, donde depositamos las coordenadas $(x,y)$ de la tarea en el mapa.
+\verb|game_mapear| recibe las coordenadas correspondientes a la pagina que la tarea desea mapear. Primero se verifica que sean coordenadas validas del mapa y se obtiene la direccion fisica de la pagina mediante \verb|xytofisica|. Si recibimos coordenadas invalidas, desalojamos a la tarea. Si no le pedimos a \verb|mmu_mapear_pagina| que mapee para la tarea actual la pagina deseada.
