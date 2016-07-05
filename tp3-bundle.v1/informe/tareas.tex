@@ -1,13 +1,26 @@
 \subsection{Gestión de tareas}
 
-\textbf{REVISAR/REESCRIBIR DESDE ACA}
+Tras definir y configurar las entradas en la IDT, construimos las estructuras que permiten saltar entre tareas.
+Para albergar el contexto previo al primer salto, con el objetivo de partir desde un contexto limpio, creamos un TSS vacío, agregamos su descriptor a la GDT en el indice 9.
+Hecho esto, lo apuntamos en el registro TR. De esta manera le estamos indicando al procesador en que segmento guardar el contexto una vez que saltemos a la primer tarea. 
+Este tss, que denominamos \verb|tss_inicial|, se carga con todos sus registros en 0 ya que no se saltará a el y no se modificará más allá de este primer salto.
 
-Para tareas usamos una inicial, con tss vacia, a donde metemos el contexto al momento de realizar el primer salto. Este salto lo hacemos justo despues de habilitar interrupciones y es la ultima linea de código de kernel que se ejecuta.\\
+La tarea que ejecutaremos incialmente será la Idle. Para poder cambiar a su contexto, definimos su TSS y agregamos el descriptor correspondiente a la GDT en el indice 10.
+En este segmento definimos los campos de la siguiente manera:
 
-Todos los descriptores de TSS que cargamos estan en el anillo de privilegio 0.
-La tss de la tarea inicial la cargamos vacía y ubicamos su descriptor en el indice 9 de la GDT.
-Para la tarea idle usamos un descriptor en el indice 10 de la gdt, apuntando a una tss donde definimos un contexto de kernel (esp a la base del stack de kernel, directorio de paginacion, segmentos de datos y codigo de kernel).\\
-\textbf{REVISAR/REESCRIBIR HASTA ACA}\\
+\textbf{METER ESTO EN UNA TABLA:}\\
+esp0 : base de stack de kernel\\
+ss0  : seg datos kernel\\
+cr3  : dir paginas kernel\\
+eip  : 0x1000\\
+esp y ebp : base del stack de kernel\\
+regs de prop gral : 0\\
+flags : 0x202\\
+cs : seg codigo kernel\\
+ds y demas seg datos : seg datos kernel\\
+
+
+Tanto para estos TSS, como para todos los de tareas lanzadas para el juego, usamos descriptores con nivel de privilegio cero y attributo presente en 1.\\\textbf{}
 
 
 Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta matriz tiene dimensiones 3x15, para acomodar todas las tareas en juego. La primer coordenada se corresponde con el enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_type_max|, que devuelve 14 para tareas sanas, y 4 para los virus.
