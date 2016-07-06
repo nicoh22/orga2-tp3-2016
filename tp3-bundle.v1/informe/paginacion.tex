@@ -9,11 +9,16 @@ A través de estos mecanismos, una vez que ubicamos un directorio de páginas en
 
 En la función \verb|mmu_mapear_pagina| tomamos los siguientes atributos:
 
-\textbf{METER ESTO EN UNA TABLA:}\\
-virtual :  dirección virtual a mapear\\
-cr3 :  la dirección física del page directory al que queremos agregar una página\\
-fisica :  una dirección física\\
-attr : los atributos a definir en las entradas de la tabla y directorio.\\
+
+\begin{center}
+	\begin{tabular}{r p{0.7\textwidth} }
+		\verb|virtual| : & Dirección virtual a mapear. \\
+		\verb|cr3| : & Dirección física del page directory al que queremos agregar una página.\\
+		\verb|fisica| : & Una dirección física. \\
+		\verb|attr| : & Atributos a definir en las entradas de la tabla y directorio.\\
+	\end{tabular}
+\end{center}
+\vspace{10pt}
 
 
 A partir de estos parámetros, al mapear una página tenemos en cuenta primero si es necesario crear la entrada en el page directory, revisando el bit \textbf{P} de la entrada correspondiente a la dirección virtual.

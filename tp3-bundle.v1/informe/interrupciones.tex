@@ -19,7 +19,7 @@ Esto implica volver a pintar el fondo si se sale de modo debug (ver seccion \ref
 
 
 \subsubsection{Interrupciones de teclado}
-
+\label{subsec:int-teclado}
 El handler de interrupcion de teclado solo lee el puerto del teclado ($0x60$) y se lo pasa a la funcion \verb|atender_teclado|. Esta decide el curso de accion en base a la tecla presionada. 
 
 Las teclas 'w', 'a' , 's' y 'd' mueven al jugador 1 y las teclas 'i', 'j', 'k' y 'l' al jugador 2. Las teclas 'shift' permiten a los jugadores lanzar tareas. Las funciones que realizan estas funciones son desarrooladas en la seccion \ref{sec:game}. 

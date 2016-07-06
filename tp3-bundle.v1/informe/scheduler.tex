@@ -6,15 +6,19 @@ Como se mencionó en la sección \ref{subsec:int-reloj}, en cada interrupción d
 Manejamos esto con la función \verb|sched_proximo_indice|, que retorna el indice en la gdt de la tarea a la que se debe saltar, o cero si no es necesario cambiar de tarea. 
 
 Ésta se apoya en las siguientes variables: \\
-
-\verb|en_idle|, un flag que denota si el último salto fue a la tarea idle\\
-\verb|tareasIndices|, un arreglo de tres posiciones indexado por el enum \verb|task_type|, que guarda cual fué la última tarea que se ejecutó para cada tipo. Tambien nos referiremos a este como el indice actual para un tipo\\
-\verb|tareasInfo|, la estructura descrita en la sección anterior.
-\verb|currentType|, de tipo \verb|task_type|, que guarda el tipo de la tarea corriendo actualmente.\\
-\verb|currentIndex|, un entero que indica el indice de la tarea correindo actualmente.\\
+\begin{center}
+\begin{tabular}{r p{0.7\textwidth} }
+	\verb|en_idle| : & Flag que denota si el último salto fue a la tarea idle. \\
+	\verb|tareasIndices| : & Arreglo de tres posiciones indexado por el enum \verb|task_type|, que guarda cual fué la última tarea que se ejecutó para cada tipo. Tambien nos referiremos a este como el indice actual para un tipo.\\
+	\verb|tareasInfo| : & La estructura descrita en la sección anterior (ver \ref{sec-tss-tareasInfo}). \\
+	\verb|currentType| : & Variable de tipo \verb|task_type| que guarda el tipo de la tarea corriendo actualmente.\\
+	\verb|currentIndex| : & Entero que indica el indice de la tarea correindo actualmente.\\
+\end{tabular}
+\end{center}
+\vspace{10pt}
 
 Estas variables se inicializan a la vez que \verb|tareasInfo|, con todos los valores en 0.
-En primer lugar controlamos si estamos en un estado de interrupción por debug, en cuyo caso no debe cambiarse de tarea. Más detalles sobre este comportamiento se describen en la sección \ref{sec-debug}.
+En primer lugar controlamos si estamos en un estado de interrupción por debug, en cuyo caso no debe cambiarse de tarea. Más detalles sobre este comportamiento se describen en la sección \ref{sec:debug}.
 
 Para buscar el indice en la GDT de la próxima tarea iteramos circularmente tres veces, guardando en la variable \verb|nextType| el tipo que estamos considerando en cada iteración. Ésta variable toma inicialmente el tipo siguiente al actual, siguiendo el orden de tareas sanas luego virus A y por último virus B. Al ciclar tres veces, \verb|nextType| toma el valor del tipo actual en la última vuelta, para manejar el caso en que todas las tareas corriendo son del mismo tipo.
 
@@ -33,9 +37,9 @@ Siguiendo este procedimiento implementamos el comportamiento descrito las consig
 
 \subsubsection{Lanzado y desalojo de tareas}
 
-Como describimos en la sección anterior, dejando de lado el orden, el factor determinante para definir si se salta o no a una tarea es el campo \verb|alive| en su entrada correspondiente en \verb|tareasInfo|. Vale la pena recordar que, de acuerdo a lo mencionado en la sección \ref{sec-tareas}, este campo se deja en 0 al inicializar las estructuras.
+Como describimos en la sección anterior, dejando de lado el orden, el factor determinante para definir si se salta o no a una tarea es el campo \verb|alive| en su entrada correspondiente en \verb|tareasInfo|. Vale la pena recordar que, de acuerdo a lo mencionado en la sección \ref{sec:tss-tareasInfo-init}, este campo se deja en 0 al inicializar las estructuras.
 
-Tal como se describió en la sección \ref{sec-int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor.
+Tal como se describió en la sección \ref{subsec:int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor.
 
 
 

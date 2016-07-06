@@ -8,54 +8,94 @@ Este tss, que denominamos \verb|tss_inicial|, se carga con todos sus registros e
 La tarea que ejecutaremos incialmente será la Idle. Para poder cambiar a su contexto, definimos su TSS y agregamos el descriptor correspondiente a la GDT en el indice 10.
 En este segmento definimos los campos de la siguiente manera:
 
-\textbf{METER ESTO EN UNA TABLA:}\\
-esp0 : base de stack de kernel\\
-ss0  : seg datos kernel\\
-cr3  : dir paginas kernel\\
-eip  : 0x1000\\
-esp y ebp : base del stack de kernel\\
-regs de prop gral : 0\\
-flags : 0x202\\
-cs : seg codigo kernel\\
-ds y demas seg datos : seg datos kernel\\
+
+\begin{center}
+\begin{tabular}{ |c| c | }
+\hline
+\verb|esp0| & Base de stack de kernel\\
+\hline
+\verb|ss0|  & Segmento de datos de kernel\\
+\hline
+\verb|cr3|  & Directorio de páginas de kernel\\
+\hline
+\verb|eip|  & \verb|0x1000|\\
+\hline
+\verb|esp|  & Base del stack de kernel\\
+\hline
+\verb|ebp|  & Base del stack de kernel\\
+\hline
+Registros prop. gral. & \verb|0|\\
+\hline
+\verb|eflags| & \verb|0x202|\\
+\hline
+\verb|cs| & Segmento de código de kernel\\
+\hline
+Segmentos de datos & Segmento de datos de kernel\\
+\hline
+\end{tabular}
+\end{center}
+
 
 
 Tanto para estos TSS, como para todos los de tareas lanzadas para el juego, usamos descriptores con nivel de privilegio cero y attributo presente en 1.\\\textbf{}
 
-
-Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta matriz tiene dimensiones 3x15, para acomodar todas las tareas en juego. La primer coordenada se corresponde con el enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_type_max|, que devuelve 14 para tareas sanas, y 4 para los virus.
+\label{sec-tss-tareasInfo}
+Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta tiene dimensiones $3\times15$, para acomodar todas las tareas en juego. La primer coordenada se corresponde con los primeros tres valores del enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. 
+Siempre que se accede guardamos el recaudo de mantenernos solo en los indices válidos para cada tipo de acuerdo a la función \verb|task_type_max| que devuelve la máxima cantidad de tareas de la clase indicada. 
 El tipo de esta matriz es una estructura que llamamos \verb|task_info|.
 En ésta guardamos los siguientes campos:\\
 
-\textbf{METER ESTO EN UNA TABLA:}\\
-alive : flag para denotar si una tarea esta en juego. \\
-owner : dueño de la tarea. Utiliza el tipo enumerado \verb|task_type|\\
-x,y   : coordenadas en el mapa donde esta ubicada la tarea\\
-mapped\_x y mapped\_y : coordenadas en el mapa de la pagina mapeada por la tarea\\
-gdtIndex : indice de la gdt correspondiente a esta tarea\\
+
+\begin{center}
+	\begin{tabular}{r p{0.7\textwidth} }
+		\verb|alive| : & Flag para denotar si una tarea esta en juego. \\
+		\verb|owner| : & Dueño de la tarea. Utiliza el tipo enumerado \verb|task_type|\\
+		\verb|x| e \verb|y| : & Coordenadas en el mapa donde esta ubicada la tarea\\
+		\verb|mapped_x| y \verb|mapped_y| : & Coordenadas en el mapa de la pagina mapeada por la tarea\\
+		\verb|gdtIndex| : & Indice de la gdt correspondiente a esta tarea\\
+	\end{tabular}
+\end{center}
+\vspace{10pt}
 
 Para manejar los TSSs de las tareas del juego optamos por una matriz, llamada \verb|tss_directory|, de la estructura \verb|tss|. Esta matriz tiene las mismas dimensiones que \verb|tareasInfo|, de manera que los indices de cada tss se corresponden con los de la tarea cuyo contexto representa. 
 \\
 
 Utilizamos también estos indices para definir en que posición de la GDT ubicamos el descriptor de TSS, correspondiendo cada posición válida en la matriz con una ubicación en la GDT. De esta manera, partiendo del indice 11 de la tabla de descriptores globales, los primeros 15 consecutivos corresponden a las tareas sanas, los siguientes 5 a tareas del virus A y los últimos 5 a tareas del virus B.
-En función de esto, para cada tarea de \verb|tareasInfo| calculamos su posición en la GDT con la siguiente formula: $ 11 + offset(tipo) + indice$\\
+En función de esto, para cada tarea de \verb|tareasInfo| calculamos su posición en la GDT con la siguiente formula: $ 11 + offset(tipo) + indice$.\\
 
 
 Basándonos en estas variables y estructuras, al lanzar una tarea creamos su contexto a partir del tipo de tarea, su indice en \verb|tareasInfo|, su indice en la GDT, y la dirección de memoria física correspondiente a su posición en el mapa. 
 Para ello generamos un directorio de paginas siguiendo el procedimiento descrito en la sección \ref{sec-paginacion-tareas} y obtenemos una página de memoria libre para la pila de nivel 0 de la tarea. Luego cargamos su descriptor en la entrada de GDT indicada y llenamos la tss ubicada en \verb|tss_directory[tipo][indice]| con los siguientes datos:\\
 
-\textbf{METER ESTO EN UNA TABLA:}\\
-esp0 : pagina de memoria libre\\
-ss0  : seg datos kernel\\
-cr3  : dir paginas creado para la tarea\\
-eip  : 0x1000\\
-esp y ebp : final de la pagina de codigo de la tarea (0x8001000)\\
-regs de prop gral : 0\\
-flags : 0x202\\
-cs : seg codigo user\\
-ds y demas seg datos : seg datos user\\
+
+\begin{center}
+	\begin{tabular}{ |c| c | }
+		\hline
+		\verb|esp0| & Página de memoria libre\\
+		\hline
+		\verb|ss0|  & Segmento de datos de kernel\\
+		\hline
+		\verb|cr3|  & Directorio de páginas de la tarea\\
+		\hline
+		\verb|eip|  & \verb|0x1000|\\
+		\hline
+		\verb|esp|  & \verb|0x8001000|\\
+		\hline
+		\verb|ebp|  & \verb|0x8001000|\\
+		\hline
+		Registros prop. gral. & \verb|0|\\
+		\hline
+		\verb|eflags| & \verb|0x202|\\
+		\hline
+		\verb|cs| & Segmento de código de usuario\\
+		\hline
+		Segmentos de datos & Segmento de datos de usuario\\
+		\hline
+	\end{tabular}
+\end{center}
 
 
+\label{sec:tss-tareasInfo-init}
 Al inicializar las estructuras del juego y scheduler, dejamos en 0 todos los campos de cada entrada en \verb|tareasInfo|. Hecho esto se lanzan las 15 tareas sanas en posiciones al azar dentro del mapa usando el procedimiento que describimos en esta sección. A continuación se detalla cómo implementamos los saltos entre tareas y utilizamos las estructuras que introducimos aquí.
 
 

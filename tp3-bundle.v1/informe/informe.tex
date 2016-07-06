@@ -20,7 +20,7 @@
 \usepackage{charter}   % tipografia
 \usepackage{graphicx}
 \usepackage{comment}
-%\usepackage{makeidx}
+\usepackage{tabularx}
 \usepackage{paralist} %itemize inline
 
 %\usepackage{float}
@@ -36,6 +36,8 @@
 \usepackage{underscore}
 \usepackage{caratula}
 \usepackage{url}
+\usepackage[colorlinks,citecolor=black,filecolor=black,linkcolor=black,    urlcolor=black]{hyperref}
+
 
 
 % ********************************************************* %
@@ -95,8 +97,9 @@
 \submateria{Segundo Cuatrimestre de 2014}
 \titulo{Trabajo Práctico II}
 \subtitulo{subtitulo del trabajo}
-\integrante{Nombre}{XXX/XX}{mail}
-\integrante{Nombre}{XXX/XX}{mail}
+\integrante{Esquivel, Federico Nicolás}{915/12}{alt.juss@gmail.com}
+\integrante{Hernandez, Nicolás}{XXX/XX}{nicoh22@hotmail.com}
+\integrante{Karbopel, Rodrigo}{XXX/XX}{rok\_35@live.com.ar}
 
 \maketitle
 \newpage
@@ -118,7 +121,7 @@ En el presente trabajo se describe la problemática de ...
 
 \section{Objetivos generales}
 
-El objetivo de este Trabajo Práctico es ...
+En este trabajo buscamos activar todos los sistemas para que un procesador trabaje en modo multi-tarea. Partiendo del estado en que el bootloader nos entrega el control, completaremos las estructuras necesarias para pasar a modo protegido, incorporar paginación, manejar excepciones e interrupciones, lanzar tareas y distribuir los recursos del procesador entre ellas.
 
 
 \input{desarrollo.tex}
