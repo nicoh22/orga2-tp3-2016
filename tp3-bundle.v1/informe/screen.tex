@@ -1,0 +1,22 @@
+\subsection{Pantalla}
+
+Tratamos de mantener el codigo que maneja el estado de la pantalla lo más modular posible. Es decir, evitar leer/modificar estructuras ajenas  y que las demas secciones de nuestro codigo no tengan que conocer exactamente como esta compuesta la pantalla.\\
+
+Logramos esto proveyendo desde  \verb|screen.c| funciones que realizan de mediadoras entre la memoria de video y las estructuras del juego. Estas funciones no reciben como parametros ninguna estructura, sino identificadores basicos que den la informacion necesaria.\\
+
+\verb|screen_pintar_tarea|: Recibe tipo de tarea y el $x$ e $y$ que esta ocupa en el mapa (notar que esto es diferente al $x$ e $y$ que ocupa en la pantalla).\\
+
+\verb|screen_pintar_jugador|: Recibe el indice de jugador (jugadorA o jugadorB) y su posicion en el mapa.\\
+
+\verb|screen_pintar_mapeo_tarea|: Pinta la pagina extra de una tarea.Recibe posicion en el mapa de la pagina y tipo de tarea.\\
+
+\verb|screen_limpiar_posicion|: Limpia una posicion del mapa (la pinta de gris claro).\\
+
+\verb|screen_actualizar_puntos|: Recibe los puntos de los jugadores y los imprime en pantalla.\\
+
+\verb|screen_actualizar_vidas|: Recibe \verb|tareas_restantes| de ambos jugadores y los imprime.\\
+
+\verb|screen_actualizar_reloj_tarea|: Recibe el tipo de tarea, el indice (este mismo indice se usa en el scheduler), si esta viva o no la tarea y el dueño actual de la tarea (quien la infecto). Se posee una matriz \verb|clock_State| que indica el ultimo estado de reloj de la tarea, se modifica este estado por el siguiente (este orden definido en el arreglo \verb|clock|) y se lo imprime en pantalla.\\
+
+\verb|screen_imprimir_log|: Imprime el log correspondiente al modo debug. Recibe un puntero a la pila. De alli se extraen en orden los parametros a imprimir.\\
+
