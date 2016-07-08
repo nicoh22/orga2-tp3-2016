@@ -250,7 +250,7 @@ void screen_actualizar_vidas(unsigned short vidasA, unsigned short vidasB){
 	print_int(vidasB, 65, 47, C_BG_BLACK | C_FG_WHITE);
 }
 
-void imprimir_log(unsigned int *espPtr) {
+void screen_imprimir_log(unsigned int *espPtr) {
 	
 	unsigned int stack4 = espPtr[0];
 	unsigned int stack3 = espPtr[1];

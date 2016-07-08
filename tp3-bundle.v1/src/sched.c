@@ -57,7 +57,7 @@ void print_saltando() {
 }
 
 void sched_init() {
-	debugState = disableDebug;
+	debugState = debugDisabled;
 
 	en_idle = 1;
 	currentType = 0;
@@ -128,7 +128,7 @@ void sched_lanzar_tareas(taskType tipo, unsigned short x, unsigned short y) {
 unsigned short sched_proximo_indice() {
 
 	// Estoy en la idle y previamente habia ocurrido una excepcion. No salto.
-	if (en_idle && debugState == enableDebugIntr) {
+	if (en_idle && debugState == debugInterrupted) {
 		return 0;
 	}
 

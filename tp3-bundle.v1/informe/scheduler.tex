@@ -37,9 +37,16 @@ Siguiendo este procedimiento implementamos el comportamiento descrito las consig
 
 \subsubsection{Lanzado y desalojo de tareas}
 
-Como describimos en la sección anterior, dejando de lado el orden, el factor determinante para definir si se salta o no a una tarea es el campo \verb|alive| en su entrada correspondiente en \verb|tareasInfo|. Vale la pena recordar que, de acuerdo a lo mencionado en la sección \ref{sec:tss-tareasInfo-init}, este campo se deja en 0 al inicializar las estructuras.
+Como describimos en la sección anterior, dejando de lado el orden, el factor determinante para definir si se salta o no a una tarea es el campo \verb|alive| en su entrada correspondiente en \verb|tareasInfo|. 
+Vale la pena recordar que, de acuerdo a lo mencionado en la sección \ref{sec:tss-tareasInfo-init}, este campo se deja en 0 al inicializar las estructuras.
+En consecuencia, para desalojar tareas desarrollamos la función \verb|sched_desalojar_actual|, que baja el flag \verb|alive| de la taera actual (de acuerdo a \verb|currentType| y \verb|currentIndex|), y sube \verb|en_idle|, indicando que pasamos a ejecutar la tarea idle.
 
-Tal como se describió en la sección \ref{subsec:int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor.
+Esta función siempre se ejecuta a partir de una interrupción, y queda como responsabilidad del handler realizar el salto a la tarea idle. Dichos handlers pueden ser las rutinas de atención para excepciones o bien la rutina de atención para las syscalls.\\
+
+
+
+Tal como se describió en la sección \ref{subsec:int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor. 
+Para ello 
 
 
 

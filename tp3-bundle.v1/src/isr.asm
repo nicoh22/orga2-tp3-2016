@@ -34,7 +34,7 @@ extern sched_tarea_actual_owner
 ;; Screen
 extern print
 extern mensajesExcepcion
-extern imprimir_log
+extern screen_imprimir_log
 
 ;; Rutinas de atencion de alto nivel
 extern atender_teclado 
@@ -42,7 +42,7 @@ extern manejar_syscall
 extern game_tick
 
 ;; Debug
-extern enableDebugIntrMode
+extern debug_set_interrupted
 
 ;;
 ;; Definición de MACROS
@@ -61,8 +61,9 @@ _isr%1:
     ; eip
     ; error code
     push eax
-    call enableDebugIntrMode
+    call debug_set_interrupted 
     cmp eax, 1
+    ; si se puede interrumpir por debug, continuamos
     jne _isr%1.debugDisable
     push ebx
     mov ebx, [esp + 24] ; esp nivel 3
@@ -73,7 +74,7 @@ _isr%1:
     push ebp
     xor ecx, ecx
     mov cx, ds
-    push ecx ; ds = ss = fs = gs? gdt index user data EBOLA: en teoria no puede cambiar...
+    push ecx ; ds = ss = fs = gs? gdt index user data 
     mov cx, es
     push ecx
     mov cx, fs
@@ -101,11 +102,11 @@ _isr%1:
     mov ecx, [ebx + 16] ; stack4
     push ecx
     push esp
-    call imprimir_log
+    call screen_imprimir_log
 
 _isr%1.debugDisable:
 
-    mov eax, %1
+    	mov eax, %1
 	shl eax, 2
 	mov eax, [eax + mensajesExcepcion]
 	

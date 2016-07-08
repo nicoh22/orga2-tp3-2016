@@ -6,7 +6,7 @@ Hecho esto, lo apuntamos en el registro TR. De esta manera le estamos indicando 
 Este tss, que denominamos \verb|tss_inicial|, se carga con todos sus registros en 0 ya que no se saltará a el y no se modificará más allá de este primer salto.
 
 La tarea que ejecutaremos incialmente será la Idle. Para poder cambiar a su contexto, definimos su TSS y agregamos el descriptor correspondiente a la GDT en el indice 10.
-En este segmento definimos los campos de la siguiente manera:
+En este segmento definimos los campos de la siguiente manera:\\
 
 
 \begin{center}
@@ -34,10 +34,10 @@ Segmentos de datos & Segmento de datos de kernel\\
 \hline
 \end{tabular}
 \end{center}
+\vspace{10pt}
 
 
-
-Tanto para estos TSS, como para todos los de tareas lanzadas para el juego, usamos descriptores con nivel de privilegio cero y attributo presente en 1.\\\textbf{}
+Tanto para estos TSS, como para todos los de tareas lanzadas para el juego, usamos descriptores con nivel de privilegio cero y attributo presente en uno.\\\textbf{}
 
 \label{sec-tss-tareasInfo}
 Para gestionar el estado de las tareas del juego utilizamos una matriz, \verb|tareasInfo|. Esta tiene dimensiones $3\times15$, para acomodar todas las tareas en juego. La primer coordenada se corresponde con los primeros tres valores del enum \verb|task_type|, mientras que la segunda indica el indice o id de tarea. 
@@ -63,7 +63,7 @@ Para manejar los TSSs de las tareas del juego optamos por una matriz, llamada \v
 Utilizamos también estos indices para definir en que posición de la GDT ubicamos el descriptor de TSS, correspondiendo cada posición válida en la matriz con una ubicación en la GDT. De esta manera, partiendo del indice 11 de la tabla de descriptores globales, los primeros 15 consecutivos corresponden a las tareas sanas, los siguientes 5 a tareas del virus A y los últimos 5 a tareas del virus B.
 En función de esto, para cada tarea de \verb|tareasInfo| calculamos su posición en la GDT con la siguiente formula: $ 11 + offset(tipo) + indice$.\\
 
-
+\label{subsec:tss-lanzar}
 Basándonos en estas variables y estructuras, al lanzar una tarea creamos su contexto a partir del tipo de tarea, su indice en \verb|tareasInfo|, su indice en la GDT, y la dirección de memoria física correspondiente a su posición en el mapa. 
 Para ello generamos un directorio de paginas siguiendo el procedimiento descrito en la sección \ref{sec-paginacion-tareas} y obtenemos una página de memoria libre para la pila de nivel 0 de la tarea. Luego cargamos su descriptor en la entrada de GDT indicada y llenamos la tss ubicada en \verb|tss_directory[tipo][indice]| con los siguientes datos:\\
 
@@ -93,7 +93,7 @@ Para ello generamos un directorio de paginas siguiendo el procedimiento descrito
 		\hline
 	\end{tabular}
 \end{center}
-
+\vspace{10pt}
 
 \label{sec:tss-tareasInfo-init}
 Al inicializar las estructuras del juego y scheduler, dejamos en 0 todos los campos de cada entrada en \verb|tareasInfo|. Hecho esto se lanzan las 15 tareas sanas en posiciones al azar dentro del mapa usando el procedimiento que describimos en esta sección. A continuación se detalla cómo implementamos los saltos entre tareas y utilizamos las estructuras que introducimos aquí.

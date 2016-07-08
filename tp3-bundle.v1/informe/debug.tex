@@ -1,0 +1,19 @@
+\subsection{Modo debug}
+
+De acuerdo a lo solicitado implementamos un modo debug que nos permite visualizar el estado de los registros y la pila al momento que se produce una excepción en una tarea, justo antes de que ésta sea desalojada.
+
+Para ello utilizamos la variable \verb|debugState|, del tipo enumerado \verb|debug_state_type|, que define los estados del mecanismo de debug.
+Estos estados son \verb|debugEnabled|, que indica que el estado de la próxima excepción será visualizado por pantalla, interrumpiendo momentaneamente el flujo del juego; \verb|debugInterrupted|, el estado al que se pasa cuando ocurre una excepción que debemos mostrar; y \verb|debugDisabled|, que denota el estado normal, en el cual no se detiene la ejecución de tareas al ocurrir una excepción. Este último es el estado inicial del juego.
+
+Cuando se presiona la tecla 'y', usamos la función \verb|debug_switch_state| para controlar el estado al que debe pasar \verb|debugState|. En ella, si el modo debug esta deshabilitado, lo habilitamos. Si por el contrario, el valor de \verb|debugState| es \verb|debugEnabled|, lo deshabilitamos.
+De estar en estado interrumpido, lo pasamos a habilitado para continuar la ejecución hasta la próxima excepción. 
+En esta situación también indicamos que debemos redibujar la pantalla mostrar correctamente la sección del mapa que ocupa la tabla de visualización de registros.
+
+De esta manera, el usuario solo es capaz de cambiar el estado de \verb|debugState| a habilitado o deshabilitado, dependiendo de su valor previo. Únicamente los handlers de excepciones pueden cambiar el estado a interrumpido. Logramos esto llamando a la función \verb|debug_set_interrupted| al entrar en uno de ellos. 
+Esta función pasa \verb|debugStat| a estado interrumpido y devuelve $1$ si previamente el estado era habilitado. De lo contrario devuelve $0$, indicando que no debemos interrumpir la ejecución.
+
+Si el handler recibe un $1$ de \verb|debug_set_interrupted|, encola todos los registros de propósito general, los selectores de segmento, registros de control y las últimas cuatro posiciones de la pila de la tarea. Hecho esto, llama a la función \verb|screen_imprimir_log|, que muestra en pantalla una tabla con toda esta información.
+Al retornar mostramos el nombre de la excepción en la esquina superior izquierda, desalojamos la tarea causante y saltamos a la tarea idle.
+
+De acuerdo a lo que mencionamos en la sección \ref{sec:sched}, mientras \verb|debugState| tenga el valor \verb|debugInterrupted|, no se producen cambios de tarea en la interrupción de reloj.
+

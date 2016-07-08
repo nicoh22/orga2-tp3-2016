@@ -4,7 +4,7 @@
 #include "screen.h"
 #include "sched.h"
 
-void controlDebugMode();
+void debug_switch_state();
 unsigned char redraw = 0;
 debugStateType debugState;
 
@@ -72,7 +72,7 @@ void game_tick(){
 	// Actualizar puntos
 	// Actualizar vidas
 	
-	if(debugState != enableDebugIntr){
+	if(debugState != debugInterrupted){
 		if(redraw){
 			redraw = 0;
 			screen_pintar_fondo();
@@ -148,7 +148,7 @@ void game_tick(){
 void atender_teclado(unsigned char tecla){
 
     //Ocurrio una excepcion. Estoy en la idle y apreto una tecla. La ignoro.
-    if (debugState == enableDebugIntr && tecla != KB_y) {
+    if (debugState == debugInterrupted && tecla != KB_y) {
         return;
     }
 	
@@ -168,27 +168,28 @@ void atender_teclado(unsigned char tecla){
 		case KB_shiftL: game_lanzar(0); break;
 		case KB_shiftR: game_lanzar(1); break;
 		
-		case KB_y: controlDebugMode(); break;
+		case KB_y: debug_switch_state(); break;
 		default: break;
 	}
 }
 
-void controlDebugMode() {
-	if (debugState == enableDebug) {
-		debugState = disableDebug;
-	}else if (debugState == disableDebug){
-		debugState = enableDebug;
-	}else if(debugState == enableDebugIntr) {
-		debugState = enableDebug;
+void debug_switch_state() {
+	if (debugState == debugEnabled) {
+		debugState = debugDisabled;
+	}else if (debugState == debugDisabled){
+		debugState = debugEnabled;
+	}else if(debugState == debugInterrupted) {
+		debugState = debugEnabled;
 		redraw = 1;
 	}
 
 }
 
 // retorno 1 o 0 para indicar al llamador que estaba en modo debug y puede printear el log
-int enableDebugIntrMode() {
-    if (debugState == enableDebug) {
-        debugState = enableDebugIntr;
+int debug_set_interrupted() {
+	// Si ya esta en estado debug, pasamos a estado interrumpido, sino no hacemos nada
+    if (debugState == debugEnabled) {
+        debugState = debugInterrupted;
         return 1;
     }
     return 0;

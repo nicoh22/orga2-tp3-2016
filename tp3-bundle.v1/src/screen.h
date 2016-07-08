@@ -43,7 +43,7 @@ extern void inicializar_interfaz();
 
 extern void print_alligned_right(const char * text);
 
-extern void imprimir_log(unsigned int *esp);
+extern void screen_imprimir_log(unsigned int *esp);
 
 void screen_pintar_fondo();
 

@@ -37,6 +37,6 @@ void _isr32();
 void _isr33();
 void _isr102();
 
-extern int enableDebugIntrMode();
+extern int debug_set_interrupted();
 
 #endif  /* !__ISR_H__ */
