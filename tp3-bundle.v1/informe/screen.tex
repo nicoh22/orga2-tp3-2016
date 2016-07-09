@@ -2,7 +2,8 @@
 
 Tratamos de mantener el codigo que maneja el estado de la pantalla lo más modular posible. Es decir, evitar leer/modificar estructuras ajenas  y que las demas secciones de nuestro codigo no tengan que conocer exactamente como esta compuesta la pantalla.\\
 
-Logramos esto proveyendo desde  \verb|screen.c| funciones que realizan de mediadoras entre la memoria de video y las estructuras del juego. Estas funciones no reciben como parametros ninguna estructura, sino identificadores basicos que den la informacion necesaria.\\
+Logramos esto proveyendo desde  \verb|screen.c| funciones que realizan de mediadoras entre la memoria de video y las estructuras del juego. Estas funciones no reciben como parametros ninguna estructura, sino identificadores basicos que den la informacion necesaria. Cabe destacar también que, para mantener consistencia entre los datos mostradas en pantalla y el estado del juego, la mayoría de estas funciones son llamadas en la rutina de atención del reloj (ver \ref{subsec:int-reloj}).\\
+
 
 \verb|screen_pintar_tarea|: Recibe tipo de tarea y el $x$ e $y$ que esta ocupa en el mapa (notar que esto es diferente al $x$ e $y$ que ocupa en la pantalla).\\
 

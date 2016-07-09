@@ -1,5 +1,6 @@
 \subsection{Scheduler de tareas}
 
+\label{sec:sched}
 Una vez terminada la configuración del procesador y construidas las estructuras necesarias, saltamos a la tarea idle. A partir de ese momento controlamos los saltos entre tareas a través de un scheduler.
 Como se mencionó en la sección \ref{subsec:int-reloj}, en cada interrupción de reloj el código del scheduler decide si debe saltar, y de ser asi a que tarea, hasta el próximo tick de reloj.
 

@@ -26,10 +26,9 @@ jugador jugadores[2];
 
 \subsubsection{Interaccion con el usuario}
 
-%TODO meter referencias al scheduler
 
 Las siguientes rutinas hacen de interfaz con los eventos de teclado que podemos recibir. El kernel recibe las teclas pulsadas y decide el curso de accion. 
-En caso de la tecla pulsada ser un "shift" se llama a la funcion \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser asi, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posicion actual del jugador.
+En caso de la tecla pulsada ser un "shift" se llama a la funcion \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser asi, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posicion actual del jugador. En la seccion \ref{sec:sched} se define lo que implica lanzar una tarea,
 
 Si las teclas pulsadas fueron las de movimiento, el kernel se encarga de transformarlas a un indice de jugador y una direccion. Representamos las direcciones con el siguiente tipo enumerado:
 
