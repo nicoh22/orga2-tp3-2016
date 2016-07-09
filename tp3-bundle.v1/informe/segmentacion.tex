@@ -1,16 +1,33 @@
 
-\subsection{Segmentación y manejo de excepciones}
+\subsection{Segmentación y activación de modo protegido}
 
-De acuerdo a lo indicado en el enunciado, definimos segmentos de código y datos en la GDT a partir del indice 4, un par con privilegios de kernel y otro con privilegios de usuario. 
+De acuerdo a lo indicado en el enunciado, definimos segmentos de código y datos en la GDT a partir del indice 4. El primer par con privilegios de kernel (DPL 0), con indices 4 y 5 respectivamente, y un segundo par de segmentos con privlegios de usuario (DPL 3) en los indices 6 y 7 de la GDT. 
 Direccionamos los primeros $878$MB de memoria con estos segmentos.
-Para ello, establecimos la base de cada uno en la dirección 0x0 y, para poder representar el número en 20 bits, calculamos el limite de cada uno en bloques de 4KB. 
-Adicionalmente, definimos un segmento de datos con privilegios de kernel para la memoria de video, basado en la dirección 0xB8000. Dado que las dimensiones de la pantalla son 80x50 caracteres y que para representar cada uno se necesitan dos bytes, el tamaño de este segmento es de 8000 Bytes. En función de esto definimos el limite del segmento en 7999, su ultimo byte direccionable.\\
+Para ello establecimos la base de cada uno en la dirección \textit{0x0} y, para poder representar el límite, usamos granularidad de 4KB. De esta manera, $878$MB se corresponden a $224768$ bloques de 4KB. Como en el limite indicamos el último bloque direccionable, restamos uno a esta cantidad. Luego, el límite calculado para estos segmentos fue \textit{0x36DFF}.
 
-Inicialmente, resolvimos el manejo de excepciones definiendo los primeros veinte indices (de 0 a 19) en la tabla de descriptores de interrupción. 
+Adicionalmente, definimos un segmento de datos con privilegios de kernel para la memoria de video, basado en la dirección \textit{0xB8000}, en el indice 8 de la GDT. 
+Dado que las dimensiones de la pantalla son $80\times50$ caracteres y que para representar cada uno se necesitan dos bytes, el tamaño de este segmento es de $8000$ Bytes. 
+En función de esto definimos el limite del segmento en $7999$, su ultimo byte direccionable. \\
+
+Una vez que construimos estos segmentos en la GDT, la apuntamos en el registro GDTR y activamos modo protegido. Para ello seteamos el bit PE en CR0 y usamos un jump far para cargar el selector de segmento de código.
+Tras el salto, configuramos los selectores de segmentos de datos (ds, ss, es, fs y gs), apuntándolos al segmento de datos de kernel que definimos en el índice 5 de la tabla de descriptores.
+Asimismo, asignamos el valor \textit{0x2700} a los registros esp y ebp para configurar la pila de kernel.\\
+
+
+Hecho esto, inicializamos la pantalla.
+En pos de esto usamos el segmento de datos que definimos para el área de la pantalla, cargando su selector en gs. Luego nos desplazamos por el rango permitido por el segmento, escribiendo \textit{0x7020} en cada par de bytes hasta alcanzar el límite. Este valor corresponde a un espacio con fondo gris.
+
+
+
+
+
+\subsubsection{Manejo inicial de excepciones}
+
+En un principio, resolvimos el manejo de excepciones definiendo los primeros veinte indices (de 0 a 19) en la tabla de descriptores de interrupción. 
 Para ello utilizamos un macro en el cual referimos cada entrada $N$ al segmento de código de kernel, con el offset correspondiente su rutina de atención \_isr$N$. 
-En cuanto los atributos de cada descriptor, dejamos en 1 el bit de presencia, asignamos nivel de privilegios de kernel y usamos el tipo \textit{interrupt}.
+En cada descriptor en la IDT dejamos en 1 el bit de presencia, asignamos nivel de privilegios de kernel y usamos el tipo \textit{interrupt}.
 
 Para atender excepciones escribimos rutinas que muestran sus mensajes de error por pantalla.
 Definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-ésimo mensaje de un arreglo donde los guardamos previamente.\\
 
-Este comportamiento luego fue revisado para la implementación del modo debug y el desalojo de tareas (sección \ref{sec-desalojo}).
+Este comportamiento luego fue revisado para la implementación del desalojo de tareas y el modo debug (secciones \ref{sec-desalojo} y \ref{sec:debug}).

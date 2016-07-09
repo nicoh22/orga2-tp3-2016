@@ -35,7 +35,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned short)    0x6DFF,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-		// Type Execute Only - EBOLA
+		// Type Execute Only
         (unsigned char)     0x08,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */
@@ -51,7 +51,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned short)    0x6DFF,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-		// Type Read/Write - EBOLA
+		// Type Read/Write
         (unsigned char)     0x02,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */
@@ -67,7 +67,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned short)    0x6DFF,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-		// Type Execute Only - EBOLA
+		// Type Execute Only
         (unsigned char)     0x08,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x03,           /* dpl          */
@@ -83,7 +83,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned short)    0x6DFF,         /* limit[0:15]  */ 
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-		// Type Read/Write - EBOLA
+		// Type Read/Write
         (unsigned char)     0x02,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x03,           /* dpl          */
@@ -99,7 +99,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned short)    0x1F3F,         /* limit[0:15]  */ 
         (unsigned short)    0x8000,         /* base[0:15]   */
         (unsigned char)     0x0B,           /* base[23:16]  */
-		// Type Read/Write - EBOLA
+		// Type Read/Write
         (unsigned char)     0x02,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */

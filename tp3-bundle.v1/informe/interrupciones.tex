@@ -3,7 +3,7 @@
 Para poder atender interrupciones primero debemos llenar la IDT y lo conseguimos llamando a la funcion \verb|idt_inicializar|. Esta se encarga de llenar dinamicamente la idt, obteniendo los punteros a las funciones que atienden las interrupciones en tiempo de linkeo. El selector de segmento usado para todas las entradas de la idt es el correspondiente a codigo de nivel 0 ($0x20$). El dpl de todas las entradas es 0 excepto la entrada 102, que es la que designamos para ofrecer los servicios del sistema; por lo tanto en la entrada 102 el dpl es 3.
 
 La atencion de las interrupciones se realizan desde el archivo isr.asm. Ademas incluimos un archivo adicional (isr\_c.c) el cual contiene funciones de atencion de interrupciones escritas en C. 
-Las excepciones del procesador son todas atendidas de manera similar, lo cual hace posible implentarlas usando macros. Primero chequeamos si estamos en modo debug (ver seccion \ref{sec:modo_debug}), en caso de no estarlo se imprime un mensaje de error de los que se encuentran almacenados en el vector \verb|mensajesExcepcion| y se desaloja a la tarea que cometio la excepcion. 
+Las excepciones del procesador son todas atendidas de manera similar, lo cual hace posible implentarlas usando macros. Primero chequeamos si estamos en modo debug (ver seccion \ref{sec:debug}), en caso de no estarlo se imprime un mensaje de error de los que se encuentran almacenados en el vector \verb|mensajesExcepcion| y se desaloja a la tarea que cometio la excepcion. 
 
 
 
@@ -14,7 +14,7 @@ Las excepciones del procesador son todas atendidas de manera similar, lo cual ha
 Cuando nos llega desde el PIC un tick de reloj, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Esto lo logramos llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:scheduler}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
 
 Tanto si cambiamos de tarea como si no, se llama a la función \verb|game_tick|, una función que por conveniencia decidimos escribirla en C y se encarga de mantener la consistencia entre el estado del juego y los datos mostrados en pantalla. 
-Esto implica volver a pintar el fondo si se sale de modo debug (ver sección \ref{sec:modo_debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, sus relojes y p\'aginas mapeadas.
+Esto implica volver a pintar el fondo si se sale de modo debug (ver sección \ref{sec:debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, sus relojes y p\'aginas mapeadas.
 
 
 

@@ -23,7 +23,7 @@ extern game_inicializar
 %define PAGE_DIRECTORY 0X27000
 %define PAGE_TABLE 0X28000
 
-%define stackBasePointerKern 0x27000 ; EBOLA
+%define stackBasePointerKern 0x27000
 %define dataSegmentSelectorKern 0x28
 
 %define GDT_SEL_TSS_INICIAL	0x48 
@@ -58,7 +58,6 @@ start:
 	cli
 
 	; Cambiar modo de video a 80 X 50
-	; EBOLA
 	mov ax, 0003h
 	int 10h ; set mode 03h
 	xor bx, bx
@@ -67,12 +66,11 @@ start:
 
 	; Imprimir mensaje de bienvenida
 	imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
-	; EBOLA FIN
 
 	; Habilitar A20 - no hay que salver registros
 	call habilitar_A20
 	; Cargar la GDT
-	lgdt [GDT_DESC] ; EBOLA
+	lgdt [GDT_DESC]
 
 	; Setear el bit PE del registro CR0
 	mov eax, cr0
@@ -106,7 +104,7 @@ BITS 32
 	mov ecx, 0
 	.inicializarPantalla:
 	; 80x50 * 2 bytes: 	8000 bytes
-	; Espacio con bg gris : 0x0714
+	; Espacio con bg gris : 0x0720
 	; Segmento de video (8) 0000 0000 0100 0000
 	mov eax, 0x40
 	mov gs, ax
