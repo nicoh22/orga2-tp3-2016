@@ -11,7 +11,7 @@ Las excepciones del procesador son todas atendidas de manera similar, lo cual ha
 
 \label{subsec:int-reloj}
 
-Cuando nos llega desde el PIC un tick de reloj, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Esto lo logramos llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:scheduler}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
+Cuando nos llega desde el PIC un tick de reloj, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Esto lo logramos llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:sched}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
 
 Tanto si cambiamos de tarea como si no, se llama a la función \verb|game_tick|, una función que por conveniencia decidimos escribirla en C y se encarga de mantener la consistencia entre el estado del juego y los datos mostrados en pantalla. 
 Esto implica volver a pintar el fondo si se sale de modo debug (ver sección \ref{sec:debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, sus relojes y p\'aginas mapeadas.
