@@ -10,7 +10,7 @@ De estar en estado interrumpido, lo pasamos a habilitado para continuar la ejecu
 En esta situación también indicamos que debemos redibujar la pantalla mostrar correctamente la sección del mapa que ocupa la tabla de visualización de registros.
 
 De esta manera, el usuario solo es capaz de cambiar el estado de \verb|debugState| a habilitado o deshabilitado, dependiendo de su valor previo. Únicamente los handlers de excepciones pueden cambiar el estado a interrumpido. Logramos esto llamando a la función \verb|debug_set_interrupted| al entrar en uno de ellos. 
-Esta función pasa \verb|debugStat| a estado interrumpido y devuelve $1$ si previamente el estado era habilitado. De lo contrario devuelve $0$, indicando que no debemos interrumpir la ejecución.
+Esta función pasa \verb|debugState| a estado interrumpido y devuelve $1$ si previamente el estado era habilitado. De lo contrario devuelve $0$, indicando que no debemos interrumpir la ejecución.
 
 Si el handler recibe un $1$ de \verb|debug_set_interrupted|, encola todos los registros de propósito general, los selectores de segmento, registros de control y las últimas cuatro posiciones de la pila de la tarea. Hecho esto, llama a la función \verb|screen_imprimir_log|, que muestra en pantalla una tabla con toda esta información.
 Al retornar mostramos el nombre de la excepción en la esquina superior izquierda, desalojamos la tarea causante y saltamos a la tarea idle.
