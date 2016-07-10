@@ -1,3 +1,4 @@
+\vspace{10pt}
 \subsection{Pantalla}
 
 Tratamos de mantener el código que maneja el estado de la pantalla lo más modular posible. Es decir, evitar leer/modificar estructuras ajenas  y que las demás secciones de nuestro código no tengan que conocer exactamente como esta compuesta la pantalla.\\
@@ -20,4 +21,6 @@ Logramos esto proveyendo desde  \verb|screen.c| funciones que realizan de mediad
 \verb|screen_actualizar_reloj_tarea|: Recibe el tipo de tarea, el indice (este mismo indice se usa en el scheduler), si esta viva o no la tarea y el dueño actual de la tarea (quien la infecto). Se posee una matriz \verb|clock_State| que indica el ultimo estado de reloj de la tarea, se modifica este estado por el siguiente (este orden definido en el arreglo \verb|clock|) y se lo imprime en pantalla.\\
 
 \verb|screen_imprimir_log|: Imprime el log correspondiente al modo debug. Recibe un puntero a la pila. De alli se extraen en orden los parametros a imprimir.\\
+
+\newpage
 

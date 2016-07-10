@@ -6,7 +6,7 @@ En ella utilizamos un macro en el cual referimos cada entrada $N$ al segmento de
 
 Todas las rutinas de atención de interrupciones deben correr con nivel de privilegio cero, por lo que en sus descriptores usamos el selector de segmento correspondiente al indice 4 de la GDT, el segmento de código de kernel.
 Además, no deben poder ser invocadas por código de usuario, por lo que las definimos con DPL 0. La única excepción es la interrupción \textit{0x66}, que utilizamos para las syscalls a disposición de los usuarios. Por este motivo, su entrada en la IDT especifica DPL 3.
-Independientemente de su nivel de privilegios, definimos todas las interrupciones con tipo \textit{interrupt}.
+Independientemente de su nivel de privilegios, definimos todas las interrupciones con tipo \textit{interrupt}.\\
 
 
 
@@ -17,7 +17,9 @@ Para atender excepciones escribimos rutinas que muestran sus mensajes de error p
 En pos de esto, guardamos los mensajes de error correspondientes en cada posición del arreglo \verb|mensajesExcepcion|.
 Luego, definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-ésimo mensaje de \verb|mensajesExcepcion|.\\
 
-Este comportamiento luego fue revisado para la implementación del desalojo de tareas y el modo debug. En su versión final, cada rutina de excepción muestra la pantalla de debug si esta activado, imprime el mensaje de error y desaloja la tarea causante (ver secciones \ref{sec-desalojo} y \ref{sec:debug}).
+Este comportamiento luego fue revisado para la implementación del desalojo de tareas y el modo debug. En su versión final, cada rutina de excepción muestra la pantalla de debug si esta activado, imprime el mensaje de error y desaloja la tarea causante (ver secciones \ref{sec-desalojo} y \ref{sec:debug}).\\
+
+\newpage
 
 
 \subsubsection{Interrupción de reloj}
