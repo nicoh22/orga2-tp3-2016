@@ -70,7 +70,7 @@
 \fancyhf{}
 
 \fancyhead[LO]{Sección \rightmark} % \thesection\ 
-\fancyfoot[LO]{\small{Esquivel, Federico Nicolás, Hernandez, Nicolás, Karbopel, Rodrigo}}
+\fancyfoot[LO]{\small{Esquivel Federico Nicolás, Hernandez Nicolás, Kapobel Rodrigo}}
 \fancyfoot[RO]{\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.5pt}
@@ -98,8 +98,8 @@
 \titulo{Trabajo Práctico III}
 \subtitulo{subtitulo del trabajo}
 \integrante{Esquivel, Federico Nicolás}{915/12}{alt.juss@gmail.com}
-\integrante{Hernandez, Nicolás}{XXX/XX}{nicoh22@hotmail.com}
-\integrante{Karbopel, Rodrigo}{XXX/XX}{rok\_35@live.com.ar}
+\integrante{Hernandez, Nicolás}{122/13}{nicoh22@hotmail.com}
+\integrante{Kapobel, Rodrigo}{695/12}{rok\_35@live.com.ar}
 
 \maketitle
 \newpage
@@ -119,12 +119,23 @@
 
 \section{Objetivos generales}
 
-%En este trabajo buscamos activar todos los sistemas para que un procesador trabaje en modo multi-tarea. Partiendo del estado en que el bootloader nos entrega el control, completaremos las estructuras necesarias para pasar a modo protegido, incorporar paginación, manejar excepciones e interrupciones, lanzar tareas y distribuir los recursos del procesador entre ellas.
+En este trabajo buscamos activar todos los sistemas para que un procesador trabaje en modo multi-tarea. Partiendo del estado en que el bootloader nos entrega el control, completaremos las estructuras necesarias para pasar a modo protegido, incorporar paginación, manejar excepciones e interrupciones, lanzar tareas y distribuir los recursos del procesador entre ellas.
 
 
 \input{desarrollo.tex}
 
-\section{Conclusiones y trabajo futuro}
+
+
+\section{Conclusión}
+
+
+En este trabajo logramos implementar un sistema multitarea con segmentación flat, paginación, manejo de interrupciones y los comportamientos descriptos en el enunciado.
+
+A raiz de los problemas que encontramos durante el desarrollo, destacamos la importancia de los niveles de protección (RPL) en los selectores de segmentos en modo protegido
+y en consecuencia los DPLs de las estructuras del sistema. 
+Nuestro diseño se basa fuertemente en protección de niveles de privilegios para funcionar logrando un sistema robusto en cuestiones de seguridad, bloqueando a las tareas de acceder a secciones de memoria sensibles para el kernel del sistema, como pueden ser el scheduler o las secciones de código que manejan syscalls y excepciones o accederse entre si.
+
+Destacamos, además, la paginación como método de organización de memoria, debido a la facilidad de implementación de los algoritmos (y por lo tanto su comprensión) de mapeo y desmapeo de memoria, dado que no es necesario llevar cuenta donde se encuentra cada sección libre o que hay que reacomodar para obtenerlas porque las mismas se organizan en bloques contiguos al contrario de lo que podría suceder en segmentación.
 
 
 \end{document}
