@@ -125,17 +125,22 @@ En este trabajo buscamos activar todos los sistemas para que un procesador traba
 \input{desarrollo.tex}
 
 
-
 \section{Conclusión}
 
+En este trabajo logramos implementar un sistema multitarea con segmentación flat, paginación, manejo de interrupciones y los comportamientos descritos en el enunciado.
 
-En este trabajo logramos implementar un sistema multitarea con segmentación flat, paginación, manejo de interrupciones y los comportamientos descriptos en el enunciado.
-
-A raiz de los problemas que encontramos durante el desarrollo, destacamos la importancia de los niveles de protección (RPL) en los selectores de segmentos en modo protegido
+A raíz de los problemas que encontramos durante el desarrollo, destacamos la importancia de los niveles de protección (RPL) en los selectores de segmentos en modo protegido
 y en consecuencia los DPLs de las estructuras del sistema. 
-Nuestro diseño se basa fuertemente en protección de niveles de privilegios para funcionar logrando un sistema robusto en cuestiones de seguridad, bloqueando a las tareas de acceder a secciones de memoria sensibles para el kernel del sistema, como pueden ser el scheduler o las secciones de código que manejan syscalls y excepciones o accederse entre si.
+Nuestro diseño se basa fuertemente en protección de niveles de privilegios para funcionar logrando un sistema robusto en cuestiones de seguridad, bloqueando a las tareas de acceder a secciones de memoria sensibles para el kernel, como pueden ser el scheduler, las secciones de código que manejan syscalls y excepciones.
 
-Destacamos, además, la paginación como método de organización de memoria, debido a la facilidad de implementación de los algoritmos (y por lo tanto su comprensión) de mapeo y desmapeo de memoria, dado que no es necesario llevar cuenta donde se encuentra cada sección libre o que hay que reacomodar para obtenerlas porque las mismas se organizan en bloques contiguos al contrario de lo que podría suceder en segmentación.
+Destacamos, además, el sistema de paginación como método de organización de memoria. Debido a la facilidad de implementación de los algoritmos de mapeo y desmapeo de memoria (y por lo tanto la comprensión de los mismos), dado que no es necesario llevar cuenta donde se encuentra cada sección libre o qué hay que reacomodar para obtenerlas, porque las mismas se organizan en bloques contiguos al contrario de lo que podría suceder en segmentación.
+
+
+
+
+
+
+>>>>>>> bb9392b Conclusión?
 
 
 \end{document}
