@@ -46,8 +46,10 @@ Esta función siempre se ejecuta a partir de una interrupción, y queda como res
 
 
 
-Tal como se describió en la sección \ref{subsec:int-teclado}, cuando un jugador presiona la tecla adecuada, se lanza una tarea de su tipo en la posición de su cursor. 
-Para ello 
+Para lanzar tareas usamos la función \verb|sched_lanzar_tareas|, que precisa parámetros \verb|tipo|, \verb|x| e \verb|y|. El primero corresponde al enum \verb|taskType|, mientras que los dos últimos son enteros sin signo de 16 bits, representando las coordenadas en pantalla donde se lanzará la tarea.
+En primer lugar, controlamos si existe un índice libre para colocar la tarea en \verb|tareasInfo|. Si lo hay, calculamos el indice correspondiente en la GDT en base al tipo e indice de tarea y obtenemos la dirección física asociada a las coordenadas en el mapa. Con estos datos creamos las estructuras necesarias de acuerdo al procedimiento descrito en la sección \ref{subsec:tss-lanzar}.
+Una vez construidas las estructuras, llenamos la entrada en \verb|tareasInfo| con los campos
+\verb|alive| en 1, las coordenadas de la tarea y su página mapeada iguales a \verb|x| e \verb|y|, el campo \verb|owner| con \verb|tipo| y \verb|gdtIndex| con el índice calculado.
 
 
 

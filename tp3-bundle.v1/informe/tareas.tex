@@ -96,7 +96,10 @@ Para ello generamos un directorio de paginas siguiendo el procedimiento descrito
 \vspace{10pt}
 
 \label{sec:tss-tareasInfo-init}
-Al inicializar las estructuras del juego y scheduler, dejamos en 0 todos los campos de cada entrada en \verb|tareasInfo|. Hecho esto se lanzan las 15 tareas sanas en posiciones al azar dentro del mapa usando el procedimiento que describimos en esta sección. A continuación se detalla cómo implementamos los saltos entre tareas y utilizamos las estructuras que introducimos aquí.
+Al inicializar las estructuras del juego y scheduler, dejamos en 0 todos los campos de cada entrada en \verb|tareasInfo|. 
+Hecho esto se lanzan las 15 tareas sanas en posiciones al azar dentro del mapa usando la función \verb|sched_lanzar_tarea|, que detallamos en la próxima sección.
+
+A continuación se detalla cómo implementamos los saltos entre tareas y utilizamos las estructuras que introducimos aquí.
 
 
 

@@ -1,5 +1,6 @@
 
 \subsection{Segmentación y activación de modo protegido}
+\label{sec:segmentacion}
 
 De acuerdo a lo indicado en el enunciado, definimos segmentos de código y datos en la GDT a partir del indice 4. El primer par con privilegios de kernel (DPL 0), con indices 4 y 5 respectivamente, y un segundo par de segmentos con privlegios de usuario (DPL 3) en los indices 6 y 7 de la GDT. 
 Direccionamos los primeros $878$MB de memoria con estos segmentos.
@@ -19,15 +20,3 @@ En pos de esto usamos el segmento de datos que definimos para el área de la pan
 
 
 
-
-
-\subsubsection{Manejo inicial de excepciones}
-
-En un principio, resolvimos el manejo de excepciones definiendo los primeros veinte indices (de 0 a 19) en la tabla de descriptores de interrupción. 
-Para ello utilizamos un macro en el cual referimos cada entrada $N$ al segmento de código de kernel, con el offset correspondiente su rutina de atención \_isr$N$. 
-En cada descriptor en la IDT dejamos en 1 el bit de presencia, asignamos nivel de privilegios de kernel y usamos el tipo \textit{interrupt}.
-
-Para atender excepciones escribimos rutinas que muestran sus mensajes de error por pantalla.
-Definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-ésimo mensaje de un arreglo donde los guardamos previamente.\\
-
-Este comportamiento luego fue revisado para la implementación del desalojo de tareas y el modo debug (secciones \ref{sec-desalojo} y \ref{sec:debug}).

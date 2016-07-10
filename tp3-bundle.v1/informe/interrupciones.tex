@@ -1,34 +1,47 @@
 \subsection{Interrupciones}
 
-Para poder atender interrupciones primero debemos llenar la IDT y lo conseguimos llamando a la funcion \verb|idt_inicializar|. Esta se encarga de llenar dinamicamente la idt, obteniendo los punteros a las funciones que atienden las interrupciones en tiempo de linkeo. El selector de segmento usado para todas las entradas de la idt es el correspondiente a codigo de nivel 0 ($0x20$). El dpl de todas las entradas es 0 excepto la entrada 102, que es la que designamos para ofrecer los servicios del sistema; por lo tanto en la entrada 102 el dpl es 3.
+Para poder atender interrupciones primero debemos llenar la IDT y lo conseguimos llamando a la funcion \verb|idt_inicializar|. 
 
-La atencion de las interrupciones se realizan desde el archivo isr.asm. Ademas incluimos un archivo adicional (isr\_c.c) el cual contiene funciones de atencion de interrupciones escritas en C. 
-Las excepciones del procesador son todas atendidas de manera similar, lo cual hace posible implentarlas usando macros. Primero chequeamos si estamos en modo debug (ver seccion \ref{sec:debug}), en caso de no estarlo se imprime un mensaje de error de los que se encuentran almacenados en el vector \verb|mensajesExcepcion| y se desaloja a la tarea que cometio la excepcion. 
+En ella utilizamos un macro en el cual referimos cada entrada $N$ al segmento de código de kernel, con el offset correspondiente su rutina de atención \_isr$N$. 
 
+Todas las rutinas de atención de interrupciones deben correr con nivel de privilegio cero, por lo que en sus descriptores usamos el selector de segmento correspondiente al indice 4 de la GDT, el segmento de código de kernel.
+Además, no deben poder ser invocadas por código de usuario, por lo que las definimos con DPL 0. La única excepción es la interrupción \textit{0x66}, que utilizamos para las syscalls a disposición de los usuarios. Por este motivo, su entrada en la IDT especifica DPL 3.
+Independientemente de su nivel de privilegios, definimos todas las interrupciones con tipo \textit{interrupt}.
+
+
+
+\subsubsection{Excepciones}
+
+En un principio, resolvimos el manejo de excepciones definiendo los primeros veinte indices (de 0 a 19) en la tabla de descriptores de interrupción. 
+Para atender excepciones escribimos rutinas que muestran sus mensajes de error por pantalla.
+En pos de esto, guardamos los mensajes de error correspondientes en cada posición del arreglo \verb|mensajesExcepcion|.
+Luego, definimos cada \_isr$N$ con un macro en el cual obtenemos y mostramos el $N$-ésimo mensaje de \verb|mensajesExcepcion|.\\
+
+Este comportamiento luego fue revisado para la implementación del desalojo de tareas y el modo debug. En su versión final, cada rutina de excepción muestra la pantalla de debug si esta activado, imprime el mensaje de error y desaloja la tarea causante (ver secciones \ref{sec-desalojo} y \ref{sec:debug}).
 
 
 \subsubsection{Interrupción de reloj}
 
 \label{subsec:int-reloj}
 
-Cuando nos llega desde el PIC un tick de reloj, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Esto lo logramos llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:sched}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
+Cuando nos llega un tick de reloj desde el PIC, actualizamos el reloj de sistema situado en la esquina inferior derecha de la pantalla mediante la funcion \verb|proximo_reloj|. Luego pedimos al scheduler el indice de la gdt de la proxima tarea a ejecutar. Logramos esto llamando a la funcion \verb|sched_proximo_indice| (ver seccion \ref{sec:sched}); en caso de devolvernos 0, interpretamos que no debemos cambiar de tarea, sino saltamos usando el indice de gdt obtenido.
 
-Tanto si cambiamos de tarea como si no, se llama a la función \verb|game_tick|, una función que por conveniencia decidimos escribirla en C y se encarga de mantener la consistencia entre el estado del juego y los datos mostrados en pantalla. 
-Esto implica volver a pintar el fondo si se sale de modo debug (ver sección \ref{sec:debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, sus relojes y p\'aginas mapeadas.
+Tanto si cambiamos de tarea como si no, se llama a la función \verb|game_tick|, una función que por conveniencia decidimos escribirla en C, que se encarga de mantener la consistencia entre el estado del juego y los datos que se muestran en pantalla. 
+Esto implica volver a pintar el fondo si se sale de modo debug (ver sección \ref{sec:debug}), pintar las vidas y puntos actuales de cada jugador y ademas pintar las tareas, p\'aginas mapeadas y actualizar sus relojes.
 
 
 
 \subsubsection{Interrupciones de teclado}
 \label{subsec:int-teclado}
-El handler de interrupcion de teclado solo lee el puerto del teclado ($0x60$) y se lo pasa a la funcion \verb|atender_teclado|. Esta decide el curso de accion en base a la tecla presionada. 
+El handler de interrupción de teclado solo lee el puerto del teclado ($0x60$) y se lo pasa a la función \verb|atender_teclado|. Esta decide el curso de accion en base a la tecla presionada. 
 
-Las teclas 'w', 'a' , 's' y 'd' mueven al jugador 1 y las teclas 'i', 'j', 'k' y 'l' al jugador 2. Las teclas 'shift' permiten a los jugadores lanzar tareas. Las funciones que realizan estas funciones son desarrooladas en la seccion \ref{sec:game}. 
+Las teclas 'w', 'a' , 's' y 'd' mueven al jugador 1 y las teclas 'i', 'j', 'k' y 'l' al jugador 2. Las teclas 'shift' permiten a los jugadores lanzar tareas. Las funciones que implementan estos comportamientos se detallan en la sección \ref{sec:game}. 
 
-Sin embargo estas teclas son ignoradas si se produjo una excepcion mientras el sistema se encontraba en modo debug. La tecla 'y' nos permite en todo momento activar o desactivar el modo debug.
+Sin embargo estas teclas son ignoradas si se produjo una excepción mientras el sistema se encontraba en modo debug. La tecla 'y' nos permite en todo momento activar o desactivar el modo debug.
 
 
 \subsubsection{Servicios de sistema}
 
-El handler de esta interrupcion pasa como parametros a la funcion \verb|manejar_syscall| los registros eax, ebx y ecx. Esta funcion setea el parametro global \verb|en_idle| ya que tanto en el caso de ejecutarse exitosamente la operacion requerida como no, debemos poner a correr la tarea idle. Luego chequeamos si la tarea nos paso correctamente el parametro \verb|syscall|, de no ser asi la tarea es desalojada. Caso contrario llamamos a la funcion correspondiente al servicio pedido. Estas funciones son responsables de verificar el/los parametros recibidos.
-Para mas informacion sobre  las funciones encontradas en \verb|manejar_syscall| ver la seccion \ref{sec:game}
+El handler de esta interrupción pasa como parámetros a la función \verb|manejar_syscall| los registros eax, ebx y ecx. Esta funcion setea el parametro global \verb|en_idle| ya que tanto en el caso de ejecutarse exitosamente la operacion requerida como no, debemos poner a correr la tarea idle por el resto del tiempo asignado a la tarea que llamó a la syscall. Luego chequeamos si la tarea nos paso correctamente el parametro \verb|syscall|, de no ser asi la tarea es desalojada. Caso contrario llamamos a la funcion correspondiente al servicio pedido. Estas funciones son responsables de verificar el/los parametros recibidos.
+Para mas información sobre  las funciones encontradas en \verb|manejar_syscall| ver la sección \ref{sec:game}
 

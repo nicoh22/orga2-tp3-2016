@@ -30,25 +30,28 @@ Hecho esto quedan mapeadas las direcciones \verb|virtual| a \verb|fisica|, y lla
 
 En el contexto de este trabajo solo usamos los bits \textbf{P}, \textbf{R/W} y \textbf{U/S} de los atributos, que coinciden en ambas estructuras. 
 Como en el esquema que utilizamos no necesitamos entradas en tablas con atributos distintos a los definidos en la entrada de directorio correspondiente, usamos los atributos definidos en \verb|attr| para todas las estructuras requeridas en cada mapeo.
-Asimismo, como veremos en las secciones subsiguientes, el area libre esta mapeada por identity mapping para el kernel y todas las tareas. Debido a esto la dirección física del directorio de páginas se corresponde con su dirección virtual en todo contexto.\\
+Asimismo, como veremos en las secciones subsiguientes, el area libre esta mapeada por identity mapping para el kernel y todas las tareas. Debido a esto la dirección física del directorio de páginas se corresponde con su dirección virtual en todo contexto.
+Esto es relevante porque al mapear páginas no siempre se trabaja con cr3 apuntando al directorio de kernel, por lo que es necesario poder acceder al área libre y las estructuras allí definidas desde cualquier page directory. Al estar mapeada por identity mapping, podemos usar las mismas direcciones para referirnos a los directorios y tablas de páginas desde cualquier contexto.\\
 
 Para la función \verb|mmu_unmapear_pagina| requerimos una dirección virtual y el directorio en el cual queremos deshacer el mapeo. 
-Con estos datos buscamos la entrada en el directorio, la cual de no estar presente no hacemos nada, y la entrada correspondiente en la tabla apuntada por ella.
-Anulamos ésta última, dejando todos sus bits en cero. 
+Con estos datos buscamos la entrada en el directorio. De no estar presente retornamos de la función sin cambios. De lo contrario, obtenemos la entrada correspondiente en la tabla apuntada por ella y anulamos ésta última, dejando todos sus bits en cero. 
 Luego verificamos si hay al menos una entrada presente en la tabla y de no ser así, anulamos también la entrada del page directory.
-Finalmente, limpaiamos la TLB con la función \verb|tblflush|.\\
+Finalmente, limpiamos la TLB con la función \verb|tblflush|.\\
 
 A continuación detallamos los procedimientos a través de los cuales construimos los directorios que usamos en este trabajo tanto para el kernel, como para las tareas del juego.
 
 
 \subsubsection{Directorio de kernel}
 
+Tras pasar a modo protegido e inicializar la pantalla con el procedimiento descrito en la sección anterior (ver \ref{sec:segmentacion}), pasamos a activar paginación a fines de incorporar protección por nivel de privilegio a los accesos a memoria.
+Para ello, incializamos \verb|proxima_pagina_libre| como mencionamos anteriormente, y creamos un page directory para el kernel.
+
 En el directorio del kernel mapeamos las direcciones \textit{0x000000} a \textit{0x3FFFFF} usando \textit{identity mapping}.
 Para lograrlo en primer lugar inicializamos los primeros 4KB de memoria a partir de la dirección \textit{0x27000} con ceros, donde luego definimos el directorio de páginas del kernel.
-Ubicamos la primer página del directorio en la dirección \textit{0x28000}, con atributos de lectura y escritura, nivel de privilegios cero y el bit presente activo.
+Ubicamos la primer página del directorio en la dirección \textit{0x28000}, con atributos de lectura y escritura, nivel de privilegios cero y el bit presente alto.
 Luego, para mapear el sección de memoria pedida, llenamos la tabla con las direcciones de los primeros 1024 bloques de 4KB de memoria física. 
 De esta manera definimos la última entrada de la tabla con la dirección base 0x3FF000, permitiendo direccionar las siguientes 4096-1 direcciones. 
-Al igual que la definición de la tabla de páginas en el directorio, cada página fue definida con atributos de lectura y escritura, privilegios de kernel y bit presente activo.
+Al igual que la definición de la tabla de páginas en el directorio, cada página fue definida con atributos de lectura y escritura, DPL cero y bit presente en uno.
 
 Teniendo armado un directorio de páginas con una tabla de páginas, habilitamos paginación moviendo la dirección del directorio a CR3 y levantando el bit correspondiente en CR0.\\
 
@@ -60,10 +63,12 @@ Para ella requerimos los parámetros \verb|tipo|, que indica el tipo de tarea se
 Denotamos el tipo de cada tarea con el enum \verb|task_type|, cuyos valores para tareas sanas, de virus A y B son: \verb|H_type(0)|, \verb|A_type(1)| y \verb|B_type(2)|.
 
 En esta función debemos copiar el código adecuado y construir el directorio y páginas necesarias para que una tarea encuentre sus instrucciones a partir de la dirección virtual \textit{0x8000000} y pueda mapear otra página en la posición en el mapa a la dirección virtual \textit{0x8001000}.
-Para ello usamos el directorio apuntado por CR3 al momento en que se llamó la función para copiar el código, mapeando la dirección física con identity mapping temporalmente usando atributos de kernel y escribiendo el código de la tarea. Obtenemos éste último calculando el desplazamiento a partir de la dirección \textit{0x10000}, que resulta del producto entre el tamaño de página y el orden en memoria correspondiente al tipo de tarea.
+Para ello usamos el directorio apuntado por CR3 al momento en que se llamó la función para copiar el código. En él, mapeamos la dirección física con identity mapping temporalmente usando atributos de kernel. A continuación escribimos el código de la tarea en la página recién mapeada.
+Obtenemos éste último calculando el desplazamiento a partir de la dirección \textit{0x10000}, que resulta del producto entre el tamaño de página y el orden en memoria correspondiente al tipo de tarea. Por ejemplo, para mapear una tarea de tipo \verb|A_type|, cuyo orden en memoria es 1 (siendo 0 la primer tarea, la idle), encontramos su código en la dirección \textit{0x11000}.
+
 Una vez escrito el código, desmapeamos la página usada del directorio actual y construimos el de la tarea. 
-Con este objetivo obtenemos una página para el directorio, que inicializamos con ceros, y seguimos el mismo procedimiento descrito para el directorio de kernel.
-Una vez mapeada el area de kernel en el directorio de la tarea, vinculamos la posición física indicada a la dirección virtual 0x8000000. 
+Con este objetivo obtenemos una página del área libre para el directorio, que inicializamos con ceros, y seguimos el mismo procedimiento descrito para el directorio de kernel.
+Una vez mapeada el área de kernel y el área libre en el directorio de la tarea, vinculamos la posición física indicada a la dirección virtual 0x8000000. 
 Consideramos que en un principio la tarea no esta atacando (mapeando la dirección) a otra tarea, por lo que también vinculamos la posición virtual 0x8001000 a la misma dirección física.\\
 
 

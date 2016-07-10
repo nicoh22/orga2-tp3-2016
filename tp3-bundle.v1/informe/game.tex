@@ -3,19 +3,19 @@
 
 \label{sec:game}
 
-En esta seccion se describira el estado del juego que se representa en pantalla.
-La mayoria del estado del juego se describe mediante la estructura \verb|jugador|. Contiene la posicion en el mapa del jugador, los puntos obtenidos y las vidas restantes.
+En esta sección describimos el estado del juego que se representa en pantalla.
+La mayor parte del estado del juego se describe mediante la estructura \verb|jugador|. Esta contiene la posicion en el mapa del jugador, los puntos obtenidos y las vidas restantes.
 
 
 
 \begin{verbatim}
 
 typedef struct jugador_t{
-	unsigned int tareas_restantes;
-	unsigned short x;
-	unsigned short y;
-	unsigned short id;
-	unsigned short puntos;
+    unsigned int tareas_restantes;
+    unsigned short x;
+    unsigned short y;
+    unsigned short id;
+    unsigned short puntos;
 } jugador;
 
 jugador jugadores[2];
@@ -24,13 +24,13 @@ jugador jugadores[2];
 \end{verbatim}
 
 
-\subsubsection{Interaccion con el usuario}
+\subsubsection{Interacción con el usuario}
 
 
-Las siguientes rutinas hacen de interfaz con los eventos de teclado que podemos recibir. El kernel recibe las teclas pulsadas y decide el curso de accion. 
-En caso de la tecla pulsada ser un "shift" se llama a la funcion \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser asi, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posicion actual del jugador. En la seccion \ref{sec:sched} se define lo que implica lanzar una tarea,
+Las siguientes rutinas hacen de interfaz con los eventos de teclado que podemos recibir. El kernel recibe las teclas pulsadas y decide el curso de acción. 
+En caso de la tecla pulsada ser un "shift" se llama a la función \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser asi, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posicion actual del jugador. En la seccion \ref{sec:sched} se define lo que implica lanzar una tarea,
 
-Si las teclas pulsadas fueron las de movimiento, el kernel se encarga de transformarlas a un indice de jugador y una direccion. Representamos las direcciones con el siguiente tipo enumerado:
+Si las teclas pulsadas fueron las de movimiento, el kernel se encarga de transformarlas a un indice de jugador y una dirección. Representamos las direcciones con el siguiente tipo enumerado:
 
 \begin{verbatim}
 
@@ -38,13 +38,13 @@ typedef enum direccion_e { IZQ = 0xAAA, DER = 0x441, ARB = 0xA33, ABA = 0x883  }
 
 \end{verbatim}
 
-La funcion \verb|game_mover_cursor|, dado un jugador y una direccion, se encarga de de modificar acordemente la posicion en el mapa de la estructura jugador.
+La función \verb|game_mover_cursor|, dado un jugador y una direccion, se encarga de de modificar acordemente la posicion en el mapa de la estructura jugador.
 
 \subsubsection{Interaccion con tareas}
 
-Las siguiente son las rutinas que provee nuestro sistema para que las tareas interactuen con el estado del juego.
-La funcion \verb|game_soy| recibe un parametro que determina si una tarea es roja, azul o verde. Se setea acoremente el parametro \verb|owner| de la tarea actual.
+Las siguientes son las rutinas que provee nuestro sistema para que las tareas interactúen con el estado del juego.
+La función \verb|game_soy| recibe un parametro que determina si una tarea es roja, azul o verde. Se setea acoremente el parametro \verb|owner| de la tarea actual.
 \verb|game_donde| recibe un puntero, donde depositamos las coordenadas $(x,y)$ de la tarea en el mapa.
-\verb|game_mapear| recibe las coordenadas correspondientes a la pagina que la tarea desea mapear. Primero se verifica que sean coordenadas validas del mapa y se obtiene la direccion fisica de la pagina mediante \verb|xytofisica|. Si recibimos coordenadas invalidas, desalojamos a la tarea. Si no le pedimos a \verb|mmu_mapear_pagina| que mapee para la tarea actual la pagina deseada.
+\verb|game_mapear| recibe las coordenadas correspondientes a la página que la tarea desea mapear. Primero se verifica que sean coordenadas validas del mapa y se obtiene la direccion fisica de la página mediante \verb|xytofisica|. Si recibimos coordenadas inválidas, desalojamos a la tarea. Si no le pedimos a \verb|mmu_mapear_pagina| que mapee para la tarea actual la página deseada.
 
 
