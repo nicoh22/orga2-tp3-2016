@@ -199,6 +199,7 @@ unsigned int sched_desalojar_actual() {
 		break;
 	}
 	print("DES:", 20, 0, attr);
+	print("  ", 26, 0, attr);
 	print_int(currentIndex, 26, 0, attr);
 	///// DEBUG //////
 

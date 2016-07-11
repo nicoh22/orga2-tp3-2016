@@ -28,7 +28,7 @@ jugador jugadores[2];
 
 
 Las siguientes rutinas hacen de interfaz con los eventos de teclado que podemos recibir. El kernel recibe las teclas pulsadas y decide el curso de acción. 
-En caso de la tecla pulsada ser un "shift" se llama a la función \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser asi, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posicion actual del jugador. En la seccion \ref{sec:sched} se define lo que implica lanzar una tarea. 
+En caso de la tecla pulsada ser un 'shift', se llama a la función \verb|game_lanzar| con el indice de jugador correspondiente (0 para la izquierda o 1 para la derecha). Ella se ocupa de verificar que el jugador tenga "vidas" (representadas mediante \verb|tareas_restantes|) y que haya lugar en el scheduler (solo se pueden correr 5 tareas por jugador). De ser así, se resta una vida al jugador y se le pide al scheduler que lance una tarea en la posición actual del jugador. En la seccion \ref{sec:sched} se detalla el procedimiento para lanzar una tarea. 
 
 Si las teclas pulsadas fueron las de movimiento, el kernel se encarga de transformarlas a un indice de jugador y una dirección. Representamos las direcciones con el siguiente tipo enumerado:
 
@@ -38,7 +38,7 @@ typedef enum direccion_e {IZQ = 0xAAA, DER = 0x441, ARB = 0xA33, ABA = 0x883} di
 
 La función \verb|game_mover_cursor|, dado un jugador y una direccion, se encarga de de modificar acordemente la posicion en el mapa de la estructura jugador.
 
-\subsubsection{Interaccion con tareas}
+\subsubsection{Interacción con tareas}
 
 Las siguientes son las rutinas que provee nuestro sistema para que las tareas interactúen con el estado del juego.
 La función \verb|game_soy| recibe un parametro que determina si una tarea es roja, azul o verde. Se setea acoremente el parametro \verb|owner| de la tarea actual.
