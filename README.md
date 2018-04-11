@@ -1,4 +1,4 @@
-# orga2-tp3-2016
+# Organización del computador II - tp3 - 1c - 2016
 
 Ideas para manejar la pantalla:
 	
